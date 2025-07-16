@@ -88,16 +88,12 @@ def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str,
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # マニフェストをHTMLとして埋め込み
     gr.HTML(f"""
-    <!DOCTYPE html>
-    <html>
-    
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             window.src = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             window.space = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             </script>
     
-    </html>
     """)
     
     gr.Markdown("## 🤖 LM Studio チャットボット")
