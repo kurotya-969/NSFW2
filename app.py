@@ -7,16 +7,6 @@ from fastapi import FastAPI
 from typing import List, Tuple, Any
 from fastapi.responses import JSONResponse
 
-@app.get("/manifest.json")
-async def manifest():
-    return JSONResponse({
-        "name": "Chat App",
-        "short_name": "Chat",
-        "start_url": "/",
-        "display": "standalone",
-        "icons": []
-    })
-
 # --- ロギング設定 ---
 log_filename = f"chat_log_{datetime.now().strftime('%Y-%m-%d')}.txt"
 logging.basicConfig(
@@ -85,6 +75,18 @@ def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str,
 
 # --- Gradio UI ---
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
+    with gr.Blocks() as demo:
+    # マニフェストをHTMLとして直接埋め込み
+            gr.HTML("""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <link rel="manifest" href="data:application/json;charset=utf-8;base64,ewogICJuYW1lIjogIkNoYXQgQXBwIiwKICAic2hvcnRfbmFtZSI6ICJDaGF0IiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJpY29ucyI6IFtdCn0=">
+    </head>
+    </html>
+    """)
+    
+    # 以下通常のチャットインターフェース...
     gr.Markdown("## 🤖 LM Studio チャットボット")
     
     # 状態管理をより安全に
