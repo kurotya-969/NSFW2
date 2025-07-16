@@ -7,17 +7,6 @@ from fastapi import FastAPI
 from typing import List, Tuple, Any
 from fastapi.responses import JSONResponse
 
-# --- マニフェストデータの定義 ---
-manifest_data = {
-    "name": "Chat App",
-    "short_name": "Chat",
-    "start_url": "/",
-    "display": "standalone",
-    "icons": []
-}
-
-
-
 # --- ロギング設定 ---
 log_filename = f"chat_log_{datetime.now().strftime('%Y-%m-%d')}.txt"
 logging.basicConfig(
@@ -38,6 +27,26 @@ API_ENDPOINT = f"{LM_STUDIO_API_URL}/chat/completions"
 RENDER_EXTERNAL_URL = "https://nose-provided-pocket-arising.trycloudflare.com/v1"
 PORT = int(os.environ.get("PORT", 7860))
 API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
+
+with gr.Blocks(theme=gr.themes.Soft()) as demo:
+    # マニフェストをHTMLとして埋め込み
+    gr.HTML(f"""
+            <script>
+            window.API_BASE_URL = "{RENDER_EXTERNAL_URL.rstrip('/')}";
+            window.src = "{RENDER_EXTERNAL_URL.rstrip('/')}";
+            window.space = "{RENDER_EXTERNAL_URL.rstrip('/')}";
+            </script>
+    
+    """)
+
+    # --- マニフェストデータの定義 ---
+manifest_data = {
+    "name": "Chat App",
+    "short_name": "Chat",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": []
+}
 
 # --- 安全なhistory処理 ---
 def safe_history(history: Any) -> ChatHistory:
@@ -85,16 +94,7 @@ def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str,
         return error_msg, safe_hist
 
 # --- Gradio UI ---
-with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    # マニフェストをHTMLとして埋め込み
-    gr.HTML(f"""
-            <script>
-            window.API_BASE_URL = "{RENDER_EXTERNAL_URL.rstrip('/')}";
-            window.src = "{RENDER_EXTERNAL_URL.rstrip('/')}";
-            window.space = "{RENDER_EXTERNAL_URL.rstrip('/')}";
-            </script>
-    
-    """)
+
     
     gr.Markdown("## 🤖 LM Studio チャットボット")
     
