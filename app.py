@@ -43,6 +43,9 @@ def build_messages(history, user_input, system_prompt):
 
 # LM Studio APIと通信するチャット関数
 def chat(user_input, system_prompt, history=[]):
+    if isinstance(history, bool):
+        history = []
+
     if not user_input.strip():
         return "", history
 
@@ -172,6 +175,9 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         if not msg.strip():
             return "", history, history
         
+        if isinstance(history, bool):
+            history = []
+
         response, updated_history = chat(msg, sys_prompt, list(history))
         chat_display = [(h[0], h[1]) for h in updated_history]
         
