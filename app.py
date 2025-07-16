@@ -93,10 +93,8 @@ def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str,
         logging.error(error_msg)
         return error_msg, safe_hist
 
-# --- Gradio UI ---
 
-    
-    gr.Markdown("## 🤖 LM Studio チャットボット")
+with gr.Markdown("## 🤖 LM Studio チャットボット"):
     
     # 状態管理
     state = gr.State([])
