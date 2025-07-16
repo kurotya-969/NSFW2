@@ -96,7 +96,6 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             </script>
-        <link rel="manifest" href="/manifest.json">
     </head>
     </html>
     """)
