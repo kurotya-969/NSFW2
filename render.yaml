@@ -10,5 +10,5 @@ services:
       - key: PORT
         value: "10000"
       - key: LM_STUDIO_API_URL
-        value: "  https://totally-americans-blackjack-bedroom.trycloudflare.com/v1"
+        value: "https://totally-americans-blackjack-bedroom.trycloudflare.com/v1"
       # APIキーなど必要な環境変数もここで追加
