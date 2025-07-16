@@ -33,7 +33,7 @@ logging.basicConfig(
 ChatHistory = List[Tuple[str, str]]
 
 # --- LM Studio API設定 ---
-LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", "http://localhost:1234/v1").rstrip("/")
+LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", "https://nose-provided-pocket-arising.trycloudflare.com/v1").rstrip("/")
 API_ENDPOINT = f"{LM_STUDIO_API_URL}/chat/completions"
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "")
 PORT = int(os.environ.get("PORT", 7860))
