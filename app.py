@@ -2,8 +2,6 @@ import os
 import requests
 import gradio as gr
 import logging
-import base64
-import json
 from datetime import datetime
 from fastapi import FastAPI
 from typing import List, Tuple, Any

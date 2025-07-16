@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: my-chatbot
+    env: python
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
+    plan: free
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: LM_STUDIO_API_URL
+        value: "http://localhost:1234/v1"
+      # APIキーなど必要な環境変数もここで追加
