@@ -169,7 +169,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 submit_btn = gr.Button("送信", variant="primary")
                 clear_btn = gr.Button("履歴クリア")
     
-    state = gr.State([])
+    state = gr.State(value=[])
     
     def on_submit(msg, sys_prompt, history):
         if not msg.strip():
