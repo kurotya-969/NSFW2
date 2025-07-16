@@ -90,13 +90,13 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     gr.HTML(f"""
     <!DOCTYPE html>
     <html>
-    <head>
+    
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL.rstrip('/')}";
-            src = "{RENDER_EXTERNAL_URL.rstrip('/')}";
-            space = "{RENDER_EXTERNAL_URL.rstrip('/')}";
+            window.src = "{RENDER_EXTERNAL_URL.rstrip('/')}";
+            window.space = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             </script>
-    </head>
+    
     </html>
     """)
     
