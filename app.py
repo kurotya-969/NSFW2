@@ -2,10 +2,22 @@ import os
 import requests
 import gradio as gr
 import logging
+import base64
+import json
 from datetime import datetime
 from fastapi import FastAPI
 from typing import List, Tuple, Any
 from fastapi.responses import JSONResponse
+
+
+manifest_data = base64.b64encode(json.dumps({
+    "name": "Chat App",
+    "short_name": "Chat",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": []
+}).encode()).decode()
+
 
 # --- ロギング設定 ---
 log_filename = f"chat_log_{datetime.now().strftime('%Y-%m-%d')}.txt"
@@ -77,12 +89,20 @@ def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str,
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     with gr.Blocks() as demo:
     # マニフェストをHTMLとして直接埋め込み
-            gr.HTML("""
+             gr.HTML(f"""
     <!DOCTYPE html>
     <html>
     <head>
-        <link rel="manifest" href="data:application/json;charset=utf-8;base64,ewogICJuYW1lIjogIkNoYXQgQXBwIiwKICAic2hvcnRfbmFtZSI6ICJDaGF0IiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJpY29ucyI6IFtdCn0=">
+        <link rel="manifest" href="data:application/json;base64,{manifest_data}">
     </head>
+    <body>
+        <script>
+        // マニフェストリクエストをインターセプト
+        if (window.location.pathname === '/manifest.json') {{
+            window.location.href = "data:application/json;base64,{manifest_data}";
+        }}
+        </script>
+    </body>
     </html>
     """)
     
