@@ -5,6 +5,17 @@ import logging
 from datetime import datetime
 from fastapi import FastAPI
 from typing import List, Tuple, Any
+from fastapi.responses import JSONResponse
+
+@app.get("/manifest.json")
+async def manifest():
+    return JSONResponse({
+        "name": "Chat App",
+        "short_name": "Chat",
+        "start_url": "/",
+        "display": "standalone",
+        "icons": []
+    })
 
 # --- ロギング設定 ---
 log_filename = f"chat_log_{datetime.now().strftime('%Y-%m-%d')}.txt"
