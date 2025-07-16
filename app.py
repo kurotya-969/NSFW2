@@ -35,7 +35,7 @@ ChatHistory = List[Tuple[str, str]]
 # --- LM Studio API設定 ---
 LM_STUDIO_API_URL = "https://nose-provided-pocket-arising.trycloudflare.com/v1"
 API_ENDPOINT = f"{LM_STUDIO_API_URL}/chat/completions"
-RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "")
+RENDER_EXTERNAL_URL = "https://nose-provided-pocket-arising.trycloudflare.com/v1"
 PORT = int(os.environ.get("PORT", 7860))
 API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
 
@@ -93,6 +93,9 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     <!DOCTYPE html>
     <html>
     <head>
+            <script>
+            window.API_BASE_URL = "{RENDER_EXTERNAL_URL.rstrip('/')}";
+            </script>
         <link rel="manifest" href="/manifest.json">
     </head>
     </html>
