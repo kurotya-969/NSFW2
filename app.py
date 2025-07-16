@@ -39,8 +39,6 @@ RENDER_EXTERNAL_URL = "https://nose-provided-pocket-arising.trycloudflare.com/v1
 PORT = int(os.environ.get("PORT", 7860))
 API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
 
-logging.info(f"LM_STUDIO_API_URL = {LM_STUDIO_API_URL}")
-
 # --- 安全なhistory処理 ---
 def safe_history(history: Any) -> ChatHistory:
     """あらゆる型のhistoryを安全にChatHistoryに変換"""
@@ -95,6 +93,8 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     <head>
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL.rstrip('/')}";
+            src = "{RENDER_EXTERNAL_URL.rstrip('/')}";
+            space = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             </script>
     </head>
     </html>
