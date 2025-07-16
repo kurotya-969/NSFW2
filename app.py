@@ -39,6 +39,8 @@ RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "")
 PORT = int(os.environ.get("PORT", 7860))
 API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
 
+logging.info(f"LM_STUDIO_API_URL = {LM_STUDIO_API_URL}")
+
 # --- 安全なhistory処理 ---
 def safe_history(history: Any) -> ChatHistory:
     """あらゆる型のhistoryを安全にChatHistoryに変換"""
@@ -63,7 +65,7 @@ def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str,
     try:
         messages = build_messages(safe_hist, user_input, system_prompt)
         post_data = {
-            "model": "local-model",
+            "model": "berghof-nsfw-7b-i1",
             "messages": messages,
             "temperature": 0.7,
             "max_tokens": 256,
