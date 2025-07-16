@@ -9,15 +9,14 @@ from fastapi import FastAPI
 from typing import List, Tuple, Any
 from fastapi.responses import JSONResponse
 
-
-manifest_data = base64.b64encode(json.dumps({
+# --- マニフェストデータの定義 ---
+manifest_data = {
     "name": "Chat App",
     "short_name": "Chat",
     "start_url": "/",
     "display": "standalone",
     "icons": []
-}).encode()).decode()
-
+}
 
 # --- ロギング設定 ---
 log_filename = f"chat_log_{datetime.now().strftime('%Y-%m-%d')}.txt"
@@ -87,30 +86,20 @@ def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str,
 
 # --- Gradio UI ---
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    with gr.Blocks() as demo:
-    # マニフェストをHTMLとして直接埋め込み
-             gr.HTML(f"""
+    # マニフェストをHTMLとして埋め込み
+    gr.HTML(f"""
     <!DOCTYPE html>
     <html>
     <head>
-        <link rel="manifest" href="data:application/json;base64,{manifest_data}">
+        <link rel="manifest" href="/manifest.json">
     </head>
-    <body>
-        <script>
-        // マニフェストリクエストをインターセプト
-        if (window.location.pathname === '/manifest.json') {{
-            window.location.href = "data:application/json;base64,{manifest_data}";
-        }}
-        </script>
-    </body>
     </html>
     """)
     
-    # 以下通常のチャットインターフェース...
     gr.Markdown("## 🤖 LM Studio チャットボット")
     
-    # 状態管理をより安全に
-    state = gr.State([])  # 明示的にリストで初期化
+    # 状態管理
+    state = gr.State([])
     
     with gr.Row():
         api_status = gr.Textbox(label="API接続状態", value="初期化中...", interactive=False)
@@ -152,6 +141,13 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
 # FastAPIアプリ
 app = FastAPI()
+
+# マニフェスト配信エンドポイント
+@app.get("/manifest.json")
+async def get_manifest():
+    return JSONResponse(manifest_data)
+
+# Gradioアプリをマウント
 app = gr.mount_gradio_app(app, demo, path="/")
 
 if __name__ == "__main__":
