@@ -1,5 +1,4 @@
-gradio>=4.0.0
-gunicorn
-requests
-fastapi
-uvicorn
+gradio==4.44.0
+fastapi==0.104.1
+uvicorn==0.24.0
+requests==2.31.0

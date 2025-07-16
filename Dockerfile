@@ -14,8 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Renderが環境変数PORTでポートを指定してくるので、それに合わせる
-EXPOSE 7860
+EXPOSE $PORT
 
-# GunicornでFastAPI(Uvicornワーカー)アプリケーションを実行
+# UvicornでFastAPIアプリケーションを直接実行
 # シェル形式でCMDを記述し、$PORT環境変数を展開させる
-CMD gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT app:app
+CMD uvicorn app:app --host 0.0.0.0 --port $PORT
