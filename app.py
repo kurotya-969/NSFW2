@@ -10,10 +10,6 @@ from typing import List, Tuple, Any, Optional, Dict
 from fastapi.responses import JSONResponse
 from prompt_generator import PromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
-
-from clean_meta_fix import clean_meta
-
-# 以下の関数はclean_meta_fix.pyに移動しました
 def clean_meta(text: str) -> str:
     # 括弧内の注釈を削除（日本語・英語）
     cleaned_text = re.sub(r'（.*?）|\(.*?\)', '', text)
