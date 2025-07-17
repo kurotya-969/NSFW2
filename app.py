@@ -115,12 +115,12 @@ def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str,
         error_msg = f"エラーが発生しました: {str(e)}"
         logging.error(error_msg)
         return error_msg, safe_hist
-def on_submit(msg: str, sys_prompt: str, history: Any):
-        if not msg.strip():
-            return "", history if isinstance(history, list) else [], history if isinstance(history, list) else []
-        
-        response, updated_history = chat(msg, sys_prompt, history)
-        return "", updated_history, updated_history
+def on_submit(msg: str, history: ChatHistory):
+    response, updated_history = chat(msg, system_prompt, history)
+    return "", updated_history, updated_history
+
+
+
 def clear_history():
         return [], []
 
@@ -155,8 +155,8 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 clear_btn = gr.Button("履歴クリア")
 
     # イベントハンドラ
-    user_input.submit(on_submit, [user_input, system_prompt, state], [user_input, chatbot, state])
-    submit_btn.click(on_submit, [user_input, system_prompt, state], [user_input, chatbot, state])
+    user_input.submit(on_submit, inputs=[user_input, state], outputs=[user_input, chatbot, state])
+    submit_btn.click(on_submit, inputs=[user_input, state], outputs=[user_input, chatbot, state])
     clear_btn.click(clear_history, outputs=[chatbot, state])
 
 
