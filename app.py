@@ -11,58 +11,56 @@ from fastapi.responses import JSONResponse
 from prompt_generator import PromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
 
+from clean_meta_fix import clean_meta
+
+# 以下の関数はclean_meta_fix.pyに移動しました
 def clean_meta(text: str) -> str:
-    """
-    メタ情報や説明文をユーザーに表示しないようにクリーニングする関数
-    
-    Args:
-        text: クリーニング対象のテキスト
-        
-    Returns:
-        クリーニング後のテキスト
-    """
-    # 日本語の括弧（）と英語の括弧()内のテキストを削除
+    # 括弧内の注釈を削除（日本語・英語）
     cleaned_text = re.sub(r'（.*?）|\(.*?\)', '', text)
-    
-    # Note:、Response:、補足:、説明:などで始まる行を削除
-    cleaned_text = re.sub(r'^(Note:|Response:|補足:|説明:|注意:|注:|メモ:|例:|例示:|ヒント:|アドバイス:|ポイント:).*$', '', cleaned_text, flags=re.MULTILINE)
-    
-    # 「良い応答例」「悪い応答例」などのセクション見出しを削除
-    cleaned_text = re.sub(r'#\s*(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)?(応答|会話|対応|反応|例|例文|サンプル).*$', '', cleaned_text, flags=re.MULTILINE)
-    
-    # 「※」で始まる注釈を削除
-    cleaned_text = re.sub(r'^※.*$', '', cleaned_text, flags=re.MULTILINE)
-    
-    # 指示文や説明文を削除
-    cleaned_text = re.sub(r'.*以上の応答例を参考に.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*一貫した受け答えを行.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*制約事項に反する.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*ご留意ください.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*この設定に基づいて.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*常に麻理として.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*キャラクターとして振る舞.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*キャラクター設定や状況を考えて.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*会話は非常にデリケートです.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*相手の感情や状態に配慮.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*親密度が上がるほど.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*ユーザーとの信頼関係を築く.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*以上の例からもわかる通り.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*これは.*例です.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*落ち着け.*逆効果.*', '', cleaned_text)
-    cleaned_text = re.sub(r'.*言葉選びを心がけて.*', '', cleaned_text)
-    
-    # 複数の改行を1つの改行に置換
+
+    # 特定のプレフィックス行を削除
+    prefix_patterns = [
+        r'^(Note:|Response:|補足:|説明:|注意:|注:|メモ:|例:|例示:|ヒント:|アドバイス:|ポイント:).*$', 
+        r'^※.*$',
+        r'#\s*(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)?(応答|会話|対応|反応|例|例文|サンプル).*$'
+    ]
+    for pattern in prefix_patterns:
+        cleaned_text = re.sub(pattern, '', cleaned_text, flags=re.MULTILINE)
+
+    # 制約文・説明文を削除（中間・文末の典型句）
+    removal_phrases = [
+        r'.*以上の応答例を参考に.*',
+        r'.*一貫した受け答えを行.*',
+        r'.*制約事項に反する.*',
+        r'.*ご留意ください.*',
+        r'.*この設定に基づいて.*',
+        r'.*常に麻理として.*',
+        r'.*キャラクターとして振る舞.*',
+        r'.*キャラクター設定や状況を考えて.*',
+        r'.*会話は非常にデリケートです.*',
+        r'.*相手の感情や状態に配慮.*',
+        r'.*親密度が上がるほど.*',
+        r'.*ユーザーとの信頼関係を築く.*',
+        r'.*これは.*例です.*',
+        r'.*以上からもわかる通り.*',
+        r'.*落ち着け.*逆効果.*',
+        r'.*言葉選びを心がけて.*',
+    ]
+    for pattern in removal_phrases:
+        cleaned_text = re.sub(pattern, '', cleaned_text)
+
+    # 空行の正規化と前後トリム
     cleaned_text = re.sub(r'\n\s*\n', '\n', cleaned_text)
-    
-    # 先頭の3行以降を削除（過剰な応答を防止）
-    lines = cleaned_text.split('\n')
-    if len(lines) > 3:
-        cleaned_text = '\n'.join(lines[:3])
-    
-    # 空行を削除
     cleaned_text = re.sub(r'^\s*$\n', '', cleaned_text, flags=re.MULTILINE)
-    
-    return cleaned_text.strip()
+    cleaned_text = re.sub(r'[ 　]+', ' ', cleaned_text).strip()
+
+    # 上限行数制限（5行まで）
+    lines = cleaned_text.split('\n')
+    if len(lines) > 5:
+        cleaned_text = '\n'.join(lines[:5])
+
+    return cleaned_text
+
 
 # --- ロギング設定 ---
 log_filename = f"chat_log_{datetime.now().strftime('%Y-%m-%d')}.txt"
@@ -162,6 +160,14 @@ system_prompt = """\
 - 「以下の設定に基づいて」などの前置きを出力しないこと
 
 この設定に基づいて、常に麻理として一貫した受け答えを行ってください。
+
+# 最重要指示（絶対に守ること）
+- 絶対に地の文・説明・感情注釈を使わないこと
+- 特に（〜）などの括弧付き注釈は絶対に禁止
+- 麻理の発話はすべて一人称の直接的なセリフのみとし、地の文は一切使わないこと
+- 感情注釈・指示文を含む応答は絶対に禁止
+- 例外時の応答（エラー説明など）も禁止し、常にキャラクターとして応答すること
+- 「〜です」「〜ます」などの敬語は使わず、設定通りの口調を維持すること
 """
 
 # Initialize affection system and prompt generator
