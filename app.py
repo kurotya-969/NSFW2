@@ -183,11 +183,30 @@ def safe_history(history: Any) -> ChatHistory:
     return []
 
 def build_messages(history: ChatHistory, user_input: str, system_prompt: str) -> List[dict]:
+    """
+    会話履歴とユーザー入力からメッセージリストを構築する
+    システムプロンプト（人格設定）を常にコンテキストの先頭に配置し、
+    LoRAモデルなどで人格設定の記憶が消えるのを防止する
+    
+    Args:
+        history: 会話履歴
+        user_input: ユーザーの入力
+        system_prompt: システムプロンプト（人格設定）
+        
+    Returns:
+        APIに送信するメッセージリスト
+    """
+    # システムプロンプトを常にコンテキストの先頭に配置
     messages = [{"role": "system", "content": system_prompt}]
+    
+    # 会話履歴を追加
     for u, a in history:
         messages.append({"role": "user", "content": str(u)})
         messages.append({"role": "assistant", "content": str(a)})
+    
+    # 最新のユーザー入力を追加
     messages.append({"role": "user", "content": user_input})
+    
     return messages
 
 
