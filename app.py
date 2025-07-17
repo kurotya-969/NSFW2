@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 import gradio as gr
 import logging
@@ -9,6 +10,30 @@ from typing import List, Tuple, Any, Optional, Dict
 from fastapi.responses import JSONResponse
 from prompt_generator import PromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
+
+def clean_meta(text: str) -> str:
+    """
+    括弧を含む説明文をユーザーに表示しないようにクリーニングする関数
+    
+    Args:
+        text: クリーニング対象のテキスト
+        
+    Returns:
+        クリーニング後のテキスト
+    """
+    # 日本語の括弧（）と英語の括弧()内のテキストを削除
+    cleaned_text = re.sub(r'（.*?）|\(.*?\)', '', text)
+    
+    # Note:、補足:、説明:などで始まる行を削除
+    cleaned_text = re.sub(r'^(Note:|補足:|説明:).*$', '', cleaned_text, flags=re.MULTILINE)
+    
+    # 「良い応答例」「悪い応答例」などのセクション見出しを削除
+    cleaned_text = re.sub(r'#\s*(良い|悪い)応答例.*$', '', cleaned_text, flags=re.MULTILINE)
+    
+    # 複数の改行を1つの改行に置換
+    cleaned_text = re.sub(r'\n\s*\n', '\n', cleaned_text)
+    
+    return cleaned_text.strip()
 
 # --- ロギング設定 ---
 log_filename = f"chat_log_{datetime.now().strftime('%Y-%m-%d')}.txt"
@@ -176,6 +201,10 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
         response = requests.post(API_ENDPOINT, json=post_data, headers=headers, timeout=120)
         response.raise_for_status()
         api_response = response.json()["choices"][0]["message"]["content"].strip()
+        
+        # クリーニング関数を適用して、メタ情報を削除
+        api_response = clean_meta(api_response)
+        
         updated_history = safe_hist + [(user_input, api_response)]
         
         # Update conversation history in session
