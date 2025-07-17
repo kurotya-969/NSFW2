@@ -31,22 +31,22 @@ API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # マニフェストをHTMLとして埋め込み
     gr.HTML(f"""
-            <head>
+            
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             window.src = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             window.space = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             </script>
             <link rel="manifest" href="/manifest.json">
-            </head>
+            
     """)
 
     gr.Markdown("## 🤖 LM Studio チャットボット")
     
     # 状態管理
-state = gr.State([])
+    state = gr.State([])
     
-with gr.Row():
+    with gr.Row():
         with gr.Column(scale=1):
             system_prompt = gr.Textbox(
                 label="Systemプロンプト", 
