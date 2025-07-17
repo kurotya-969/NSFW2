@@ -157,7 +157,7 @@ async def get_manifest():
     return JSONResponse(manifest_data)
 
 # Gradioアプリをマウント
-app = gr.mount_gradio_app(app, demo, path="/")
+app = gr.mount_gradio_app(app, demo, path="/ui")
 
 if __name__ == "__main__":
     import uvicorn
