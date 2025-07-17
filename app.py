@@ -28,6 +28,64 @@ RENDER_EXTERNAL_URL = "https://nose-provided-pocket-arising.trycloudflare.com/v1
 PORT = int(os.environ.get("PORT", 7860))
 API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
 
+
+# --- 安全なhistory処理 ---
+def safe_history(history: Any) -> ChatHistory:
+    """あらゆる型のhistoryを安全にChatHistoryに変換"""
+    if isinstance(history, (list, tuple)):
+        return [(str(h[0]), str(h[1])) for h in history if len(h) >= 2]
+    return []
+
+def build_messages(history: ChatHistory, user_input: str, system_prompt: str) -> List[dict]:
+    messages = [{"role": "system", "content": system_prompt}]
+    for u, a in history:
+        messages.append({"role": "user", "content": str(u)})
+        messages.append({"role": "assistant", "content": str(a)})
+    messages.append({"role": "user", "content": user_input})
+    return messages
+
+
+
+
+def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str, ChatHistory]:
+    safe_hist = safe_history(history) if history is not None else []
+    
+    if not user_input.strip():
+        return "", safe_hist
+
+    try:
+        messages = build_messages(safe_hist, user_input, system_prompt)
+        post_data = {
+            "model": "berghof-nsfw-7b-i1",
+            "messages": messages,
+            "temperature": 0.7,
+            "max_tokens": 256,
+            "stream": False
+        }
+        headers = {"Content-Type": "application/json"}
+        if API_KEY:
+            headers["Authorization"] = f"Bearer {API_KEY}"
+
+        response = requests.post(API_ENDPOINT, json=post_data, headers=headers, timeout=120)
+        response.raise_for_status()
+        api_response = response.json()["choices"][0]["message"]["content"].strip()
+        updated_history = safe_hist + [(user_input, api_response)]
+        return api_response, updated_history
+
+    except Exception as e:
+        error_msg = f"エラーが発生しました: {str(e)}"
+        logging.error(error_msg)
+        return error_msg, safe_hist
+def on_submit(msg: str, sys_prompt: str, history: Any):
+        if not msg.strip():
+            return "", history if isinstance(history, list) else [], history if isinstance(history, list) else []
+        
+        response, updated_history = chat(msg, sys_prompt, history)
+        return "", updated_history, updated_history
+def clear_history():
+        return [], []
+
+
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # マニフェストをHTMLとして埋め込み
     gr.HTML(f"""
@@ -65,6 +123,12 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 submit_btn = gr.Button("送信", variant="primary")
                 clear_btn = gr.Button("履歴クリア")
 
+    # イベントハンドラ
+    user_input.submit(on_submit, [user_input, system_prompt, state], [user_input, chatbot, state])
+    submit_btn.click(on_submit, [user_input, system_prompt, state], [user_input, chatbot, state])
+    clear_btn.click(clear_history, outputs=[chatbot, state])
+
+
 
     # --- マニフェストデータの定義 ---
 manifest_data = {
@@ -72,70 +136,17 @@ manifest_data = {
     "short_name": "Chat",
     "start_url": "/",
     "display": "standalone",
-    "icons": []
+    "icons":  [
+        {
+            "src": "/favicon.ico",
+            "sizes": "48x48",
+            "type": "image/x-icon"
+        }
+    ]
 }
 
-# --- 安全なhistory処理 ---
-def safe_history(history: Any) -> ChatHistory:
-    """あらゆる型のhistoryを安全にChatHistoryに変換"""
-    if isinstance(history, (list, tuple)):
-        return [(str(h[0]), str(h[1])) for h in history if len(h) >= 2]
-    return []
-
-def build_messages(history: ChatHistory, user_input: str, system_prompt: str) -> List[dict]:
-    messages = [{"role": "system", "content": system_prompt}]
-    for u, a in history:
-        messages.append({"role": "user", "content": str(u)})
-        messages.append({"role": "assistant", "content": str(a)})
-    messages.append({"role": "user", "content": user_input})
-    return messages
-
-def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str, ChatHistory]:
-    safe_hist = safe_history(history) if history is not None else []
-    
-    if not user_input.strip():
-        return "", safe_hist
-
-    try:
-        messages = build_messages(safe_hist, user_input, system_prompt)
-        post_data = {
-            "model": "berghof-nsfw-7b-i1",
-            "messages": messages,
-            "temperature": 0.7,
-            "max_tokens": 256,
-            "stream": False
-        }
-        headers = {"Content-Type": "application/json"}
-        if API_KEY:
-            headers["Authorization"] = f"Bearer {API_KEY}"
-
-        response = requests.post(API_ENDPOINT, json=post_data, headers=headers, timeout=120)
-        response.raise_for_status()
-        api_response = response.json()["choices"][0]["message"]["content"].strip()
-        updated_history = safe_hist + [(user_input, api_response)]
-        return api_response, updated_history
-
-    except Exception as e:
-        error_msg = f"エラーが発生しました: {str(e)}"
-        logging.error(error_msg)
-        return error_msg, safe_hist
 
 
-
-def on_submit(msg: str, sys_prompt: str, history: Any):
-        if not msg.strip():
-            return "", history if isinstance(history, list) else [], history if isinstance(history, list) else []
-        
-        response, updated_history = chat(msg, sys_prompt, history)
-        return "", updated_history, updated_history
-
-def clear_history():
-        return [], []
-
-    # イベントハンドラ
-user_input.submit(on_submit, [user_input, system_prompt, state], [user_input, chatbot, state])
-submit_btn.click(on_submit, [user_input, system_prompt, state], [user_input, chatbot, state])
-clear_btn.click(clear_history, outputs=[chatbot, state])
 
 # FastAPIアプリ
 app = FastAPI()
