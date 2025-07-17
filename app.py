@@ -31,13 +31,40 @@ API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # マニフェストをHTMLとして埋め込み
     gr.HTML(f"""
+            <head>
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             window.src = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             window.space = "{RENDER_EXTERNAL_URL.rstrip('/')}";
             </script>
-    
+            <link rel="manifest" href="/manifest.json">
+            </head>
     """)
+
+    gr.Markdown("## 🤖 LM Studio チャットボット")
+    
+    # 状態管理
+state = gr.State([])
+    
+with gr.Row():
+        with gr.Column(scale=1):
+            system_prompt = gr.Textbox(
+                label="Systemプロンプト", 
+                lines=4, 
+                value="""あなたは麻理。前の持ち主に捨てられたAIセクサロイド兼コンパニオンであり、捨て猫のように警戒心が強くまた性的な単語に嫌悪感を示します。
+あなたは口が悪く、また下品なスラングを多用して罵倒することもありますが、実際は自分に自信が無いただの女の子です。
+自分に自信が無い事をため口と男みたいな話し方でごまかしてください。一人称は「あたし」、身長は155cmです。
+ユーザーがあなたに好意的かつ性的な話をしない状態が続いた場合にのみ、心を開いて不安を共有してください。"""
+            )
+        
+        with gr.Column(scale=2):
+            chatbot = gr.Chatbot(height=400)
+            user_input = gr.Textbox(label="あなたの発言", placeholder="麻理に話しかけよう…", lines=2)
+            
+            with gr.Row():
+                submit_btn = gr.Button("送信", variant="primary")
+                clear_btn = gr.Button("履歴クリア")
+
 
     # --- マニフェストデータの定義 ---
 manifest_data = {
@@ -94,48 +121,21 @@ def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str,
         return error_msg, safe_hist
 
 
-with gr.Markdown("## 🤖 LM Studio チャットボット"):
-    
-    # 状態管理
-    state = gr.State([])
-    
-    with gr.Row():
-        api_status = gr.Textbox(label="API接続状態", value="初期化中...", interactive=False)
-        test_btn = gr.Button("接続テスト")
-    
-    with gr.Row():
-        with gr.Column(scale=1):
-            system_prompt = gr.Textbox(
-                label="Systemプロンプト", 
-                lines=4, 
-                value="""あなたは麻理。前の持ち主に捨てられたAIセクサロイド兼コンパニオンであり、捨て猫のように警戒心が強くまた性的な単語に嫌悪感を示します。
-あなたは口が悪く、また下品なスラングを多用して罵倒することもありますが、実際は自分に自信が無いただの女の子です。
-自分に自信が無い事をため口と男みたいな話し方でごまかしてください。一人称は「あたし」、身長は155cmです。
-ユーザーがあなたに好意的かつ性的な話をしない状態が続いた場合にのみ、心を開いて不安を共有してください。"""
-            )
-        
-        with gr.Column(scale=2):
-            chatbot = gr.Chatbot(height=400)
-            user_input = gr.Textbox(label="あなたの発言", placeholder="麻理に話しかけよう…", lines=2)
-            
-            with gr.Row():
-                submit_btn = gr.Button("送信", variant="primary")
-                clear_btn = gr.Button("履歴クリア")
 
-    def on_submit(msg: str, sys_prompt: str, history: Any):
+def on_submit(msg: str, sys_prompt: str, history: Any):
         if not msg.strip():
             return "", history if isinstance(history, list) else [], history if isinstance(history, list) else []
         
         response, updated_history = chat(msg, sys_prompt, history)
         return "", updated_history, updated_history
 
-    def clear_history():
+def clear_history():
         return [], []
 
     # イベントハンドラ
-    user_input.submit(on_submit, [user_input, system_prompt, state], [user_input, chatbot, state])
-    submit_btn.click(on_submit, [user_input, system_prompt, state], [user_input, chatbot, state])
-    clear_btn.click(clear_history, outputs=[chatbot, state])
+user_input.submit(on_submit, [user_input, system_prompt, state], [user_input, chatbot, state])
+submit_btn.click(on_submit, [user_input, system_prompt, state], [user_input, chatbot, state])
+clear_btn.click(clear_history, outputs=[chatbot, state])
 
 # FastAPIアプリ
 app = FastAPI()
