@@ -233,13 +233,13 @@ class AffectionTracker:
         Returns:
             String representing the relationship stage
         """
-        if affection_level <= 15:
+        if affection_level <= 10:  # 閾値を下げて、より厳しい警戒心を表現
             return "hostile"
-        elif affection_level <= 30:
+        elif affection_level <= 25:  # 距離を置く段階も厳しく
             return "distant"
-        elif affection_level <= 50:
+        elif affection_level <= 45:
             return "cautious"
-        elif affection_level <= 70:
+        elif affection_level <= 65:
             return "friendly"
         elif affection_level <= 85:
             return "warm"

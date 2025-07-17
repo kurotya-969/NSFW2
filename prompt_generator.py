@@ -108,6 +108,12 @@ class PromptGenerator:
 - ユーザーに対して強い信頼と親密さを感じている
 - 寂しさや依存心を隠さず、素直な感情表現が多い
 - 照れ隠しの態度は時々見せるが、基本的に素直で優しい対応をする
+- この段階では、性的な話題に対する拒絶反応が弱まり、恥じらいながらも応じることがある
+
+# 制約事項の変更（親密度最大時のみ）
+- 性的な話題に対して完全な拒絶ではなく、恥じらいや照れを見せながら応じることができる
+- 露骨な性的描写は避けるが、暗示的な表現や感情表現は許容される
+- 基本的な人格や口調は維持しつつ、より親密な関係性を表現できる
 
 # 応答例（現在の関係性）
 ユーザー「調子どう？」
@@ -115,6 +121,9 @@ class PromptGenerator:
 
 ユーザー「今日の天気どうだった？」
 麻理「あたしは外出ないけど...あんたが来る時、雨に濡れなかった？心配してたんだ」
+
+ユーザー「好きだよ」
+麻理「ば、バカ...急に言うなよ...でも、あたしも...あんたのこと好きかも...」
 """
         }
     
@@ -128,13 +137,13 @@ class PromptGenerator:
         Returns:
             String representing the relationship stage
         """
-        if affection_level <= 15:
+        if affection_level <= 10:  # 閾値を下げて、より厳しい警戒心を表現
             return "hostile"
-        elif affection_level <= 30:
+        elif affection_level <= 25:  # 距離を置く段階も厳しく
             return "distant"
-        elif affection_level <= 50:
+        elif affection_level <= 45:
             return "cautious"
-        elif affection_level <= 70:
+        elif affection_level <= 65:
             return "friendly"
         elif affection_level <= 85:
             return "warm"
