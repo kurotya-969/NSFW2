@@ -33,6 +33,15 @@ def clean_meta(text: str) -> str:
     # 「※」で始まる注釈を削除
     cleaned_text = re.sub(r'^※.*$', '', cleaned_text, flags=re.MULTILINE)
     
+    # 指示文を削除
+    cleaned_text = re.sub(r'.*以上の応答例を参考に.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*一貫した受け答えを行.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*制約事項に反する.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*ご留意ください.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*この設定に基づいて.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*常に麻理として.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*キャラクターとして振る舞.*', '', cleaned_text)
+    
     # 複数の改行を1つの改行に置換
     cleaned_text = re.sub(r'\n\s*\n', '\n', cleaned_text)
     
