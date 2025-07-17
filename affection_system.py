@@ -168,8 +168,32 @@ class SessionManager:
             "assistant": assistant_response
         })
         
+        # 会話履歴が長くなりすぎた場合、古い履歴を要約または破棄
+        MAX_HISTORY_LENGTH = 7  # 保持する最大の会話ターン数（5〜10の間で設定）
+        if len(session.conversation_history) > MAX_HISTORY_LENGTH:
+            self._summarize_conversation_history(session)
+        
         session.last_interaction = datetime.now().isoformat()
         return self.save_session(session_id)
+        
+    def _summarize_conversation_history(self, session: UserSession) -> None:
+        """
+        古い会話履歴を要約または破棄して、トークン数を削減する
+        
+        Args:
+            session: 要約対象のUserSessionオブジェクト
+        """
+        if len(session.conversation_history) <= 5:  # 履歴が少ない場合は何もしない
+            return
+            
+        # 最新の5つの会話ターンを保持し、それ以前の履歴は破棄
+        # 注: 実際の要約機能を実装する場合は、ここでLLMを使って要約を生成することも可能
+        recent_history = session.conversation_history[-5:]
+        
+        # 古い履歴を破棄し、最新の履歴のみを保持
+        session.conversation_history = recent_history
+        
+        logging.info(f"Session {session.user_id}: Conversation history summarized, keeping last 5 turns")
     
     def cleanup_old_sessions(self, days_old: int = 30) -> int:
         """

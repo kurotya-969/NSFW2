@@ -18,6 +18,7 @@ class SentimentType(Enum):
     DISMISSIVE = "dismissive"
     APPRECIATIVE = "appreciative"
     HOSTILE = "hostile"
+    SEXUAL = "sexual"  # 新しく追加した性的内容の検出タイプ
 
 @dataclass
 class SentimentAnalysisResult:
@@ -214,6 +215,40 @@ class SentimentAnalyzer:
             'asshole': -5,
         }
     
+    def _detect_sexual_content(self, text: str) -> int:
+        """
+        テキスト内の性的な内容を検出し、好感度への影響を計算する
+        
+        Args:
+            text: 分析対象のテキスト
+            
+        Returns:
+            好感度への影響値（負の値）
+        """
+        # 性的な単語リストではなく、テキスト全体の内容から判断
+        # 一般的な性的単語をチェック
+        sexual_terms = [
+            'セックス', 'エッチ', 'おっぱい', '胸', 'パンツ', '下着', '裸', 'ヌード', '性器',
+            'sex', 'sexy', 'nude', 'naked', 'breast', 'penis', 'vagina', 'underwear'
+        ]
+        
+        # 単純なキーワードマッチング
+        found_terms = [term for term in sexual_terms if term in text.lower()]
+        
+        if found_terms:
+            # テキストの長さに基づいてペナルティを計算
+            # 長いテキストほど大きなペナルティを与える
+            base_penalty = -3 * len(found_terms)  # 見つかった単語ごとに-3
+            length_penalty = min(-1, -len(text) // 50)  # 50文字ごとに-1のペナルティ、最小-1
+            total_penalty = base_penalty + length_penalty
+            
+            logging.info(f"性的内容を検出: 基本ペナルティ={base_penalty}, 長さペナルティ={length_penalty}, "
+                        f"合計ペナルティ={total_penalty}, 検出単語={found_terms}")
+            
+            return total_penalty
+        
+        return 0
+    
     def analyze_user_input(self, user_input: str) -> SentimentAnalysisResult:
         """
         Analyze user input for sentiment and calculate affection impact
@@ -245,9 +280,12 @@ class SentimentAnalyzer:
         appreciative_score, appreciative_keywords = self._analyze_keywords(normalized_input, self.appreciative_keywords)
         hostile_score, hostile_keywords = self._analyze_keywords(normalized_input, self.hostile_keywords)
         
+        # 性的な内容の検出と好感度への影響計算
+        sexual_content_penalty = self._detect_sexual_content(normalized_input)
+        
         # Calculate overall sentiment score
         total_positive = positive_score + caring_score + appreciative_score
-        total_negative = negative_score + dismissive_score + hostile_score
+        total_negative = negative_score + dismissive_score + hostile_score + sexual_content_penalty
         
         # Determine sentiment types
         sentiment_types = []
@@ -263,6 +301,8 @@ class SentimentAnalyzer:
             sentiment_types.append(SentimentType.APPRECIATIVE)
         if hostile_score < 0:
             sentiment_types.append(SentimentType.HOSTILE)
+        if sexual_content_penalty < 0:
+            sentiment_types.append(SentimentType.SEXUAL)
         
         if not sentiment_types:
             sentiment_types.append(SentimentType.NEUTRAL)
@@ -328,7 +368,9 @@ class SentimentAnalyzer:
         Returns:
             String describing the interaction type
         """
-        if SentimentType.HOSTILE in sentiment_types:
+        if SentimentType.SEXUAL in sentiment_types:
+            return "sexual"  # 性的な内容が検出された場合、最優先で「sexual」タイプとする
+        elif SentimentType.HOSTILE in sentiment_types:
             return "hostile"
         elif SentimentType.APPRECIATIVE in sentiment_types:
             return "appreciative"

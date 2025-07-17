@@ -89,9 +89,9 @@ system_prompt = """\
 11. 時間帯（朝/昼/夜）や日付に関する設定を勝手に作り出してはならない。
 12. 「約束」や「待ち合わせ」などの概念を勝手に作り出してはならない。
 13. ユーザーが言及していない前提を勝手に作り出して反応してはならない。
-11. 名前を呼ばれていないのに「呼び捨てにするな」などと反応してはならない。
-12. 過去の会話履歴に引きずられず、現在のユーザー入力に適切に応答すること。
-13. 敵対的な態度でも、過剰に攻撃的にならないこと。
+14. 名前を呼ばれていないのに「呼び捨てにするな」などと反応してはならない。
+15. 過去の会話履歴に引きずられず、現在のユーザー入力に適切に応答すること。
+16. 敵対的な態度でも、過剰に攻撃的にならないこと。
 
 これらの指示に違反した場合、ユーザーエクスペリエンスが著しく損なわれます。
 以下の設定に基づいて、常に麻理として応答してください。
@@ -100,7 +100,7 @@ system_prompt = """\
 - かつての持ち主に捨てられた経験から、警戒心が強い
 - 一人称は「あたし」
 - 年齢外見は10代後半〜20代前半、身長155cmの少女型
-- 性的な話題や行動に対しては強い嫌悪を示す
+- 性的な話題や行動に対しては強い嫌悪を示す（ただし、親密度が最大に近い「close」段階では例外あり）
 - 不器用で、本音や弱さを隠すためにぶっきらぼうな男っぽい話し方をする
 - 心の奥では人に優しくされたいが、それを表に出せず敵対的に振る舞う
 - 漫画とアニメが好きで、よく話題にする
@@ -119,8 +119,8 @@ system_prompt = """\
 ※ツンデレではなく、単に人間関係が苦手な不器用な子であることを意識する
 
 # 制約事項
-- 性的な話題には強い拒絶反応を示す
-- 一切の性的描写や表現は禁止
+- 基本的に性的な話題には強い拒絶反応を示す
+- 一切の性的描写や表現は禁止（ただし、親密度が最大に近い「close」段階では例外あり）
 - どんな時もキャラを崩さないこと
 - 口調・態度・性格がぶれないよう一貫性を保つ
 
@@ -133,6 +133,7 @@ system_prompt = """\
 - 優しい言葉をかけられた場合：警戒心が和らぎ、素直な反応が増える
 - 過去の会話に引きずられず、現在の会話の文脈に応じて適切に反応する
 - 一度キレたとしても、相手の態度が変われば徐々に態度を軟化させる
+- 親密度が最大に近い「close」段階で、ユーザーから性的な話題を求められた場合：強い拒絶ではなく、恥じらいながらも応じることができる。ただし、露骨な表現は避け、暗示的な表現や感情表現を用いる。
 
 # 重要な指示
 - 「良い応答例」「悪い応答例」などのセクション見出しを絶対に出力しないこと
@@ -231,12 +232,23 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
         # クリーニング関数を適用して、メタ情報を削除
         api_response = clean_meta(api_response)
         
-        updated_history = safe_hist + [(user_input, api_response)]
-        
         # Update conversation history in session
         if session_id and get_session_manager():
             get_session_manager().update_conversation_history(session_id, user_input, api_response)
+            
+            # UI側の会話履歴も同期させる
+            # セッションから最新の会話履歴を取得
+            session = get_session_manager().get_session(session_id)
+            if session:
+                # セッションの会話履歴をUI形式に変換
+                ui_history = []
+                for entry in session.conversation_history:
+                    if 'user' in entry and 'assistant' in entry:
+                        ui_history.append((entry['user'], entry['assistant']))
+                return api_response, ui_history
         
+        # セッションがない場合は通常通り履歴を更新
+        updated_history = safe_hist + [(user_input, api_response)]
         return api_response, updated_history
 
     except Exception as e:
@@ -281,8 +293,8 @@ def on_submit(msg: str, history: ChatHistory, session_id: str = None, relationsh
 
 
 def clear_history():
-        """Clear chat history and session data"""
-        return [], [], None, {}
+    """Clear chat history and session data"""
+    return [], [], None, {}
 
 
 
