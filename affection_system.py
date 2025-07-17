@@ -423,23 +423,48 @@ class AffectionTracker:
         if session_id not in self.sentiment_history:
             self.sentiment_history[session_id] = []
         
+        # 感情の自然回復機能
+        # 前回の感情タイプを取得
+        previous_interaction_type = None
+        if self.sentiment_history[session_id]:
+            previous_interaction_type = self.sentiment_history[session_id][-1].get("interaction_type")
+        
+        # 前回がhostileまたはnegativeで、今回がneutralまたはpositiveの場合、
+        # 自然回復ボーナスを追加（キレのループから抜け出しやすくする）
+        recovery_bonus = 0
+        if previous_interaction_type in ["hostile", "negative"] and sentiment_result.interaction_type in ["neutral", "positive", "caring", "appreciative"]:
+            recovery_bonus = 2  # 回復ボーナス
+            logging.info(f"Applied recovery bonus of +{recovery_bonus} for session {session_id} (transitioning from {previous_interaction_type} to {sentiment_result.interaction_type})")
+        
+        # 連続したネガティブ反応に対するペナルティ軽減
+        # 前回と今回の両方がhostileまたはnegativeの場合、ペナルティを軽減
+        if previous_interaction_type in ["hostile", "negative"] and sentiment_result.interaction_type in ["hostile", "negative"]:
+            if delta < 0:
+                # ネガティブな変化を半分に軽減
+                delta = delta // 2
+                logging.info(f"Reduced negative affection impact from {delta*2} to {delta} for session {session_id} (consecutive negative interactions)")
+        
+        # 感情履歴を更新
         self.sentiment_history[session_id].append({
             "timestamp": datetime.now().isoformat(),
             "user_input": user_input,
             "sentiment_score": sentiment_result.sentiment_score,
             "interaction_type": sentiment_result.interaction_type,
-            "affection_delta": delta,
+            "affection_delta": delta + recovery_bonus,  # 回復ボーナスを含む
             "detected_keywords": sentiment_result.detected_keywords
         })
         
+        # 回復ボーナスを適用
+        adjusted_delta = delta + recovery_bonus
+        
         # Only update affection if there's a non-zero delta
-        if delta != 0:
+        if adjusted_delta != 0:
             # For large changes, apply smoothing
-            if abs(delta) > 5:
-                self._schedule_gradual_affection_change(session_id, delta)
+            if abs(adjusted_delta) > 5:
+                self._schedule_gradual_affection_change(session_id, adjusted_delta)
             else:
                 # Small changes apply immediately
-                self.session_manager.update_affection(session_id, delta)
+                self.session_manager.update_affection(session_id, adjusted_delta)
         
         # Process any pending gradual changes
         self._process_pending_affection_changes(session_id)

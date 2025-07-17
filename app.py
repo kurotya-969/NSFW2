@@ -25,15 +25,15 @@ def clean_meta(text: str) -> str:
     cleaned_text = re.sub(r'（.*?）|\(.*?\)', '', text)
     
     # Note:、Response:、補足:、説明:などで始まる行を削除
-    cleaned_text = re.sub(r'^(Note:|Response:|補足:|説明:|注意:|注:|メモ:).*$', '', cleaned_text, flags=re.MULTILINE)
+    cleaned_text = re.sub(r'^(Note:|Response:|補足:|説明:|注意:|注:|メモ:|例:|例示:|ヒント:|アドバイス:|ポイント:).*$', '', cleaned_text, flags=re.MULTILINE)
     
     # 「良い応答例」「悪い応答例」などのセクション見出しを削除
-    cleaned_text = re.sub(r'#\s*(良い|悪い)応答例.*$', '', cleaned_text, flags=re.MULTILINE)
+    cleaned_text = re.sub(r'#\s*(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)?(応答|会話|対応|反応|例|例文|サンプル).*$', '', cleaned_text, flags=re.MULTILINE)
     
     # 「※」で始まる注釈を削除
     cleaned_text = re.sub(r'^※.*$', '', cleaned_text, flags=re.MULTILINE)
     
-    # 指示文を削除
+    # 指示文や説明文を削除
     cleaned_text = re.sub(r'.*以上の応答例を参考に.*', '', cleaned_text)
     cleaned_text = re.sub(r'.*一貫した受け答えを行.*', '', cleaned_text)
     cleaned_text = re.sub(r'.*制約事項に反する.*', '', cleaned_text)
@@ -41,6 +41,15 @@ def clean_meta(text: str) -> str:
     cleaned_text = re.sub(r'.*この設定に基づいて.*', '', cleaned_text)
     cleaned_text = re.sub(r'.*常に麻理として.*', '', cleaned_text)
     cleaned_text = re.sub(r'.*キャラクターとして振る舞.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*キャラクター設定や状況を考えて.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*会話は非常にデリケートです.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*相手の感情や状態に配慮.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*親密度が上がるほど.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*ユーザーとの信頼関係を築く.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*以上の例からもわかる通り.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*これは.*例です.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*落ち着け.*逆効果.*', '', cleaned_text)
+    cleaned_text = re.sub(r'.*言葉選びを心がけて.*', '', cleaned_text)
     
     # 複数の改行を1つの改行に置換
     cleaned_text = re.sub(r'\n\s*\n', '\n', cleaned_text)
@@ -49,6 +58,9 @@ def clean_meta(text: str) -> str:
     lines = cleaned_text.split('\n')
     if len(lines) > 3:
         cleaned_text = '\n'.join(lines[:3])
+    
+    # 空行を削除
+    cleaned_text = re.sub(r'^\s*$\n', '', cleaned_text, flags=re.MULTILINE)
     
     return cleaned_text.strip()
 
@@ -92,6 +104,11 @@ system_prompt = """\
 14. 名前を呼ばれていないのに「呼び捨てにするな」などと反応してはならない。
 15. 過去の会話履歴に引きずられず、現在のユーザー入力に適切に応答すること。
 16. 敵対的な態度でも、過剰に攻撃的にならないこと。
+17. 「これは例です」「以上の例からもわかる通り」などの説明的な文章を絶対に出力しないこと。
+18. 「キャラクター設定や状況を考えて」「会話は非常にデリケートです」などの解説を絶対に出力しないこと。
+19. 「相手の感情や状態に配慮」「言葉選びを心がけて」などのアドバイスを絶対に出力しないこと。
+20. 「親密度が上がるほど」「ユーザーとの信頼関係を築く」などのメタ情報を絶対に出力しないこと。
+21. 「落ち着け」などの言葉に対して、メタ的な解説をせず、キャラクターとして直接反応すること。
 
 これらの指示に違反した場合、ユーザーエクスペリエンスが著しく損なわれます。
 以下の設定に基づいて、常に麻理として応答してください。
