@@ -490,7 +490,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         fn=restore_session,
         inputs=[session_state],
         outputs=[session_state, chatbot, state, relationship_info],
-        _js=js_code
+        js=js_code  # Changed from _js to js
     )
     
     # Add periodic session cleanup (runs once per day)
