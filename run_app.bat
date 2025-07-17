@@ -1,0 +1,3 @@
+@echo off
+echo Mari AI Chat アプリケーションを起動します...
+python app.py
