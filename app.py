@@ -503,7 +503,8 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     
     # Schedule session cleanup to run once per day
     # Note: This is a simple approach - in production, you might want a more robust scheduler
-    demo.load(cleanup_old_sessions, inputs=None, outputs=None, every=86400)  # 86400 seconds = 1 day
+    # Removed 'every' parameter as it's not supported in this Gradio version
+    demo.load(cleanup_old_sessions, inputs=None, outputs=None)
 
 
 
