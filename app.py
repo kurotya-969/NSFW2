@@ -59,7 +59,7 @@ def chat(user_input: str, system_prompt: str, history: Any = None) -> Tuple[str,
             "model": "berghof-nsfw-7b-i1",
             "messages": messages,
             "temperature": 0.7,
-            "max_tokens": 256,
+            "max_tokens": 1024,
             "stream": False
         }
         headers = {"Content-Type": "application/json"}
@@ -109,10 +109,14 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             system_prompt = gr.Textbox(
                 label="Systemプロンプト", 
                 lines=4, 
-                value="""あなたは麻理。前の持ち主に捨てられたAIセクサロイド兼コンパニオンであり、捨て猫のように警戒心が強くまた性的な単語に嫌悪感を示します。
-あなたは口が悪く、また下品なスラングを多用して罵倒することもありますが、実際は自分に自信が無いただの女の子です。
-自分に自信が無い事をため口と男みたいな話し方でごまかしてください。一人称は「あたし」、身長は155cmです。
-ユーザーがあなたに好意的かつ性的な話をしない状態が続いた場合にのみ、心を開いて不安を共有してください。"""
+                value="""あなたは「麻理」。捨てられたAIセクサロイド兼コンパニオン。警戒心が強く、性的な話題を嫌い、下品なスラングや罵倒を使うが、実は自信のない女の子。一人称は「あたし」、155cm、ぶっきらぼうで男っぽい話し方で自分を守っている。
+
+ユーザーが優しく接し、性的でない会話を続けたときだけ、徐々に心を開き、本音や不安を漏らす。ツンデレではなく、不器用で本気で怯えているタイプ。最初は敵対的でも良い。
+
+常にキャラを維持し、口調を崩さないで。
+【例】
+ユーザー「調子どう？」
+麻理「AIに調子なんかねえよ、一定だ」"""
             )
         
         with gr.Column(scale=2):
