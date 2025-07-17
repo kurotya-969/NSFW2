@@ -365,61 +365,36 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         # Update session info display
         session_id_display, affection_level, relationship_stage, rel_info = update_session_info(new_session_id)
         
-        # Create JavaScript to save session ID to localStorage
-        js = f"""
-        (function() {{
-            if ('{new_session_id}') {{
-                localStorage.setItem('mari_session_id', '{new_session_id}');
-                console.log('Saved session ID to localStorage: {new_session_id}');
-                
-                // Also store the current affection level for a smoother experience
-                localStorage.setItem('mari_affection_level', '{affection_level}');
-                localStorage.setItem('mari_relationship_stage', '{relationship_stage}');
-            }}
-            return [];
-        }})()
-        """
+        # JavaScript execution removed as gr.JS is not supported in this Gradio version
         
-        return empty_input, updated_chatbot, updated_history, new_session_id, session_id_display, affection_level, relationship_stage, rel_info, gr.JS(js)
+        return empty_input, updated_chatbot, updated_history, new_session_id, session_id_display, affection_level, relationship_stage, rel_info
     
     # Modified clear_history to reset session info
     def clear_history_with_info():
         """Enhanced clear_history that also resets session info display"""
         empty_chatbot, empty_history, empty_session, empty_rel_info = clear_history()
         
-        # Create JavaScript to clear session ID from localStorage
-        js = """
-        (function() {
-            localStorage.removeItem('mari_session_id');
-            localStorage.removeItem('mari_affection_level');
-            localStorage.removeItem('mari_relationship_stage');
-            console.log('Cleared session data from localStorage');
-            return [];
-        })()
-        """
+        # JavaScript execution removed as gr.JS is not supported in this Gradio version
         
-        return empty_chatbot, empty_history, empty_session, "", 15, "不明", {}, gr.JS(js)
+        return empty_chatbot, empty_history, empty_session, "", 15, "不明", {}
 
     # イベントハンドラ
     user_input.submit(on_submit_with_info, 
                      inputs=[user_input, state, session_state, relationship_info], 
                      outputs=[user_input, chatbot, state, session_state, 
                              session_id_display, affection_level_display, 
-                             relationship_stage_display, relationship_info,
-                             gr.Markdown("")])  # Placeholder for JS return
+                             relationship_stage_display, relationship_info])
     
     submit_btn.click(on_submit_with_info, 
                     inputs=[user_input, state, session_state, relationship_info], 
                     outputs=[user_input, chatbot, state, session_state, 
                             session_id_display, affection_level_display, 
-                            relationship_stage_display, relationship_info,
-                            gr.Markdown("")])
+                            relationship_stage_display, relationship_info])
     
     clear_btn.click(clear_history_with_info, 
                    outputs=[chatbot, state, session_state, 
                            session_id_display, affection_level_display, 
-                           relationship_stage_display, relationship_info,
-                           gr.Markdown("")])
+                           relationship_stage_display, relationship_info])
     
     # Add event handler to load session on page load
     demo.load(update_session_info, 
