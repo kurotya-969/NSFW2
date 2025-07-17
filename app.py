@@ -13,7 +13,7 @@ from affection_system import initialize_affection_system, get_session_manager, g
 
 def clean_meta(text: str) -> str:
     """
-    括弧を含む説明文をユーザーに表示しないようにクリーニングする関数
+    メタ情報や説明文をユーザーに表示しないようにクリーニングする関数
     
     Args:
         text: クリーニング対象のテキスト
@@ -24,14 +24,22 @@ def clean_meta(text: str) -> str:
     # 日本語の括弧（）と英語の括弧()内のテキストを削除
     cleaned_text = re.sub(r'（.*?）|\(.*?\)', '', text)
     
-    # Note:、補足:、説明:などで始まる行を削除
-    cleaned_text = re.sub(r'^(Note:|補足:|説明:).*$', '', cleaned_text, flags=re.MULTILINE)
+    # Note:、Response:、補足:、説明:などで始まる行を削除
+    cleaned_text = re.sub(r'^(Note:|Response:|補足:|説明:|注意:|注:|メモ:).*$', '', cleaned_text, flags=re.MULTILINE)
     
     # 「良い応答例」「悪い応答例」などのセクション見出しを削除
     cleaned_text = re.sub(r'#\s*(良い|悪い)応答例.*$', '', cleaned_text, flags=re.MULTILINE)
     
+    # 「※」で始まる注釈を削除
+    cleaned_text = re.sub(r'^※.*$', '', cleaned_text, flags=re.MULTILINE)
+    
     # 複数の改行を1つの改行に置換
     cleaned_text = re.sub(r'\n\s*\n', '\n', cleaned_text)
+    
+    # 先頭の3行以降を削除（過剰な応答を防止）
+    lines = cleaned_text.split('\n')
+    if len(lines) > 3:
+        cleaned_text = '\n'.join(lines[:3])
     
     return cleaned_text.strip()
 
