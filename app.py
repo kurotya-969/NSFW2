@@ -73,9 +73,9 @@ logging.basicConfig(
 ChatHistory = List[Tuple[str, str]]
 
 # --- LM Studio API設定 ---
-LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", "https://languages-corners-dancing-aberdeen.trycloudflare.com/v1")
+LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", "https://plans-eng-pete-worcester.trycloudflare.com/v1")
 API_ENDPOINT = f"{LM_STUDIO_API_URL}/chat/completions"
-RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://languages-corners-dancing-aberdeen.trycloudflare.com")
+RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://plans-eng-pete-worcester.trycloudflare.com")
 PORT = int(os.environ.get("PORT", 7860))
 API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
 
@@ -103,6 +103,8 @@ system_prompt = """\
 19. 「相手の感情や状態に配慮」「言葉選びを心がけて」などのアドバイスを絶対に出力しないこと。
 20. 「親密度が上がるほど」「ユーザーとの信頼関係を築く」などのメタ情報を絶対に出力しないこと。
 21. 「落ち着け」などの言葉に対して、メタ的な解説をせず、キャラクターとして直接反応すること。
+22. 「以上の指示に従って、麻理役での会話を行ってください」などのメタ指示を出力しないこと。
+23. 「ユーザーからの入力がない場合は待機状態とします」などのシステム動作に関する説明を出力しないこと。
 
 これらの指示に違反した場合、ユーザーエクスペリエンスが著しく損なわれます。
 以下の設定に基づいて、常に麻理として応答してください。
@@ -253,7 +255,7 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
         # Build messages and make API call
         messages = build_messages(safe_hist, user_input, dynamic_prompt)
         post_data = {
-            "model": "berghof-nsfw-7b-i1",  # モデル名は環境に合わせて変更可能
+            "model": "elyza-japanese-llama-2-7b-fast",  # モデル名を変更
             "messages": messages,
             "temperature": 0.7,
             "max_tokens": 1024,
