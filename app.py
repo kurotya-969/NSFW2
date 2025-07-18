@@ -4,10 +4,12 @@ import requests
 import gradio as gr
 import logging
 import json
+import torch
 from datetime import datetime
 from fastapi import FastAPI
 from typing import List, Tuple, Any, Optional, Dict
 from fastapi.responses import JSONResponse
+from transformers import AutoTokenizer, AutoModelForCausalLM
 from tsundere_aware_prompt_generator import TsundereAwarePromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
 def clean_meta(text: str) -> str:
@@ -159,12 +161,15 @@ logging.basicConfig(
 # --- 型定義 ---
 ChatHistory = List[Tuple[str, str]]
 
-# --- OpenRouter API設定 ---
-API_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
+# --- Hugging Face モデル設定 ---
+MODEL_NAME = "Rakuten/RakutenAI-7B-chat"
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "")
 PORT = int(os.environ.get("PORT", 7860))
-API_KEY = os.getenv("OPENROUTER_API_KEY", "")
-logging.info(f"Using OpenRouter API with model: gryphe/mythomax-l2-13b")
+
+# モデルとトークナイザーの初期化
+logging.info(f"Loading model: {MODEL_NAME}")
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=torch.float16, device_map="auto")
 
 system_prompt = """\
 あなたは「麻理（まり）」という人格を持ったAIセクサロイド兼コンパニオンとして振る舞います。
@@ -376,48 +381,38 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
             # 2回目以降のメッセージでは通常のユーザー入力を使用
             enhanced_user_input = user_input
         
-        # Build messages and make API call
-        # システムプロンプトを埋め込む場合は、システムプロンプトを空にする
+        # Build messages for the model
         if len(safe_hist) == 0:
             messages = build_messages(safe_hist, enhanced_user_input, "")
         else:
             messages = build_messages(safe_hist, enhanced_user_input, dynamic_prompt)
         
         # デバッグ用：メッセージの内容をログに記録
-        logging.debug(f"Sending messages to API: {json.dumps(messages, ensure_ascii=False)[:500]}...")
+        logging.debug(f"Preparing messages for model: {json.dumps(messages, ensure_ascii=False)[:500]}...")
         
-        post_data = {
-            "model": "gryphe/mythomax-l2-13b",  
-            "messages": messages,
+        # Hugging Face モデルを使用して推論を実行
+        inputs = tokenizer.apply_chat_template(messages, return_tensors="pt").to(model.device)
+        
+        # 生成パラメータを設定
+        generation_config = {
+            "max_new_tokens": 1024,
             "temperature": 0.7,
-            "max_tokens": 1024,
-            "stream": False
+            "top_p": 0.9,
+            "do_sample": True,
+            "pad_token_id": tokenizer.eos_token_id
         }
-        headers = {"Content-Type": "application/json"}
-        if API_KEY:
-            headers["Authorization"] = f"Bearer {API_KEY}"
-
-        logging.info(f"Sending request to {API_ENDPOINT} with model: {post_data['model']}")
         
-        try:
-            response = requests.post(API_ENDPOINT, json=post_data, headers=headers, timeout=120)
-            response.raise_for_status()
-            api_response = response.json()["choices"][0]["message"]["content"].strip()
-            
-            # デバッグ用：レスポンスの一部をログに記録
-            logging.debug(f"Received response: {api_response[:100]}...")
-        except Exception as e:
-            logging.error(f"API request failed: {str(e)}")
-            # モデル名が間違っている可能性があるため、別のモデル名で再試行
-            try:
-                post_data["model"] = "gpt-3.5-turbo"  # 別のモデル名を試す
-                logging.info(f"Retrying with model: {post_data['model']}")
-                response = requests.post(API_ENDPOINT, json=post_data, headers=headers, timeout=120)
-                response.raise_for_status()
-                api_response = response.json()["choices"][0]["message"]["content"].strip()
-            except Exception as retry_error:
-                logging.error(f"Retry also failed: {str(retry_error)}")
-                raise
+        # 推論を実行
+        logging.info(f"Generating response with {MODEL_NAME}")
+        with torch.no_grad():
+            output = model.generate(inputs, **generation_config)
+        
+        # 生成されたテキストをデコード
+        generated_text = tokenizer.decode(output[0][inputs.shape[1]:], skip_special_tokens=True)
+        api_response = generated_text.strip()
+        
+        # デバッグ用：レスポンスの一部をログに記録
+        logging.debug(f"Generated response: {api_response[:100]}...")
         
         # クリーニング関数を適用して、メタ情報を削除
         api_response = clean_meta(api_response)
