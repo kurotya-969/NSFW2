@@ -163,7 +163,7 @@ ChatHistory = List[Tuple[str, str]]
 API_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "")
 PORT = int(os.environ.get("PORT", 7860))
-API_KEY = os.getenv("OPENROUTER_API_KEY", "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")
+API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 logging.info(f"Using OpenRouter API with model: gryphe/mythomax-l2-13b")
 
 system_prompt = """\
