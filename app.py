@@ -376,7 +376,7 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
         logging.debug(f"Sending messages to API: {json.dumps(messages, ensure_ascii=False)[:500]}...")
         
         post_data = {
-            "model": "berghof-nsfw-7b-i1",  
+            "model": "elyza-japanese-llama-2-7b-fast",  
             "messages": messages,
             "temperature": 0.7,
             "max_tokens": 1024,
