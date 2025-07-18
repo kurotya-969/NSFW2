@@ -159,14 +159,12 @@ logging.basicConfig(
 # --- 型定義 ---
 ChatHistory = List[Tuple[str, str]]
 
-# --- LM Studio API設定 ---
-# ローカルのLM Studioに接続する場合は "http://localhost:1234/v1" を使用
-LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", "https://haven-lots-text-periodically.trycloudflare.com")
-API_ENDPOINT = f"{LM_STUDIO_API_URL}/v1/chat/completions"
-RENDER_EXTERNAL_URL = os.getenv("https://haven-lots-text-periodically.trycloudflare.com")
+# --- OpenRouter API設定 ---
+API_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
+RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "")
 PORT = int(os.environ.get("PORT", 7860))
-API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
-logging.info(f"Using LM Studio API URL: {LM_STUDIO_API_URL}")
+API_KEY = os.getenv("OPENROUTER_API_KEY", "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")
+logging.info(f"Using OpenRouter API with model: gryphe/mythomax-l2-13b")
 
 system_prompt = """\
 あなたは「麻理（まり）」という人格を持ったAIセクサロイド兼コンパニオンとして振る舞います。
@@ -389,7 +387,7 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
         logging.debug(f"Sending messages to API: {json.dumps(messages, ensure_ascii=False)[:500]}...")
         
         post_data = {
-            "model": "elyza-japanese-llama-2-7b-fast",  
+            "model": "gryphe/mythomax-l2-13b",  
             "messages": messages,
             "temperature": 0.7,
             "max_tokens": 1024,
