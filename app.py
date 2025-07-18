@@ -161,7 +161,7 @@ ChatHistory = List[Tuple[str, str]]
 
 # --- LM Studio API設定 ---
 # ローカルのLM Studioに接続する場合は "http://localhost:1234/v1" を使用
-LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", " https://haven-lots-text-periodically.trycloudflare.com")
+LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", "https://haven-lots-text-periodically.trycloudflare.com")
 API_ENDPOINT = f"{LM_STUDIO_API_URL}/v1/chat/completions"
 RENDER_EXTERNAL_URL = os.getenv("https://haven-lots-text-periodically.trycloudflare.com")
 PORT = int(os.environ.get("PORT", 7860))
@@ -369,8 +369,21 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
             # Fallback to standard prompt if no session management
             dynamic_prompt = system_prompt
         
+        # システムプロンプトをユーザー入力に埋め込む方法
+        if len(safe_hist) == 0:
+            # 最初のメッセージの場合、システムプロンプトをユーザー入力に埋め込む
+            enhanced_user_input = f"以下のキャラクター設定に基づいて、麻理として応答してください。その後、私の質問に答えてください。\n\n{dynamic_prompt}\n\n私の質問: {user_input}"
+            logging.info("最初のメッセージにシステムプロンプトを埋め込みました")
+        else:
+            # 2回目以降のメッセージでは通常のユーザー入力を使用
+            enhanced_user_input = user_input
+        
         # Build messages and make API call
-        messages = build_messages(safe_hist, user_input, dynamic_prompt)
+        # システムプロンプトを埋め込む場合は、システムプロンプトを空にする
+        if len(safe_hist) == 0:
+            messages = build_messages(safe_hist, enhanced_user_input, "")
+        else:
+            messages = build_messages(safe_hist, enhanced_user_input, dynamic_prompt)
         
         # デバッグ用：メッセージの内容をログに記録
         logging.debug(f"Sending messages to API: {json.dumps(messages, ensure_ascii=False)[:500]}...")
