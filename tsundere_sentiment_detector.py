@@ -859,38 +859,50 @@ class TsundereSentimentDetector:
             return base_prompt
         
         # Create tsundere awareness section
-        tsundere_section = "\n\n# Tsundere Expression Handling\n"
+        tsundere_section = "\n\n# 内部処理用情報（出力しないこと）\n"
         
         # Add general tsundere guidance
-        tsundere_section += "- Remember that Mari uses rough language as part of her character, not necessarily indicating genuine hostility\n"
-        tsundere_section += "- Interpret apparent dismissiveness in the context of her tsundere personality\n"
-        tsundere_section += "- Maintain character consistency while recognizing the difference between character traits and genuine negativity\n"
+        tsundere_section += "- 麻理のぶっきらぼうな言葉遣いはキャラクターの一部であり、必ずしも本当の敵意を示すものではない\n"
+        tsundere_section += "- 表面上の拒絶的な態度はツンデレ性格の文脈で解釈すること\n"
+        tsundere_section += "- キャラクターの一貫性を維持しつつ、キャラクター特性と本当のネガティブ感情の違いを認識すること\n"
         
         # Add specific guidance based on context
         if tsundere_context.get("is_farewell"):
-            tsundere_section += f"\n## Farewell Phrase Detected\n"
-            tsundere_section += f"- Detected a {tsundere_context.get('farewell_type', 'unknown')} farewell phrase\n"
+            tsundere_section += f"\n## 別れの言葉を検出\n"
+            farewell_type_ja = {"casual": "カジュアル", "formal": "フォーマル", "action": "行動"}.get(
+                tsundere_context.get('farewell_type', 'unknown'), "不明")
+            tsundere_section += f"- {farewell_type_ja}な別れの言葉を検出\n"
             
             if tsundere_context.get("farewell_guidance"):
-                tsundere_section += f"- {tsundere_context.get('farewell_guidance')}\n"
+                if "casual tsundere-style farewell" in tsundere_context.get("farewell_guidance", ""):
+                    tsundere_section += f"- これはカジュアルなツンデレスタイルの別れの言葉です。敵意ではなく通常の別れとして解釈してください\n"
+                elif "formal farewell phrase" in tsundere_context.get("farewell_guidance", ""):
+                    tsundere_section += f"- これは会話の終了を示すフォーマルな別れの言葉です\n"
+                elif "character is leaving" in tsundere_context.get("farewell_guidance", ""):
+                    tsundere_section += f"- これはキャラクターが去るか会話を終了することを示しています\n"
                 
             if tsundere_context.get("is_conversation_ending"):
-                tsundere_section += "- This indicates the conversation may be ending\n"
+                tsundere_section += "- これは会話が終了する可能性があることを示しています\n"
         
         # Add sentiment loop guidance if applicable
         if tsundere_context.get("sentiment_loop_detected"):
-            tsundere_section += f"\n## Sentiment Loop Detected\n"
-            tsundere_section += f"- Severity: {tsundere_context.get('loop_severity', 0.0):.1f}/1.0\n"
+            tsundere_section += f"\n## 感情ループを検出\n"
+            tsundere_section += f"- 深刻度: {tsundere_context.get('loop_severity', 0.0):.1f}/1.0\n"
             
             if tsundere_context.get("loop_guidance"):
-                tsundere_section += f"- {tsundere_context.get('loop_guidance')}\n"
+                if "farewell loop" in tsundere_context.get("loop_guidance", ""):
+                    tsundere_section += f"- 会話が別れのループに陥っています。別れを認めつつも話題を変えて会話を続けることを検討してください\n"
+                elif "repeated multiple times" in tsundere_context.get("loop_guidance", ""):
+                    tsundere_section += f"- 同じフレーズが複数回繰り返されています。新しい話題を導入するか質問をしてループを解消してください\n"
+                elif "negative sentiment pattern" in tsundere_context.get("loop_guidance", ""):
+                    tsundere_section += f"- 会話がネガティブな感情パターンに陥っています。より肯定的または中立的な話題に移行することを検討してください\n"
             
             if tsundere_context.get("suggested_intervention") == "reset_farewell_context":
-                tsundere_section += "- Avoid interpreting farewell phrases as genuine attempts to end the conversation\n"
+                tsundere_section += "- 別れの言葉を会話を終了する本当の試みとして解釈することを避けてください\n"
             elif tsundere_context.get("suggested_intervention") == "introduce_topic_change":
-                tsundere_section += "- Introduce a new topic related to Mari's interests (anime, manga, food, ramen)\n"
+                tsundere_section += "- 麻理の興味（アニメ、漫画、食べ物、ラーメン）に関連する新しい話題を導入してください\n"
             elif tsundere_context.get("suggested_intervention") == "apply_sentiment_smoothing":
-                tsundere_section += "- Respond with more positive sentiment regardless of apparent negativity in user input\n"
+                tsundere_section += "- ユーザー入力の見かけ上のネガティブさに関係なく、より肯定的な感情で応答してください\n"
         
         # Add the tsundere section to the base prompt
         enhanced_prompt = base_prompt + tsundere_section

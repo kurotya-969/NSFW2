@@ -11,21 +11,58 @@ from fastapi.responses import JSONResponse
 from tsundere_aware_prompt_generator import TsundereAwarePromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
 def clean_meta(text: str) -> str:
-    # 括弧内の注釈を削除（日本語・英語）
-    cleaned_text = re.sub(r'（.*?）|\(.*?\)', '', text)
-
-    # 特定のプレフィックス行を削除
+    """
+    メタ情報・注釈・説明文などを削除し、キャラクターの直接的な発言のみを残す
+    
+    Args:
+        text: 元のテキスト
+        
+    Returns:
+        クリーニングされたテキスト
+    """
+    # 最初に空の場合は早期リターン
+    if not text or text.isspace():
+        return ""
+    
+    # 括弧内の注釈を削除（日本語・英語、ネストされた括弧も対応）
+    cleaned_text = re.sub(r'（[^（）]*）|\([^()]*\)', '', text)
+    # 2回適用して入れ子になった括弧にも対応
+    cleaned_text = re.sub(r'（[^（）]*）|\([^()]*\)', '', cleaned_text)
+    
+    # 角括弧内の注釈を削除
+    cleaned_text = re.sub(r'\[[^\[\]]*\]', '', cleaned_text)
+    
+    # 特定のプレフィックス行を削除（より包括的に）
     prefix_patterns = [
-        r'^(Note:|Response:|補足:|説明:|注意:|注:|メモ:|例:|例示:|ヒント:|アドバイス:|ポイント:).*',
-        r'^※.*',
-        r'#\s*(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)?(応答|会話|対応|反応|例|例文|サンプル).*'
+        # 英語のメタ情報
+        r'^(Note:|Response:|Example:|Explanation:|Context:|Clarification:|Instruction:|Guidance:).*$',
+        # 日本語のメタ情報
+        r'^(補足:|説明:|注意:|注:|メモ:|例:|例示:|ヒント:|アドバイス:|ポイント:|解説:|前提:|状況:|設定:|背景:|理由:|注釈:|参考:|例文:|回答例:|応答例:).*$',
+        # 記号で始まるメタ情報
+        r'^※.*$',
+        r'^#.*$',
+        r'^・.*$',
+        # マークダウン形式の見出し
+        r'^#+\s+.*$',
+        # 会話形式のプレフィックス
+        r'^(麻理:|ユーザー:|システム:|AI:|Mari:|User:|System:).*$',
+        # 良い例・悪い例などの例示
+        r'^#\s*(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)?(応答|会話|対応|反応|例|例文|サンプル).*$',
+        r'^(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)(応答|会話|対応|反応|例|例文|サンプル).*$'
     ]
+    
     for pattern in prefix_patterns:
         cleaned_text = re.sub(pattern, '', cleaned_text, flags=re.MULTILINE)
-
-    # 制約文・説明文を削除（中間・文末の典型句）
+    
+    # 制約文・説明文を削除（中間・文末の典型句、より包括的に）
     removal_phrases = [
-        r'.*以上の応答例を参考に.*',
+        # 例示・参考に関する表現
+        r'.*以上の(応答|会話|対応|反応|例|例文|サンプル)を参考に.*',
+        r'.*これは(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)?(例|例文|サンプル)です.*',
+        r'.*以上(から|により|の通り|のように).*',
+        r'.*このように.*',
+        
+        # 制約・指示に関する表現
         r'.*一貫した受け答えを行.*',
         r'.*制約事項に反する.*',
         r'.*ご留意ください.*',
@@ -37,24 +74,74 @@ def clean_meta(text: str) -> str:
         r'.*相手の感情や状態に配慮.*',
         r'.*親密度が上がるほど.*',
         r'.*ユーザーとの信頼関係を築く.*',
-        r'.*これは.*例です.*',
-        r'.*以上からもわかる通り.*',
         r'.*落ち着け.*逆効果.*',
         r'.*言葉選びを心がけて.*',
+        
+        # 説明・解説に関する表現
+        r'.*説明すると.*',
+        r'.*補足すると.*',
+        r'.*注意点として.*',
+        r'.*ポイントは.*',
+        r'.*重要なのは.*',
+        r'.*ここでのポイントは.*',
+        
+        # メタ的な言及
+        r'.*キャラクターの設定上.*',
+        r'.*この性格では.*',
+        r'.*このキャラクターは.*',
+        r'.*麻理の性格上.*',
+        r'.*麻理という人物は.*',
+        r'.*麻理の反応として.*',
+        
+        # 指示・命令に関する表現
+        r'.*以下の指示に従って.*',
+        r'.*次のように応答してください.*',
+        r'.*このように返答してください.*',
+        r'.*麻理として応答します.*',
+        r'.*麻理の口調で返します.*',
+        
+        # 「〜です」「〜ます」などの敬語表現（麻理の口調と不一致）
+        r'.*でしょうか。$',
+        r'.*します。$',
+        r'.*します$',
+        r'.*ください。$',
+        r'.*ください$',
+        r'.*お願いします。$',
+        r'.*お願いします$',
+        r'.*いたします。$',
+        r'.*いたします$',
+        r'.*致します。$',
+        r'.*致します$'
     ]
+    
     for pattern in removal_phrases:
-        cleaned_text = re.sub(pattern, '', cleaned_text)
-
+        cleaned_text = re.sub(pattern, '', cleaned_text, flags=re.MULTILINE)
+    
     # 空行の正規化と前後トリム
     cleaned_text = re.sub(r'\n\s*\n', '\n', cleaned_text)
     cleaned_text = re.sub(r'^\s*$\n', '', cleaned_text, flags=re.MULTILINE)
+    
+    # 全角・半角スペースの正規化（連続したスペースを1つに）
     cleaned_text = re.sub(r'[ 　]+', ' ', cleaned_text).strip()
-
-    # 上限行数制限（5行まで）
+    
+    # 行頭・行末の空白を削除
+    cleaned_text = '\n'.join([line.strip() for line in cleaned_text.split('\n')])
+    
+    # 空の行を削除
+    cleaned_text = '\n'.join([line for line in cleaned_text.split('\n') if line.strip()])
+    
+    # 上限行数制限（5行まで）- 長すぎる応答を防止
     lines = cleaned_text.split('\n')
     if len(lines) > 5:
         cleaned_text = '\n'.join(lines[:5])
-
+    
+    # 最終的な空白除去
+    cleaned_text = cleaned_text.strip()
+    
+    # 空の場合はデフォルトメッセージ
+    if not cleaned_text:
+        cleaned_text = "チッ、うっせーな..."
+    
     return cleaned_text
 
 
