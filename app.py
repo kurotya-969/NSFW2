@@ -164,7 +164,7 @@ ChatHistory = List[Tuple[str, str]]
 # --- Hugging Face モデル設定 ---
 MODEL_NAME = "Rakuten/RakutenAI-7B-chat"
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "")
-PORT = int(os.environ.get("PORT", 7860))
+PORT = int(os.environ.get("PORT", 10000))
 
 # モデルとトークナイザーの初期化
 logging.info(f"Loading model: {MODEL_NAME}")
@@ -892,3 +892,10 @@ def build_messages_with_token_management(history: ChatHistory, user_input: str, 
     
     # トークン数が上限以内の場合、通常のメッセージ構築を行う
     return build_messages(history, user_input, system_prompt)
+# Gradio
+アプリをマウント
+app = gr.mount_gradio_app(app, demo, path="/ui")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
