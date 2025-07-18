@@ -383,9 +383,9 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # マニフェストをHTMLとして埋め込み
     gr.HTML(f"""
             <script>
-            window.API_BASE_URL = "{RENDER_EXTERNAL_URL.rstrip('/')}";
-            window.src = "{RENDER_EXTERNAL_URL.rstrip('/')}";
-            window.space = "{RENDER_EXTERNAL_URL.rstrip('/')}";
+            window.API_BASE_URL = "{RENDER_EXTERNAL_URL}";
+            window.src = "{RENDER_EXTERNAL_URL.rstrip}";
+            window.space = "{RENDER_EXTERNAL_URL}";
             
             // Enhanced session management with localStorage
             window.mariSessionManager = {{
