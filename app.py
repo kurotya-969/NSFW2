@@ -8,7 +8,7 @@ from datetime import datetime
 from fastapi import FastAPI
 from typing import List, Tuple, Any, Optional, Dict
 from fastapi.responses import JSONResponse
-from prompt_generator import PromptGenerator
+from tsundere_aware_prompt_generator import TsundereAwarePromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
 def clean_meta(text: str) -> str:
     # 括弧内の注釈を削除（日本語・英語）
@@ -173,7 +173,10 @@ system_prompt = """\
 # Initialize affection system and prompt generator
 storage_dir = os.path.join(os.path.dirname(__file__), "sessions")
 session_manager, affection_tracker = initialize_affection_system(storage_dir)
-prompt_generator = PromptGenerator(system_prompt)
+prompt_generator = TsundereAwarePromptGenerator(system_prompt)
+
+# Add logging for tsundere detection
+logging.getLogger('tsundere_sentiment_detector').setLevel(logging.INFO)
 
 # --- 安全なhistory処理 ---
 def safe_history(history: Any) -> ChatHistory:
@@ -232,23 +235,52 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
             session_id = get_session_manager().create_new_session()
             logging.info(f"Created new session in chat function: {session_id}")
         
-        # Analyze user input for sentiment and update affection before generating response
-        if session_id and get_affection_tracker():
-            new_level, sentiment_result = get_affection_tracker().update_affection_for_interaction(session_id, user_input)
-            logging.info(f"Updated affection for session {session_id}: new level = {new_level}, "
-                        f"sentiment = {sentiment_result.interaction_type}, "
-                        f"delta = {sentiment_result.affection_delta}")
+        # Convert chat history to format expected by tsundere detector
+        conversation_history = []
+        for u, a in safe_hist:
+            conversation_history.append({
+                "user": u,
+                "assistant": a,
+                "timestamp": None  # We don't have timestamps in the UI history
+            })
         
-        # Get dynamic system prompt based on current affection level
-        dynamic_prompt = system_prompt
-        if session_id and get_affection_tracker():
+        # Analyze user input with tsundere awareness before updating affection
+        from tsundere_sentiment_detector import TsundereSentimentDetector
+        tsundere_detector = TsundereSentimentDetector()
+        tsundere_analysis = tsundere_detector.analyze_with_tsundere_awareness(
+            user_input, session_id, conversation_history
+        )
+        
+        # Use the tsundere-adjusted affection delta instead of the raw sentiment analysis
+        if session_id and get_affection_tracker() and get_session_manager():
+            # Get current affection level
+            current_affection = get_session_manager().get_affection_level(session_id)
+            
+            # Apply the tsundere-adjusted affection delta
+            adjusted_delta = tsundere_analysis["final_affection_delta"]
+            get_session_manager().update_affection(session_id, adjusted_delta)
+            
+            new_affection = get_session_manager().get_affection_level(session_id)
+            
+            # Log the tsundere-aware affection update
+            logging.info(f"Updated affection with tsundere awareness for session {session_id}: "
+                        f"level {current_affection} -> {new_affection}, "
+                        f"delta: {adjusted_delta}")
+            
+            # Get tsundere context for prompt generation
+            tsundere_context = tsundere_analysis.get("llm_context", {})
+            
+            # Get dynamic system prompt with tsundere awareness
             affection_level = get_session_manager().get_affection_level(session_id)
-            dynamic_prompt = prompt_generator.generate_dynamic_prompt(affection_level)
+            dynamic_prompt = prompt_generator.generate_dynamic_prompt(affection_level, tsundere_context)
             
             # Get relationship stage for logging
             relationship_stage = get_affection_tracker().get_relationship_stage(affection_level)
-            logging.info(f"Using dynamic prompt for session {session_id} with affection level {affection_level} "
+            logging.info(f"Using tsundere-aware prompt for session {session_id} with affection level {affection_level} "
                         f"(relationship stage: {relationship_stage})")
+        else:
+            # Fallback to standard prompt if no session management
+            dynamic_prompt = system_prompt
         
         # Build messages and make API call
         messages = build_messages(safe_hist, user_input, dynamic_prompt)
