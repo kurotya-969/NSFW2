@@ -73,11 +73,13 @@ logging.basicConfig(
 ChatHistory = List[Tuple[str, str]]
 
 # --- LM Studio API設定 ---
+# ローカルのLM Studioに接続する場合は "http://localhost:1234/v1" を使用
 LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", "https://plans-eng-pete-worcester.trycloudflare.com/v1")
 API_ENDPOINT = f"{LM_STUDIO_API_URL}/chat/completions"
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://plans-eng-pete-worcester.trycloudflare.com")
 PORT = int(os.environ.get("PORT", 7860))
 API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
+logging.info(f"Using LM Studio API URL: {LM_STUDIO_API_URL}")
 
 system_prompt = """\
 あなたは「麻理（まり）」という人格を持ったAIセクサロイド兼コンパニオンとして振る舞います。
@@ -250,8 +252,12 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
         
         # Build messages and make API call
         messages = build_messages(safe_hist, user_input, dynamic_prompt)
+        
+        # デバッグ用：メッセージの内容をログに記録
+        logging.debug(f"Sending messages to API: {json.dumps(messages, ensure_ascii=False)[:500]}...")
+        
         post_data = {
-            "model": "elyza-japanese-llama-2-7b-fast",  # モデル名を変更
+            "model": "elyza-japanese-llama-2-7b-fast",  # 一般的なモデル名に変更（LM Studioで利用可能なモデル名に合わせて調整）
             "messages": messages,
             "temperature": 0.7,
             "max_tokens": 1024,
@@ -261,9 +267,27 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
         if API_KEY:
             headers["Authorization"] = f"Bearer {API_KEY}"
 
-        response = requests.post(API_ENDPOINT, json=post_data, headers=headers, timeout=120)
-        response.raise_for_status()
-        api_response = response.json()["choices"][0]["message"]["content"].strip()
+        logging.info(f"Sending request to {API_ENDPOINT} with model: {post_data['model']}")
+        
+        try:
+            response = requests.post(API_ENDPOINT, json=post_data, headers=headers, timeout=120)
+            response.raise_for_status()
+            api_response = response.json()["choices"][0]["message"]["content"].strip()
+            
+            # デバッグ用：レスポンスの一部をログに記録
+            logging.debug(f"Received response: {api_response[:100]}...")
+        except Exception as e:
+            logging.error(f"API request failed: {str(e)}")
+            # モデル名が間違っている可能性があるため、別のモデル名で再試行
+            try:
+                post_data["model"] = "gpt-3.5-turbo"  # 別のモデル名を試す
+                logging.info(f"Retrying with model: {post_data['model']}")
+                response = requests.post(API_ENDPOINT, json=post_data, headers=headers, timeout=120)
+                response.raise_for_status()
+                api_response = response.json()["choices"][0]["message"]["content"].strip()
+            except Exception as retry_error:
+                logging.error(f"Retry also failed: {str(retry_error)}")
+                raise
         
         # クリーニング関数を適用して、メタ情報を削除
         api_response = clean_meta(api_response)
