@@ -74,9 +74,9 @@ ChatHistory = List[Tuple[str, str]]
 
 # --- LM Studio API設定 ---
 # ローカルのLM Studioに接続する場合は "http://localhost:1234/v1" を使用
-LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", "https://restricted-ns-amended-guild.trycloudflare.com")
+LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", " https://autos-dom-harper-hong.trycloudflare.com")
 API_ENDPOINT = f"{LM_STUDIO_API_URL}/v1/chat/completions"
-RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://restricted-ns-amended-guild.trycloudflare.com")
+RENDER_EXTERNAL_URL = os.getenv(" https://autos-dom-harper-hong.trycloudflare.com")
 PORT = int(os.environ.get("PORT", 7860))
 API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
 logging.info(f"Using LM Studio API URL: {LM_STUDIO_API_URL}")
@@ -257,7 +257,7 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
         logging.debug(f"Sending messages to API: {json.dumps(messages, ensure_ascii=False)[:500]}...")
         
         post_data = {
-            "model": "elyza-japanese-llama-2-7b-fast",  # 一般的なモデル名に変更（LM Studioで利用可能なモデル名に合わせて調整）
+            "model": "berghof-nsfw-7b-i1",  
             "messages": messages,
             "temperature": 0.7,
             "max_tokens": 1024,
@@ -652,4 +652,118 @@ app = gr.mount_gradio_app(app, demo, path="/ui")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    uvicorn.run(app, host="0.0.0.0", port=PORT)# 
+
+def count_tokens(text: str) -> int:
+    """
+    テキストのトークン数を概算する簡易関数
+    正確なトークン数計算にはtiktokenなどのライブラリが必要だが、
+    ここでは簡易的に文字数の1/3をトークン数として扱う
+    
+    Args:
+        text: トークン数を計算するテキスト
+        
+    Returns:
+        概算トークン数
+    """
+    # 日本語は1文字あたり約1.5〜2トークン、英語は1単語あたり約1.3トークン
+    # 簡易的に文字数の1/3をトークン数として概算
+    return len(text) // 3
+
+def estimate_messages_tokens(messages: List[dict]) -> int:
+    """
+    メッセージリストの総トークン数を概算する
+    
+    Args:
+        messages: トークン数を計算するメッセージリスト
+        
+    Returns:
+        概算トークン数
+    """
+    total_tokens = 0
+    for message in messages:
+        # 各メッセージのロール部分も含めてトークン数を計算
+        total_tokens += count_tokens(message.get("content", ""))
+        # ロールごとのオーバーヘッド（4トークン程度）を加算
+        total_tokens += 4
+    
+    # メッセージ間のオーバーヘッド（3トークン程度）を加算
+    total_tokens += 3
+    
+    return total_tokens
+
+def summarize_conversation(history: ChatHistory) -> ChatHistory:
+    """
+    会話履歴を要約して、トークン数を削減する
+    
+    Args:
+        history: 要約対象の会話履歴
+        
+    Returns:
+        要約された会話履歴
+    """
+    if len(history) <= 4:  # 履歴が少ない場合は要約しない
+        return history
+    
+    # 最初の会話ターンと最新の3つの会話ターンを保持
+    # 最初のターンは文脈の設定に重要なことが多いため保持
+    summarized_history = [history[0]]
+    
+    # 中間部分を要約して1つのターンにまとめる
+    if len(history) > 4:
+        middle_history = history[1:-3]
+        if middle_history:
+            # 中間部分の要約を作成
+            user_parts = [u for u, _ in middle_history]
+            assistant_parts = [a for _, a in middle_history]
+            
+            summary_user = f"[過去の会話要約: {len(middle_history)}ターン分の会話履歴]"
+            summary_assistant = f"[過去の応答要約: 麻理は警戒心が強く、ぶっきらぼうな態度で応答していました]"
+            
+            summarized_history.append((summary_user, summary_assistant))
+    
+    # 最新の3つの会話ターンを追加
+    summarized_history.extend(history[-3:])
+    
+    return summarized_history
+
+def build_messages_with_token_management(history: ChatHistory, user_input: str, system_prompt: str, max_tokens: int = 3500) -> List[dict]:
+    """
+    トークン数を管理しながらメッセージリストを構築する
+    
+    Args:
+        history: 会話履歴
+        user_input: ユーザーの入力
+        system_prompt: システムプロンプト
+        max_tokens: 最大トークン数
+        
+    Returns:
+        トークン数を管理したメッセージリスト
+    """
+    # システムプロンプトのトークン数を計算
+    system_tokens = count_tokens(system_prompt)
+    
+    # ユーザー入力のトークン数を計算
+    user_input_tokens = count_tokens(user_input)
+    
+    # 会話履歴のトークン数を計算
+    history_messages = []
+    for u, a in history:
+        history_messages.append({"role": "user", "content": str(u)})
+        history_messages.append({"role": "assistant", "content": str(a)})
+    
+    history_tokens = estimate_messages_tokens(history_messages)
+    
+    # 合計トークン数を計算
+    total_tokens = system_tokens + user_input_tokens + history_tokens
+    
+    # トークン数が上限を超える場合、会話履歴を要約
+    if total_tokens > max_tokens:
+        logging.info(f"Token count ({total_tokens}) exceeds limit ({max_tokens}), summarizing conversation history")
+        summarized_history = summarize_conversation(history)
+        
+        # 要約後の会話履歴でメッセージを再構築
+        return build_messages(summarized_history, user_input, system_prompt)
+    
+    # トークン数が上限以内の場合、通常のメッセージ構築を行う
+    return build_messages(history, user_input, system_prompt)
