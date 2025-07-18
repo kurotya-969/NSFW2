@@ -74,9 +74,9 @@ ChatHistory = List[Tuple[str, str]]
 
 # --- LM Studio API設定 ---
 # ローカルのLM Studioに接続する場合は "http://localhost:1234/v1" を使用
-LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", " https://autos-dom-harper-hong.trycloudflare.com")
+LM_STUDIO_API_URL = os.getenv("LM_STUDIO_API_URL", " https://haven-lots-text-periodically.trycloudflare.com")
 API_ENDPOINT = f"{LM_STUDIO_API_URL}/v1/chat/completions"
-RENDER_EXTERNAL_URL = os.getenv(" https://autos-dom-harper-hong.trycloudflare.com")
+RENDER_EXTERNAL_URL = os.getenv("https://haven-lots-text-periodically.trycloudflare.com")
 PORT = int(os.environ.get("PORT", 7860))
 API_KEY = os.getenv("LM_STUDIO_API_KEY", "")
 logging.info(f"Using LM Studio API URL: {LM_STUDIO_API_URL}")
