@@ -13,9 +13,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # アプリケーションコードをコピー
 COPY . .
 
-# Renderが環境変数PORTでポートを指定してくるので、それに合わせる
-EXPOSE $PORT
+# デフォルトポートを設定し、環境変数PORTがある場合はそれを使用
+ENV PORT=10000
+EXPOSE ${PORT}
 
 # UvicornでFastAPIアプリケーションを直接実行
 # シェル形式でCMDを記述し、$PORT環境変数を展開させる
-CMD uvicorn app:app --host 0.0.0.0 --port $PORT
+CMD uvicorn app:app --host 0.0.0.0 --port ${PORT}
