@@ -758,25 +758,126 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         logging.info(f"Created new session during restoration: {new_session_id}")
         return new_session_id, [], [], {}
     
-    # Add custom JavaScript event handler for session restoration
-    js_code = """
-    function(sessionId) {
-        // Listen for the custom event from the page load handler
-        window.addEventListener('mari_restore_session', function(e) {
-            if (e.detail && e.detail.sessionId) {
-                // This will trigger the restore_session Python function
-                console.log("Restoring session from event:", e.detail.sessionId);
-                return e.detail.sessionId;
+    # セッション復元のためのカスタムJavaScriptを埋め込み
+   # 修正版のGradioセッション復元コード
+
+# HTMLコンポーネント（修正版）
+session_restore_html = gr.HTML("""
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM loaded, initializing session restoration...");
+        
+        // セッション復元関数
+        function restoreSession() {
+            const storedSessionId = localStorage.getItem('mari_session_id');
+            const affectionLevel = localStorage.getItem('mari_affection_level');
+            const relationshipStage = localStorage.getItem('mari_relationship_stage');
+            
+            if (storedSessionId) {
+                console.log("Attempting to restore session:", storedSessionId);
+                console.log("Affection level:", affectionLevel);
+                console.log("Relationship stage:", relationshipStage);
+                
+                // カスタムイベントを発行
+                window.dispatchEvent(new CustomEvent('mari_restore_session', {
+                    detail: { 
+                        sessionId: storedSessionId,
+                        affectionLevel: affectionLevel || '0',
+                        relationshipStage: relationshipStage || 'stranger'
+                    }
+                }));
+                
+                return true;
+            } else {
+                console.log("No stored session found, creating new session");
+                return false;
             }
-            return null;
-        });
-        return null;
-    }
+        }
+        
+        // 1.5秒後にセッション復元を試行
+        setTimeout(function() {
+            restoreSession();
+        }, 1500);
+        
+        // セッション保存関数（他の場所から呼び出し可能）
+        window.saveMariSession = function(sessionId, affectionLevel, relationshipStage) {
+            localStorage.setItem('mari_session_id', sessionId);
+            localStorage.setItem('mari_affection_level', affectionLevel);
+            localStorage.setItem('mari_relationship_stage', relationshipStage);
+            console.log("Session saved:", sessionId);
+        };
+        
+        // セッションクリア関数
+        window.clearMariSession = function() {
+            localStorage.removeItem('mari_session_id');
+            localStorage.removeItem('mari_affection_level');
+            localStorage.removeItem('mari_relationship_stage');
+            console.log("Session cleared");
+        };
+    });
+    </script>
+""")
+
+# Python側でセッション復元イベントを処理する関数
+def handle_session_restoration():
     """
-    
-    demo.load(restore_session, 
-             inputs=[gr.Javascript(js_code)], 
-             outputs=[session_state, chatbot, state, relationship_info])
+    JavaScriptからのセッション復元イベントを処理
+    """
+    # この関数はJavaScriptのカスタムイベントと連携する
+    # 実際の実装では、セッションIDに基づいてデータを復元
+    pass
+
+# Gradioインターフェース例
+def create_gradio_interface():
+    with gr.Blocks() as demo:
+        # セッション復元用のHTML（ページ読み込み時に実行）
+        session_restore_html
+        
+        # セッション状態を管理するState変数
+        session_id = gr.State("")
+        affection_level = gr.State(0)
+        relationship_stage = gr.State("stranger")
+        
+        # チャット履歴
+        chatbot = gr.Chatbot()
+        msg = gr.Textbox(placeholder="まりと話してみよう...")
+        
+        # セッション情報表示（デバッグ用）
+        session_info = gr.HTML("<div id='session-info'>セッション情報: 未読み込み</div>")
+        
+        # JavaScriptでセッション情報を更新する関数
+        session_update_js = """
+        function updateSessionInfo(sessionId, affection, stage) {
+            document.getElementById('session-info').innerHTML = 
+                `<div>セッション: ${sessionId}<br>好感度: ${affection}<br>関係: ${stage}</div>`;
+            return [sessionId, affection, stage];
+        }
+        """
+        
+        # メッセージ送信時の処理
+        def respond(message, history, sess_id, affection, stage):
+            # ここでGroq APIを呼び出し
+            # セッション状態に基づいてレスポンスを調整
+            
+            # 仮のレスポンス
+            bot_response = f"こんにちは！（セッション: {sess_id}, 好感度: {affection}）"
+            history.append((message, bot_response))
+            
+            # 好感度を少し上げる
+            new_affection = int(affection) + 1
+            
+            return history, "", sess_id, str(new_affection), stage
+        
+        # イベント処理
+        msg.submit(
+            respond,
+            inputs=[msg, chatbot, session_id, affection_level, relationship_stage],
+            outputs=[chatbot, msg, session_id, affection_level, relationship_stage],
+            js=session_update_js  # JavaScript関数も実行
+        )
+        
+    return demo
+
 
 # Gradioアプリをマウント - UIへのパスを明示的に指定
 app = gr.mount_gradio_app(app, demo, path="/ui")
