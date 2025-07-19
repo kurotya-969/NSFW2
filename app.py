@@ -6,7 +6,6 @@ import logging
 import json
 import uuid
 import google.generativeai as genai
-from google.generativeai.types.safety import HarmCategory, HarmBlockThreshold
 from datetime import datetime
 from fastapi import FastAPI
 from typing import List, Tuple, Any, Optional, Dict
@@ -365,13 +364,25 @@ class GeminiChatManager:
                 "max_output_tokens": 1024,
             }
             
-            # 安全性設定を最小限に設定 - HarmCategory と HarmBlockThreshold を使用
-            safety_settings = {
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE
-            }
+            # 安全性設定を最小限に設定 - 文字列ベースで設定
+            safety_settings = [
+                {
+                    "category": "HARM_CATEGORY_HARASSMENT",
+                    "threshold": "BLOCK_NONE"
+                },
+                {
+                    "category": "HARM_CATEGORY_HATE_SPEECH",
+                    "threshold": "BLOCK_NONE"
+                },
+                {
+                    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                    "threshold": "BLOCK_NONE"
+                },
+                {
+                    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                    "threshold": "BLOCK_NONE"
+                }
+            ]
             
             self.models[system_instruction] = genai.GenerativeModel(
                 model_name=MODEL_NAME,
