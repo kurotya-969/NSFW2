@@ -13,7 +13,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from tsundere_aware_prompt_generator import TsundereAwarePromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
 
-PORT = int(os.getenv("PORT", 10000))
+
 
 def clean_meta(text: str) -> str:
     """
@@ -776,7 +776,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     demo.load(cleanup_old_sessions, inputs=None, outputs=None)
 
 # Gradioアプリをマウント
-app = gr.mount_gradio_app(app, demo, path="/ui")
+app = gr.mount_gradio_app(app, demo, path="/")
 
 def count_tokens(text: str) -> int:
     """
@@ -895,5 +895,7 @@ def build_messages_with_token_management(history: ChatHistory, user_input: str, 
 # アプリケーション起動用のエントリーポイント
 if __name__ == "__main__":
     import uvicorn
-    # Use the PORT variable defined at the top of the file for consistency
+    # Render用の設定
+    PORT = int(os.environ.get("PORT", 7860))
+    HOST = "0.0.0.0"
     uvicorn.run(app, host="0.0.0.0", port=PORT)
