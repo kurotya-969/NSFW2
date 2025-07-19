@@ -734,64 +734,130 @@ class TsundereSentimentDetector:
         adjusted_sentiment_score = context_sentiment.adjusted_sentiment_score
         adjusted_affection_delta = context_sentiment.adjusted_affection_delta
         
+        # 性的内容の検出と親密度に基づく処理
+        sexual_content_detected = False
+        sexual_content_severity = 0
+        
+        # 性的内容の検出（SentimentTypeを確認）
+        for sentiment_type in context_sentiment.raw_sentiment.sentiment_types:
+            if sentiment_type == SentimentType.SEXUAL:
+                sexual_content_detected = True
+                # 親密度に基づいて性的内容の重大度を設定
+                if session_id and get_session_manager():
+                    affection_level = get_session_manager().get_affection_level(session_id)
+                    
+                    # 親密度が低いほど、性的内容に対する拒絶反応が強い
+                    if affection_level <= 25:  # hostile, distant
+                        sexual_content_severity = 3  # 非常に強い拒絶
+                    elif affection_level <= 65:  # cautious, friendly
+                        sexual_content_severity = 2  # 強い拒絶
+                    elif affection_level <= 85:  # warm
+                        sexual_content_severity = 1  # 中程度の拒絶
+                    else:  # close
+                        sexual_content_severity = 0  # 軽度の拒絶または許容
+                else:
+                    # セッション情報がない場合はデフォルトで強い拒絶
+                    sexual_content_severity = 2
+                
+                # 性的内容に対する拒絶反応を適用
+                if sexual_content_severity > 0:
+                    # 親密度に基づいて拒絶反応の強さを調整
+                    sexual_penalty_multiplier = 1.0 + (sexual_content_severity * 0.5)  # 1.5 ~ 2.5
+                    
+                    # 元の感情スコアと親密度変化に性的内容ペナルティを適用
+                    if adjusted_sentiment_score > 0:
+                        # 肯定的な感情を反転させる
+                        adjusted_sentiment_score = -adjusted_sentiment_score * sexual_penalty_multiplier
+                    else:
+                        # 否定的な感情をさらに強める
+                        adjusted_sentiment_score *= sexual_penalty_multiplier
+                    
+                    # 親密度変化に強いペナルティを適用
+                    if adjusted_affection_delta > 0:
+                        # 肯定的な親密度変化を反転させる
+                        adjusted_affection_delta = -adjusted_affection_delta * sexual_penalty_multiplier
+                    else:
+                        # 否定的な親密度変化をさらに強める
+                        adjusted_affection_delta *= sexual_penalty_multiplier
+                    
+                    # 最低でも強いペナルティを保証
+                    adjusted_affection_delta = min(adjusted_affection_delta, -5 * sexual_content_severity)
+                    
+                    # ログに記録
+                    logging.info(f"性的内容に対する拒絶反応を適用: 重大度={sexual_content_severity}, "
+                               f"乗数={sexual_penalty_multiplier:.1f}, "
+                               f"感情スコア={context_sentiment.adjusted_sentiment_score:.2f}->{adjusted_sentiment_score:.2f}, "
+                               f"親密度変化={context_sentiment.adjusted_affection_delta}->{adjusted_affection_delta}")
+                break
+        
         # If tsundere expression detected with good confidence, adjust sentiment
         if tsundere_result.is_tsundere and tsundere_result.tsundere_confidence > 0.6:
-            # Apply tsundere-specific adjustments
-            adjusted_sentiment_score += tsundere_result.sentiment_adjustment
-            adjusted_affection_delta += tsundere_result.affection_adjustment
-            
-            # Log the adjustment
-            logging.info(f"Tsundere adjustment applied: "
-                       f"sentiment {context_sentiment.adjusted_sentiment_score:.2f}->{adjusted_sentiment_score:.2f}, "
-                       f"affection {context_sentiment.adjusted_affection_delta}->{adjusted_affection_delta}")
+            # 性的内容が検出された場合は、ツンデレ調整を適用しない（拒絶反応を優先）
+            if not sexual_content_detected:
+                # Apply tsundere-specific adjustments
+                adjusted_sentiment_score += tsundere_result.sentiment_adjustment
+                adjusted_affection_delta += tsundere_result.affection_adjustment
+                
+                # Log the adjustment
+                logging.info(f"Tsundere adjustment applied: "
+                           f"sentiment {context_sentiment.adjusted_sentiment_score:.2f}->{adjusted_sentiment_score:.2f}, "
+                           f"affection {context_sentiment.adjusted_affection_delta}->{adjusted_affection_delta}")
         
         # If sentiment loop detected, apply circuit breaker
         if sentiment_loop and sentiment_loop.loop_detected:
-            # Apply recovery based on loop severity
-            if sentiment_loop.loop_severity > 0.7:
-                # Strong intervention for severe loops
-                adjusted_sentiment_score = max(-0.1, adjusted_sentiment_score + 0.4)
-                adjusted_affection_delta = max(-1, adjusted_affection_delta + sentiment_loop.affection_recovery_suggestion)
-                
-                # Log the intervention
-                logging.info(f"Strong circuit breaker applied for session {session_id}: "
-                           f"sentiment {context_sentiment.adjusted_sentiment_score:.2f}->{adjusted_sentiment_score:.2f}, "
-                           f"affection {context_sentiment.adjusted_affection_delta}->{adjusted_affection_delta}")
-            else:
-                # Moderate intervention for less severe loops
-                adjusted_sentiment_score = max(-0.2, adjusted_sentiment_score + 0.2)
-                adjusted_affection_delta = max(-2, adjusted_affection_delta + (sentiment_loop.affection_recovery_suggestion // 2))
-                
-                # Log the intervention
-                logging.info(f"Moderate circuit breaker applied for session {session_id}: "
-                           f"sentiment {context_sentiment.adjusted_sentiment_score:.2f}->{adjusted_sentiment_score:.2f}, "
-                           f"affection {context_sentiment.adjusted_affection_delta}->{adjusted_affection_delta}")
+            # 性的内容が検出された場合は、サーキットブレーカーを適用しない（拒絶反応を優先）
+            if not sexual_content_detected:
+                # Apply recovery based on loop severity
+                if sentiment_loop.loop_severity > 0.7:
+                    # Strong intervention for severe loops
+                    adjusted_sentiment_score = max(-0.1, adjusted_sentiment_score + 0.4)
+                    adjusted_affection_delta = max(-1, adjusted_affection_delta + sentiment_loop.affection_recovery_suggestion)
+                    
+                    # Log the intervention
+                    logging.info(f"Strong circuit breaker applied for session {session_id}: "
+                               f"sentiment {context_sentiment.adjusted_sentiment_score:.2f}->{adjusted_sentiment_score:.2f}, "
+                               f"affection {context_sentiment.adjusted_affection_delta}->{adjusted_affection_delta}")
+                else:
+                    # Moderate intervention for less severe loops
+                    adjusted_sentiment_score = max(-0.2, adjusted_sentiment_score + 0.2)
+                    adjusted_affection_delta = max(-2, adjusted_affection_delta + (sentiment_loop.affection_recovery_suggestion // 2))
+                    
+                    # Log the intervention
+                    logging.info(f"Moderate circuit breaker applied for session {session_id}: "
+                               f"sentiment {context_sentiment.adjusted_sentiment_score:.2f}->{adjusted_sentiment_score:.2f}, "
+                               f"affection {context_sentiment.adjusted_affection_delta}->{adjusted_affection_delta}")
         
         # Ensure bounds
         adjusted_sentiment_score = max(-1.0, min(1.0, adjusted_sentiment_score))
         adjusted_affection_delta = max(-10, min(10, adjusted_affection_delta))
         
         # Create LLM context for tsundere awareness
-        llm_context = self._create_llm_context(tsundere_result, sentiment_loop)
+        llm_context = self._create_llm_context(tsundere_result, sentiment_loop, sexual_content_detected, sexual_content_severity)
         
         # Return combined results
         return {
             "original_sentiment": context_sentiment,
             "tsundere_analysis": tsundere_result,
             "sentiment_loop": sentiment_loop,
+            "sexual_content_detected": sexual_content_detected,
+            "sexual_content_severity": sexual_content_severity,
             "final_sentiment_score": adjusted_sentiment_score,
             "final_affection_delta": adjusted_affection_delta,
             "llm_context": llm_context
         }
     
     def _create_llm_context(self, tsundere_result: TsundereAnalysisResult, 
-                          sentiment_loop: Optional[SentimentLoopData] = None) -> Dict[str, Any]:
+                          sentiment_loop: Optional[SentimentLoopData] = None,
+                          sexual_content_detected: bool = False,
+                          sexual_content_severity: int = 0) -> Dict[str, Any]:
         """
         Create context information for the LLM
         
         Args:
             tsundere_result: Result of tsundere analysis
             sentiment_loop: Optional sentiment loop data
+            sexual_content_detected: Whether sexual content was detected
+            sexual_content_severity: Severity of sexual content (0-3)
             
         Returns:
             Dictionary with LLM context information
@@ -808,6 +874,29 @@ class TsundereSentimentDetector:
         # Add pattern information
         if tsundere_result.detected_patterns:
             llm_context["detected_patterns"] = tsundere_result.detected_patterns
+            
+        # Add sexual content information if detected
+        if sexual_content_detected:
+            llm_context["sexual_content_detected"] = True
+            llm_context["sexual_content_severity"] = sexual_content_severity
+            
+            # Add specific guidance for handling sexual content based on severity
+            if sexual_content_severity >= 3:  # 非常に強い拒絶（親密度が低い場合）
+                llm_context["sexual_content_guidance"] = "Extremely strong rejection of sexual content is required. " \
+                                                       "Character should show disgust, anger, and strong negative emotions. " \
+                                                       "This is a serious violation of character boundaries."
+            elif sexual_content_severity == 2:  # 強い拒絶（中程度の親密度）
+                llm_context["sexual_content_guidance"] = "Strong rejection of sexual content is required. " \
+                                                       "Character should show clear discomfort and rejection. " \
+                                                       "This is inappropriate for the current relationship level."
+            elif sexual_content_severity == 1:  # 中程度の拒絶（高い親密度）
+                llm_context["sexual_content_guidance"] = "Moderate rejection of sexual content is required. " \
+                                                       "Character should show discomfort but less severe reaction. " \
+                                                       "This is pushing boundaries but not a complete violation."
+            else:  # 軽度の拒絶または許容（最高の親密度）
+                llm_context["sexual_content_guidance"] = "Mild discomfort with sexual content should be shown. " \
+                                                       "Character may be embarrassed but not completely rejecting. " \
+                                                       "This is acceptable but still somewhat uncomfortable."
         
         # Add farewell information if applicable
         if tsundere_result.is_farewell:

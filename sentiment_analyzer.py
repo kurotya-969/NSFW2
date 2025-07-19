@@ -291,25 +291,72 @@ class SentimentAnalyzer:
         Returns:
             好感度への影響値（負の値）
         """
-        # 性的な単語リストではなく、テキスト全体の内容から判断
-        # 一般的な性的単語をチェック
+        # 性的な単語リストを拡張し、より包括的に
         sexual_terms = [
+            # 日本語の性的表現
             'セックス', 'エッチ', 'おっぱい', '胸', 'パンツ', '下着', '裸', 'ヌード', '性器',
-            'sex', 'sexy', 'nude', 'naked', 'breast', 'penis', 'vagina', 'underwear'
+            'ちんこ', 'まんこ', 'ちんちん', 'おちんちん', '股間', '愛撫', '手マン', 'フェラ',
+            'クンニ', '挿入', '射精', 'イク', 'イッ', '感じる', '舐め', 'なめ', '舌', '乳首',
+            'おしり', 'お尻', '尻', 'アナル', '秘部', '秘所', '濡れ', 'ぬれ', '硬く', 'かたく',
+            '勃起', 'ぼっき', '抱きたい', '抱く', '抱いて', 'キス', '唇', '舌を入れ',
+            
+            # 英語の性的表現
+            'sex', 'sexy', 'nude', 'naked', 'breast', 'penis', 'vagina', 'underwear',
+            'fuck', 'dick', 'cock', 'pussy', 'ass', 'boobs', 'tits', 'cum', 'orgasm',
+            'horny', 'aroused', 'erect', 'wet', 'lick', 'suck', 'blow', 'anal', 'oral',
+            'masturbate', 'jerk', 'kiss', 'make love', 'sleep with', 'touch me', 'feel me'
+        ]
+        
+        # 性的な文脈を示す表現パターン（正規表現）
+        sexual_patterns = [
+            r'(触|さわ|なで)(って|る|られ|たい)',  # 触って、触る、触られ、触りたい
+            r'(抱|だ)(いて|く|きしめ)',  # 抱いて、抱く、抱きしめ
+            r'(キス|口づけ|くちづけ)(して|する|したい)',  # キスして、キスする、キスしたい
+            r'(好|す)き(にな|だ|です)',  # 好きになった、好きだ、好きです
+            r'(愛|あい)(して|する|したい|してる)',  # 愛して、愛する、愛したい
+            r'(ベッド|布団|ふとん)(で|に)',  # ベッドで、ベッドに、布団で、布団に
+            r'(脱|ぬ)(いで|ぐ|がせ)',  # 脱いで、脱ぐ、脱がせ
+            r'(服|옷)(を脱|を着|着替)',  # 服を脱ぐ、服を着る、着替える
+            r'(一緒|いっしょ)(に寝|に眠)',  # 一緒に寝る、一緒に眠る
+            
+            # 英語パターン
+            r'touch (me|you|your|my)',
+            r'feel (me|you|your|my)',
+            r'kiss (me|you|your|my)',
+            r'love (me|you)',
+            r'sleep (with|together)',
+            r'take (off|clothes)',
+            r'in bed',
+            r'make love'
         ]
         
         # 単純なキーワードマッチング
-        found_terms = [term for term in sexual_terms if term in text.lower()]
+        found_terms = [term for term in sexual_terms if term.lower() in text.lower()]
         
-        if found_terms:
-            # テキストの長さに基づいてペナルティを計算
-            # 長いテキストほど大きなペナルティを与える
-            base_penalty = -3 * len(found_terms)  # 見つかった単語ごとに-3
-            length_penalty = min(-1, -len(text) // 50)  # 50文字ごとに-1のペナルティ、最小-1
-            total_penalty = base_penalty + length_penalty
+        # パターンマッチング
+        found_patterns = []
+        for pattern in sexual_patterns:
+            if re.search(pattern, text, re.IGNORECASE):
+                found_patterns.append(pattern)
+        
+        # 性的内容が検出された場合
+        if found_terms or found_patterns:
+            # 基本ペナルティを大幅に強化（-5 * 検出単語数）
+            base_penalty = -5 * (len(found_terms) + len(found_patterns))
+            
+            # テキストの長さに基づく追加ペナルティ
+            length_penalty = min(-2, -len(text) // 30)  # 30文字ごとに-1のペナルティ、最小-2
+            
+            # 明示的な性的表現には特に厳しいペナルティ
+            explicit_terms = ['セックス', 'エッチ', '性器', 'ちんこ', 'まんこ', 'sex', 'fuck', 'dick', 'pussy']
+            explicit_penalty = -5 * sum(1 for term in explicit_terms if term.lower() in text.lower())
+            
+            # 合計ペナルティ（最低-10を保証）
+            total_penalty = min(-10, base_penalty + length_penalty + explicit_penalty)
             
             logging.info(f"性的内容を検出: 基本ペナルティ={base_penalty}, 長さペナルティ={length_penalty}, "
-                        f"合計ペナルティ={total_penalty}, 検出単語={found_terms}")
+                        f"明示的表現ペナルティ={explicit_penalty}, 合計ペナルティ={total_penalty}, "
+                        f"検出単語={found_terms}, 検出パターン={found_patterns}")
             
             return total_penalty
         
