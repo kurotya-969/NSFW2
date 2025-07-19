@@ -775,10 +775,6 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 # Gradioアプリをマウント
 app = gr.mount_gradio_app(app, demo, path="/ui")
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=PORT)# 
-
 def count_tokens(text: str) -> int:
     """
     テキストのトークン数を概算する簡易関数
@@ -892,11 +888,9 @@ def build_messages_with_token_management(history: ChatHistory, user_input: str, 
     
     # トークン数が上限以内の場合、通常のメッセージ構築を行う
     return build_messages(history, user_input, system_prompt)
-# Gradio
-アプリをマウント
-app = gr.mount_gradio_app(app, demo, path="/ui")
 
+# アプリケーション起動用のエントリーポイント
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 10000))
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    uvicorn.run(app, host="0.0.0.0", port=port)
