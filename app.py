@@ -194,7 +194,7 @@ logging.basicConfig(
 ChatHistory = List[Tuple[str, str]]
 
 # --- Google Gemini API設定 ---
-MODEL_NAME = "gemini-2.0-flash-exp"
+MODEL_NAME = "gemini-1.5-flash"
 GOOGLE_API_KEY = os.environ.get("API-KEY", "")
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com")
 # Gradioのデフォルトポートは7860、FastAPIのデフォルトは8000、競合を避けるため10000を使用
@@ -285,66 +285,116 @@ def build_messages(history: ChatHistory, user_input: str, system_prompt: str) ->
     
     return messages
 
-def call_gemini_api(messages: List[dict]) -> str:
+# Geminiチャットセッションを管理するクラス
+class GeminiChatManager:
+    def __init__(self):
+        self.chat_sessions = {}
+        self.models = {}
+    
+    def get_model(self, system_instruction):
+        """システム指示に基づいてモデルを取得または作成"""
+        # システム指示ごとに異なるモデルを使用
+        if system_instruction not in self.models:
+            generation_config = {
+                "temperature": 0.7,
+                "top_p": 0.9,
+                "max_output_tokens": 1024,
+            }
+            
+            safety_settings = [
+                {
+                    "category": "HARM_CATEGORY_HARASSMENT",
+                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                },
+                {
+                    "category": "HARM_CATEGORY_HATE_SPEECH",
+                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                },
+                {
+                    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                    "threshold": "BLOCK_NONE"
+                },
+                {
+                    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                }
+            ]
+            
+            self.models[system_instruction] = genai.GenerativeModel(
+                model_name=MODEL_NAME,
+                generation_config=generation_config,
+                safety_settings=safety_settings,
+                system_instruction=system_instruction
+            )
+        
+        return self.models[system_instruction]
+    
+    def get_chat_session(self, session_id, system_instruction):
+        """セッションIDに基づいてチャットセッションを取得または作成"""
+        # セッションIDとシステム指示の組み合わせでキーを作成
+        key = f"{session_id}:{system_instruction}"
+        
+        if key not in self.chat_sessions:
+            model = self.get_model(system_instruction)
+            self.chat_sessions[key] = model.start_chat(history=[])
+            logging.info(f"Created new Gemini chat session for {session_id}")
+        
+        return self.chat_sessions[key]
+    
+    def reset_chat_session(self, session_id, system_instruction=None):
+        """チャットセッションをリセット"""
+        # 特定のシステム指示のセッションをリセット
+        if system_instruction:
+            key = f"{session_id}:{system_instruction}"
+            if key in self.chat_sessions:
+                del self.chat_sessions[key]
+                logging.info(f"Reset Gemini chat session for {session_id} with specific system instruction")
+        # セッションIDに関連するすべてのチャットセッションをリセット
+        else:
+            keys_to_delete = [k for k in self.chat_sessions.keys() if k.startswith(f"{session_id}:")]
+            for key in keys_to_delete:
+                del self.chat_sessions[key]
+            logging.info(f"Reset all Gemini chat sessions for {session_id}")
+
+# グローバルなGeminiチャットマネージャーのインスタンスを作成
+gemini_chat_manager = GeminiChatManager()
+
+def call_gemini_api(messages: List[dict], session_id: str = None) -> str:
     """
     Google Gemini APIを呼び出して応答を取得する
     
     Args:
         messages: APIに送信するメッセージリスト
+        session_id: ユーザーセッションID
         
     Returns:
         APIからの応答テキスト
     """
     try:
-        # Gemini用にメッセージを変換
-        gemini_messages = []
-        system_content = None
-        
         # システムプロンプトを抽出
+        system_content = None
+        user_message = None
+        
         for msg in messages:
             if msg["role"] == "system":
                 system_content = msg["content"]
-            else:
-                gemini_messages.append({"role": msg["role"], "parts": [{"text": msg["content"]}]})
+            elif msg["role"] == "user" and msg == messages[-1]:
+                # 最後のユーザーメッセージを取得
+                user_message = msg["content"]
         
-        # モデルの初期化（システムプロンプトを含める）
-        generation_config = {
-            "temperature": 0.7,
-            "top_p": 0.9,
-            "max_output_tokens": 1024,
-        }
+        if not system_content or not user_message:
+            logging.error("システムプロンプトまたはユーザーメッセージが見つかりません")
+            return "チッ、なんか変だな..."
         
-        safety_settings = [
-            {
-                "category": "HARM_CATEGORY_HARASSMENT",
-                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-                "category": "HARM_CATEGORY_HATE_SPEECH",
-                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                "threshold": "BLOCK_NONE"
-            },
-            {
-                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-            }
-        ]
+        # セッションIDがない場合は一時的なIDを生成
+        if not session_id:
+            session_id = f"temp_{uuid.uuid4()}"
         
-        model = genai.GenerativeModel(
-            model_name=MODEL_NAME,
-            generation_config=generation_config,
-            safety_settings=safety_settings,
-            system_instruction=system_content
-        )
+        # チャットセッションを取得または作成
+        chat_session = gemini_chat_manager.get_chat_session(session_id, system_content)
         
-        # チャット履歴からチャットセッションを作成
-        chat = model.start_chat(history=gemini_messages[:-1] if len(gemini_messages) > 1 else [])
-        
-        # 最後のユーザーメッセージに対して応答を生成
-        response = chat.send_message(gemini_messages[-1]["parts"][0]["text"])
+        # メッセージを送信して応答を取得
+        response = chat_session.send_message(user_message)
         
         return response.text
     except Exception as e:
