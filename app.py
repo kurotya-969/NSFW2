@@ -167,7 +167,9 @@ ChatHistory = List[Tuple[str, str]]
 # --- Hugging Face モデル設定 ---
 MODEL_NAME = "Rakuten/RakutenAI-7B-chat"
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "")
-PORT = int(os.environ.get("PORT", 10000))  # Use os.environ.get for consistent environment variable handling
+# Gradioのデフォルトポートは7860、FastAPIのデフォルトは8000、競合を避けるため10000を使用
+DEFAULT_PORT = 10000
+PORT = int(os.environ.get("PORT", DEFAULT_PORT))
 
 # モデルとトークナイザーの初期化
 logging.info(f"Loading model: {MODEL_NAME}")
@@ -775,8 +777,8 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # Schedule session cleanup to run once per day
     demo.load(cleanup_old_sessions, inputs=None, outputs=None)
 
-# Gradioアプリをマウント
-app = gr.mount_gradio_app(app, demo, path="/")
+# Gradioアプリをマウント - UIへのパスを明示的に指定
+app = gr.mount_gradio_app(app, demo, path="/ui")
 
 def count_tokens(text: str) -> int:
     """
@@ -895,7 +897,5 @@ def build_messages_with_token_management(history: ChatHistory, user_input: str, 
 # アプリケーション起動用のエントリーポイント
 if __name__ == "__main__":
     import uvicorn
-    # Render用の設定
-    PORT = int(os.environ.get("PORT", 7860))
-    HOST = "0.0.0.0"
+    # 上部で定義したPORT変数を使用（DEFAULT_PORT = 10000）
     uvicorn.run(app, host="0.0.0.0", port=PORT)
