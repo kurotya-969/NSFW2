@@ -944,11 +944,51 @@ class TsundereSentimentDetector:
             Enhanced prompt with tsundere awareness
         """
         # If no tsundere context or not relevant, return base prompt
-        if not tsundere_context or not tsundere_context.get("tsundere_detected"):
+        if not tsundere_context:
             return base_prompt
         
         # Create tsundere awareness section
         tsundere_section = "\n\n# 内部処理用情報（出力しないこと）\n"
+        
+        # Check for sexual content first - this takes priority
+        if tsundere_context.get("sexual_content_detected"):
+            tsundere_section += "\n## 【最重要】性的内容への対応\n"
+            severity = tsundere_context.get("sexual_content_severity", 2)
+            
+            # Add Japanese guidance based on severity
+            if severity >= 3:  # 非常に強い拒絶（親密度が低い場合）
+                tsundere_section += "- 性的内容に対して非常に強い拒絶反応を示すこと\n"
+                tsundere_section += "- 嫌悪感、怒り、強い否定的感情を表現すること\n"
+                tsundere_section += "- これはキャラクターの境界を著しく侵害する内容です\n"
+                tsundere_section += "- 必ず返答すること。無視したり応答しないことは避けること\n"
+            elif severity == 2:  # 強い拒絶（中程度の親密度）
+                tsundere_section += "- 性的内容に対して強い拒絶反応を示すこと\n"
+                tsundere_section += "- 明確な不快感と拒絶を表現すること\n"
+                tsundere_section += "- 現在の関係性レベルではこのような話題は不適切です\n"
+                tsundere_section += "- 必ず返答すること。無視したり応答しないことは避けること\n"
+            elif severity == 1:  # 中程度の拒絶（高い親密度）
+                tsundere_section += "- 性的内容に対して中程度の拒絶反応を示すこと\n"
+                tsundere_section += "- 不快感を示すが、過度に強い反応は避けること\n"
+                tsundere_section += "- これは境界を押し広げる内容ですが、完全な侵害ではありません\n"
+                tsundere_section += "- 必ず返答すること。無視したり応答しないことは避けること\n"
+            else:  # 軽度の拒絶または許容（最高の親密度）
+                tsundere_section += "- 性的内容に対して軽度の不快感を示すこと\n"
+                tsundere_section += "- 恥じらいを見せるが、完全に拒絶はしないこと\n"
+                tsundere_section += "- これは許容範囲ですが、まだ少し不快な内容です\n"
+                tsundere_section += "- 必ず返答すること。無視したり応答しないことは避けること\n"
+            
+            # Add English guidance from the context if available
+            if tsundere_context.get("sexual_content_guidance"):
+                tsundere_section += f"- {tsundere_context.get('sexual_content_guidance')}\n"
+            
+            # Add the tsundere section to the base prompt
+            enhanced_prompt = base_prompt + tsundere_section
+            
+            return enhanced_prompt
+        
+        # If not sexual content, proceed with tsundere guidance
+        if not tsundere_context.get("tsundere_detected"):
+            return base_prompt
         
         # Add general tsundere guidance
         tsundere_section += "- 麻理のぶっきらぼうな言葉遣いはキャラクターの一部であり、必ずしも本当の敵意を示すものではない\n"
