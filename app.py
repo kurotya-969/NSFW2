@@ -195,7 +195,7 @@ logging.basicConfig(
 ChatHistory = List[Tuple[str, str]]
 
 # --- Google Gemini API設定 ---
-MODEL_NAME = "Gemini 2.0 Flash-Lite"  # 最新のGemini 1.5 Flashモデル
+MODEL_NAME = "gemini-2.0-flash-lite" 
 GOOGLE_API_KEY = os.environ.get("API-KEY", "")
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com")
 # Gradioのデフォルトポートは7860、FastAPIのデフォルトは8000、競合を避けるため10000を使用
