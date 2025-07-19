@@ -4,6 +4,7 @@ import requests
 import gradio as gr
 import logging
 import json
+import uuid
 import google.generativeai as genai
 from datetime import datetime
 from fastapi import FastAPI
