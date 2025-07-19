@@ -4,6 +4,7 @@ import requests
 import gradio as gr
 import logging
 import json
+import google.generativeai as genai
 from datetime import datetime
 from fastapi import FastAPI
 from typing import List, Tuple, Any, Optional, Dict
@@ -192,12 +193,15 @@ logging.basicConfig(
 # --- 型定義 ---
 ChatHistory = List[Tuple[str, str]]
 
-# --- Groq API設定 ---
-MODEL_NAME = "llama-3.3-70b-versatile"
-GROQ_API_KEY = os.environ.get("API-KEY", "")
+# --- Google Gemini API設定 ---
+MODEL_NAME = "gemini-2.0-flash-exp"
+GOOGLE_API_KEY = os.environ.get("API-KEY", "")
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com")
 # Gradioのデフォルトポートは7860、FastAPIのデフォルトは8000、競合を避けるため10000を使用
 DEFAULT_PORT = 10000
+
+# Google Generative AI設定
+genai.configure(api_key=GOOGLE_API_KEY)
 PORT = int(os.environ.get("PORT", DEFAULT_PORT))
 
 system_prompt = """\
@@ -281,9 +285,9 @@ def build_messages(history: ChatHistory, user_input: str, system_prompt: str) ->
     
     return messages
 
-def call_groq_api(messages: List[dict]) -> str:
+def call_gemini_api(messages: List[dict]) -> str:
     """
-    Groq APIを呼び出して応答を取得する
+    Google Gemini APIを呼び出して応答を取得する
     
     Args:
         messages: APIに送信するメッセージリスト
@@ -291,33 +295,62 @@ def call_groq_api(messages: List[dict]) -> str:
     Returns:
         APIからの応答テキスト
     """
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
-    data = {
-        "model": MODEL_NAME,
-        "messages": messages,
-        "temperature": 0.7,
-        "top_p": 0.9,
-        "max_tokens": 1024
-    }
-    
     try:
-        response = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers=headers,
-            json=data
-        )
-        response.raise_for_status()
+        # Gemini用にメッセージを変換
+        gemini_messages = []
+        system_content = None
         
-        result = response.json()
-        return result["choices"][0]["message"]["content"]
+        # システムプロンプトを抽出
+        for msg in messages:
+            if msg["role"] == "system":
+                system_content = msg["content"]
+            else:
+                gemini_messages.append({"role": msg["role"], "parts": [{"text": msg["content"]}]})
+        
+        # モデルの初期化（システムプロンプトを含める）
+        generation_config = {
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "max_output_tokens": 1024,
+        }
+        
+        safety_settings = [
+            {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_NONE"
+            },
+            {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+            }
+        ]
+        
+        model = genai.GenerativeModel(
+            model_name=MODEL_NAME,
+            generation_config=generation_config,
+            safety_settings=safety_settings,
+            system_instruction=system_content
+        )
+        
+        # チャット履歴からチャットセッションを作成
+        chat = model.start_chat(history=gemini_messages[:-1] if len(gemini_messages) > 1 else [])
+        
+        # 最後のユーザーメッセージに対して応答を生成
+        response = chat.send_message(gemini_messages[-1]["parts"][0]["text"])
+        
+        return response.text
     except Exception as e:
-        logging.error(f"Groq API呼び出しエラー: {str(e)}")
+        logging.error(f"Gemini API呼び出しエラー: {str(e)}")
         if hasattr(e, 'response') and e.response:
-            logging.error(f"レスポンス: {e.response.text}")
+            logging.error(f"レスポンス: {e.response}")
         return "チッ、調子悪いみたいだな..."
 
 def chat(user_input: str, system_prompt: str, history: Any = None, session_id: Optional[str] = None) -> Tuple[str, ChatHistory]:
@@ -401,9 +434,9 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
         # デバッグ用：メッセージの内容をログに記録
         logging.debug(f"Preparing messages for model: {json.dumps(messages, ensure_ascii=False)[:500]}...")
         
-        # Groq APIを使用して推論を実行
-        logging.info(f"Generating response with Groq API using {MODEL_NAME}")
-        api_response = call_groq_api(messages)
+        # Gemini APIを使用して推論を実行
+        logging.info(f"Generating response with Gemini API using {MODEL_NAME}")
+        api_response = call_gemini_api(messages)
         
         # デバッグ用：レスポンスの一部をログに記録
         logging.debug(f"Generated response: {api_response[:100]}...")
