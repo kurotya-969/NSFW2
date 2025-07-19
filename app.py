@@ -164,7 +164,7 @@ ChatHistory = List[Tuple[str, str]]
 # --- Hugging Face モデル設定 ---
 MODEL_NAME = "Rakuten/RakutenAI-7B-chat"
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "")
-PORT = int(os.environ.get("PORT", 10000))
+PORT = int(os.environ.get("PORT", 10000))  # Use os.environ.get for consistent environment variable handling
 
 # モデルとトークナイザーの初期化
 logging.info(f"Loading model: {MODEL_NAME}")
@@ -892,5 +892,5 @@ def build_messages_with_token_management(history: ChatHistory, user_input: str, 
 # アプリケーション起動用のエントリーポイント
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.getenv("PORT", 10000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    # Use the PORT variable defined at the top of the file for consistency
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
