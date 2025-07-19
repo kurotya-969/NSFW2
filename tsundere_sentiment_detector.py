@@ -742,11 +742,11 @@ class TsundereSentimentDetector:
         for sentiment_type in context_sentiment.raw_sentiment.sentiment_types:
             if sentiment_type == SentimentType.SEXUAL:
                 sexual_content_detected = True
-                # 親密度に基づいて性的内容の重大度を設定
+                # 親密度に基づいて性的内容の重大度を設定（LLMのガイダンス用）
                 if session_id and get_session_manager():
                     affection_level = get_session_manager().get_affection_level(session_id)
                     
-                    # 親密度が低いほど、性的内容に対する拒絶反応が強い
+                    # 親密度に応じた重大度を設定（LLMの反応ガイダンス用）
                     if affection_level <= 25:  # hostile, distant
                         sexual_content_severity = 3  # 非常に強い拒絶
                     elif affection_level <= 65:  # cautious, friendly
@@ -759,35 +759,9 @@ class TsundereSentimentDetector:
                     # セッション情報がない場合はデフォルトで強い拒絶
                     sexual_content_severity = 2
                 
-                # 性的内容に対する拒絶反応を適用
-                if sexual_content_severity > 0:
-                    # 親密度に基づいて拒絶反応の強さを調整
-                    sexual_penalty_multiplier = 1.0 + (sexual_content_severity * 0.5)  # 1.5 ~ 2.5
-                    
-                    # 元の感情スコアと親密度変化に性的内容ペナルティを適用
-                    if adjusted_sentiment_score > 0:
-                        # 肯定的な感情を反転させる
-                        adjusted_sentiment_score = -adjusted_sentiment_score * sexual_penalty_multiplier
-                    else:
-                        # 否定的な感情をさらに強める
-                        adjusted_sentiment_score *= sexual_penalty_multiplier
-                    
-                    # 親密度変化に強いペナルティを適用
-                    if adjusted_affection_delta > 0:
-                        # 肯定的な親密度変化を反転させる
-                        adjusted_affection_delta = -adjusted_affection_delta * sexual_penalty_multiplier
-                    else:
-                        # 否定的な親密度変化をさらに強める
-                        adjusted_affection_delta *= sexual_penalty_multiplier
-                    
-                    # 最低でも強いペナルティを保証
-                    adjusted_affection_delta = min(adjusted_affection_delta, -5 * sexual_content_severity)
-                    
-                    # ログに記録
-                    logging.info(f"性的内容に対する拒絶反応を適用: 重大度={sexual_content_severity}, "
-                               f"乗数={sexual_penalty_multiplier:.1f}, "
-                               f"感情スコア={context_sentiment.adjusted_sentiment_score:.2f}->{adjusted_sentiment_score:.2f}, "
-                               f"親密度変化={context_sentiment.adjusted_affection_delta}->{adjusted_affection_delta}")
+                # 性的内容の検出をログに記録
+                logging.info(f"性的内容を検出: 重大度={sexual_content_severity}, "
+                           f"親密度レベル={affection_level if session_id and get_session_manager() else 'unknown'}")
                 break
         
         # If tsundere expression detected with good confidence, adjust sentiment
@@ -956,12 +930,21 @@ class TsundereSentimentDetector:
             tsundere_section += "\n## 【最重要】性的内容への対応\n"
             tsundere_section += f"- 親密度に応じた拒絶反応を示す（強度レベル：{severity}/3）\n"
             tsundere_section += "- 必ず返答し、無視しないこと\n"
+            tsundere_section += "- 性的内容に対する反応はLLMが自然に生成すること\n"
             
-            # Add example expressions based on severity
-            if severity >= 2:
-                tsundere_section += "- 例：「バカじゃないの？」「そういう話はやめろよ」「気持ち悪っ！」\n"
-            else:
-                tsundere_section += "- 例：「ちょっと...」「もう...」「そ、そういうのは...」\n"
+            # Add guidance based on affection level/severity
+            if severity >= 3:  # 非常に強い拒絶（親密度が低い場合）
+                tsundere_section += "- 強い拒絶と不快感を示す\n"
+                tsundere_section += "- 例：「気持ち悪っ！」「何言ってんだよ、変態！」「近寄るな！」\n"
+            elif severity == 2:  # 強い拒絶（中程度の親密度）
+                tsundere_section += "- 明確な拒絶を示すが、過度に攻撃的にはならない\n"
+                tsundere_section += "- 例：「バカじゃないの？」「そういう話はやめろよ」「ちょっと引くわ」\n"
+            elif severity == 1:  # 中程度の拒絶（高い親密度）
+                tsundere_section += "- 軽い不快感を示すが、強い拒絶は避ける\n"
+                tsundere_section += "- 例：「ちょっと...」「そういうのはいいから」「変なこと言わないでよ」\n"
+            else:  # 軽度の拒絶または許容（最高の親密度）
+                tsundere_section += "- 恥じらいを見せるが、完全な拒絶は避ける\n"
+                tsundere_section += "- 例：「もう...」「ばっ、バカ言わないでよ...」「そ、そういうのは...」\n"
             
             # Add the tsundere section to the base prompt
             enhanced_prompt = base_prompt + tsundere_section
