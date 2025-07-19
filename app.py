@@ -12,6 +12,9 @@ from fastapi.responses import JSONResponse
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tsundere_aware_prompt_generator import TsundereAwarePromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
+
+PORT = int(os.getenv("PORT", 10000))
+
 def clean_meta(text: str) -> str:
     """
     メタ情報・注釈・説明文などを削除し、キャラクターの直接的な発言のみを残す
