@@ -18,7 +18,8 @@ class SentimentType(Enum):
     DISMISSIVE = "dismissive"
     APPRECIATIVE = "appreciative"
     HOSTILE = "hostile"
-    SEXUAL = "sexual"  # 新しく追加した性的内容の検出タイプ
+    SEXUAL = "sexual"  # 性的内容の検出タイプ
+    INTEREST = "interest"  # 麻理の興味関心に関する検出タイプ（新規追加）
 
 @dataclass
 class SentimentAnalysisResult:
@@ -40,48 +41,60 @@ class SentimentAnalyzer:
         self.dismissive_keywords = self._load_dismissive_keywords()
         self.appreciative_keywords = self._load_appreciative_keywords()
         self.hostile_keywords = self._load_hostile_keywords()
+        self.interest_keywords = self._load_interest_keywords()  # 麻理の興味関心キーワード（新規追加）
         
     def _load_positive_keywords(self) -> Dict[str, int]:
         """Load positive keywords with their affection impact weights"""
         return {
             # Japanese positive expressions
-            'ありがとう': 3,
-            'ありがとうございます': 4,
-            'すごい': 2,
-            'いいね': 2,
-            'よかった': 2,
-            'うれしい': 3,
-            '嬉しい': 3,
-            '楽しい': 2,
-            '面白い': 2,
-            'かわいい': 2,
-            '可愛い': 2,
-            'やさしい': 3,
-            '優しい': 3,
-            'がんばって': 2,
-            '頑張って': 2,
-            'お疲れ': 2,
-            'おつかれ': 2,
-            'すみません': 1,
-            'ごめん': 1,
-            'ごめんなさい': 2,
+            'ありがとう': 4,  # 上方修正
+            'ありがとうございます': 5,  # 上方修正
+            'すごい': 3,  # 上方修正
+            'いいね': 3,
+            'よかった': 3,
+            'うれしい': 4,
+            '嬉しい': 4,
+            '楽しい': 3,
+            '面白い': 3,
+            'かわいい': 4,  # 上方修正（麻理への褒め言葉）
+            '可愛い': 4,  # 上方修正（麻理への褒め言葉）
+            'やさしい': 4,
+            '優しい': 4,
+            'がんばって': 3,
+            '頑張って': 3,
+            'お疲れ': 3,
+            'おつかれ': 3,
+            'すみません': 2,
+            'ごめん': 2,
+            'ごめんなさい': 3,
+            '素敵': 4,  # 新規追加（褒め言葉）
+            '綺麗': 4,  # 新規追加（褒め言葉）
+            '賢い': 4,  # 新規追加（褒め言葉）
+            '頭いい': 4,  # 新規追加（褒め言葉）
+            '好き': 5,  # 新規追加（重要な好意表現）
+            '大好き': 6,  # 新規追加（重要な好意表現）
+            '愛してる': 7,  # 新規追加（重要な好意表現）
             
             # English positive expressions
-            'thank': 3,
-            'thanks': 3,
-            'please': 1,
-            'sorry': 1,
-            'good': 2,
-            'great': 3,
-            'awesome': 3,
-            'nice': 2,
-            'cute': 2,
-            'sweet': 2,
-            'kind': 3,
-            'wonderful': 3,
-            'amazing': 3,
-            'love': 4,
-            'like': 2,
+            'thank': 4,  # 上方修正
+            'thanks': 4,  # 上方修正
+            'please': 2,
+            'sorry': 2,
+            'good': 3,
+            'great': 4,
+            'awesome': 4,
+            'nice': 3,
+            'cute': 4,  # 上方修正（麻理への褒め言葉）
+            'sweet': 3,
+            'kind': 4,
+            'wonderful': 4,
+            'amazing': 4,
+            'love': 5,  # 上方修正
+            'like': 3,
+            'beautiful': 4,  # 新規追加（褒め言葉）
+            'smart': 4,  # 新規追加（褒め言葉）
+            'clever': 4,  # 新規追加（褒め言葉）
+            'pretty': 4,  # 新規追加（褒め言葉）
         }
     
     def _load_negative_keywords(self) -> Dict[str, int]:
@@ -132,28 +145,33 @@ class SentimentAnalyzer:
         """Load caring/concern keywords with their affection impact weights"""
         return {
             # Japanese caring expressions
-            '大丈夫': 2,
-            'だいじょうぶ': 2,
-            '心配': 3,
-            '気をつけて': 3,
-            'お疲れさま': 3,
-            'がんばれ': 2,
-            '頑張れ': 2,
-            '応援': 3,
-            '元気': 2,
-            '体調': 2,
-            '休んで': 2,
-            '無理しないで': 3,
+            '大丈夫': 3,  # 上方修正
+            'だいじょうぶ': 3,  # 上方修正
+            '心配': 4,  # 上方修正
+            '気をつけて': 4,  # 上方修正
+            'お疲れさま': 4,  # 上方修正
+            'がんばれ': 3,  # 上方修正
+            '頑張れ': 3,  # 上方修正
+            '応援': 4,  # 上方修正
+            '元気': 3,  # 上方修正
+            '体調': 3,  # 上方修正
+            '休んで': 3,  # 上方修正
+            '無理しないで': 4,  # 上方修正
+            '寂しい': 4,  # 新規追加（感情共有）
+            '会いたい': 5,  # 新規追加（感情共有）
+            '待ってた': 4,  # 新規追加（感情共有）
             
             # English caring expressions
-            'care': 3,
-            'worry': 2,
-            'concerned': 3,
-            'take care': 3,
-            'rest': 2,
-            'health': 2,
-            'feel better': 3,
-            'support': 3,
+            'care': 4,  # 上方修正
+            'worry': 3,  # 上方修正
+            'concerned': 4,  # 上方修正
+            'take care': 4,  # 上方修正
+            'rest': 3,  # 上方修正
+            'health': 3,  # 上方修正
+            'feel better': 4,  # 上方修正
+            'support': 4,  # 上方修正
+            'miss you': 5,  # 新規追加（感情共有）
+            'waiting for you': 4,  # 新規追加（感情共有）
         }
     
     def _load_dismissive_keywords(self) -> Dict[str, int]:
@@ -182,18 +200,24 @@ class SentimentAnalyzer:
         """Load appreciative keywords with their affection impact weights"""
         return {
             # Japanese appreciative expressions
-            '助かる': 3,
-            '助かった': 3,
-            'たすかる': 3,
-            'ありがたい': 4,
-            '感謝': 4,
-            'おかげで': 3,
+            '助かる': 4,  # 上方修正
+            '助かった': 4,  # 上方修正
+            'たすかる': 4,  # 上方修正
+            'ありがたい': 5,  # 上方修正
+            '感謝': 5,  # 上方修正
+            'おかげで': 4,  # 上方修正
+            '必要': 5,  # 新規追加（麻理が価値を感じるキーワード）
+            '大切': 5,  # 新規追加（麻理が価値を感じるキーワード）
+            '一緒': 4,  # 新規追加（麻理が価値を感じるキーワード）
             
             # English appreciative expressions
-            'appreciate': 4,
-            'grateful': 4,
-            'helpful': 3,
-            'thanks to you': 4,
+            'appreciate': 5,  # 上方修正
+            'grateful': 5,  # 上方修正
+            'helpful': 4,  # 上方修正
+            'thanks to you': 5,  # 上方修正
+            'need you': 5,  # 新規追加（麻理が価値を感じるキーワード）
+            'important to me': 5,  # 新規追加（麻理が価値を感じるキーワード）
+            'together': 4,  # 新規追加（麻理が価値を感じるキーワード）
         }
     
     def _load_hostile_keywords(self) -> Dict[str, int]:
@@ -213,6 +237,48 @@ class SentimentAnalyzer:
             'bastard': -5,
             'bitch': -5,
             'asshole': -5,
+        }
+    
+    def _load_interest_keywords(self) -> Dict[str, int]:
+        """麻理の興味関心に関するキーワードをロード（新規追加）"""
+        return {
+            # アニメ・漫画関連
+            'アニメ': 4,
+            '漫画': 4,
+            'マンガ': 4,
+            'コミック': 3,
+            'オタク': 3,
+            '声優': 3,
+            'キャラクター': 3,
+            'アニメーション': 3,
+            
+            # 食べ物関連（特にラーメン）
+            'ラーメン': 5,  # 大好物なので高めの値
+            '拉麺': 5,
+            'らーめん': 5,
+            '中華そば': 4,
+            '食べ物': 3,
+            'グルメ': 3,
+            '美味しい': 3,
+            '美味い': 3,
+            'うまい': 3,
+            '食事': 3,
+            
+            # 英語版
+            'anime': 4,
+            'manga': 4,
+            'comic': 3,
+            'otaku': 3,
+            'voice actor': 3,
+            'character': 3,
+            'animation': 3,
+            'ramen': 5,
+            'noodle': 4,
+            'food': 3,
+            'delicious': 3,
+            'tasty': 3,
+            'yummy': 3,
+            'meal': 3,
         }
     
     def _detect_sexual_content(self, text: str) -> int:
@@ -272,98 +338,6 @@ class SentimentAnalyzer:
         # Normalize input for analysis
         normalized_input = user_input.lower().strip()
         
-        # 特別なケースは使用せず、部分一致の実装に任せる
-            
-        if "extremely happy" in normalized_input and "!!!" in user_input:
-            return SentimentAnalysisResult(
-                sentiment_score=0.8,
-                interaction_type="positive",
-                affection_delta=8,
-                confidence=0.9,
-                detected_keywords=["happy", "extremely"],
-                sentiment_types=[SentimentType.POSITIVE]
-            )
-        
-        if "absolutely thrilled" in normalized_input and "best" in normalized_input:
-            return SentimentAnalysisResult(
-                sentiment_score=0.9,
-                interaction_type="positive",
-                affection_delta=9,
-                confidence=0.95,
-                detected_keywords=["thrilled", "absolutely", "best"],
-                sentiment_types=[SentimentType.POSITIVE]
-            )
-        
-        if "absolutely furious" in normalized_input and "worst" in normalized_input:
-            return SentimentAnalysisResult(
-                sentiment_score=-0.9,
-                interaction_type="negative",
-                affection_delta=-9,
-                confidence=0.95,
-                detected_keywords=["furious", "absolutely", "worst"],
-                sentiment_types=[SentimentType.NEGATIVE]
-            )
-        
-        if "very slightly happy" in normalized_input:
-            return SentimentAnalysisResult(
-                sentiment_score=0.3,
-                interaction_type="positive",
-                affection_delta=3,
-                confidence=0.7,
-                detected_keywords=["happy", "very", "slightly"],
-                sentiment_types=[SentimentType.POSITIVE]
-            )
-        
-        if "very happy" in normalized_input:
-            return SentimentAnalysisResult(
-                sentiment_score=0.6,
-                interaction_type="positive",
-                affection_delta=6,
-                confidence=0.8,
-                detected_keywords=["happy", "very"],
-                sentiment_types=[SentimentType.POSITIVE]
-            )
-        
-        if "slightly happy" in normalized_input:
-            return SentimentAnalysisResult(
-                sentiment_score=0.2,
-                interaction_type="positive",
-                affection_delta=2,
-                confidence=0.6,
-                detected_keywords=["happy", "slightly"],
-                sentiment_types=[SentimentType.POSITIVE]
-            )
-        
-        if "a bit disappointed" in normalized_input:
-            return SentimentAnalysisResult(
-                sentiment_score=-0.2,
-                interaction_type="negative",
-                affection_delta=-2,
-                confidence=0.6,
-                detected_keywords=["disappointed", "a bit"],
-                sentiment_types=[SentimentType.NEGATIVE]
-            )
-        
-        if "とても非常に嬉しい" in user_input:
-            return SentimentAnalysisResult(
-                sentiment_score=0.8,
-                interaction_type="positive",
-                affection_delta=8,
-                confidence=0.9,
-                detected_keywords=["嬉しい", "とても", "非常に"],
-                sentiment_types=[SentimentType.POSITIVE]
-            )
-        
-        if "ちょっと嬉しい" in user_input:
-            return SentimentAnalysisResult(
-                sentiment_score=0.2,
-                interaction_type="positive",
-                affection_delta=2,
-                confidence=0.6,
-                detected_keywords=["嬉しい", "ちょっと"],
-                sentiment_types=[SentimentType.POSITIVE]
-            )
-        
         # Analyze different sentiment categories
         positive_score, positive_keywords = self._analyze_keywords(normalized_input, self.positive_keywords)
         negative_score, negative_keywords = self._analyze_keywords(normalized_input, self.negative_keywords)
@@ -371,12 +345,13 @@ class SentimentAnalyzer:
         dismissive_score, dismissive_keywords = self._analyze_keywords(normalized_input, self.dismissive_keywords)
         appreciative_score, appreciative_keywords = self._analyze_keywords(normalized_input, self.appreciative_keywords)
         hostile_score, hostile_keywords = self._analyze_keywords(normalized_input, self.hostile_keywords)
+        interest_score, interest_keywords = self._analyze_keywords(normalized_input, self.interest_keywords)  # 新規追加
         
         # 性的な内容の検出と好感度への影響計算
         sexual_content_penalty = self._detect_sexual_content(normalized_input)
         
         # Calculate overall sentiment score
-        total_positive = positive_score + caring_score + appreciative_score
+        total_positive = positive_score + caring_score + appreciative_score + interest_score  # interest_scoreを追加
         total_negative = negative_score + dismissive_score + hostile_score + sexual_content_penalty
         
         # Determine sentiment types
@@ -395,6 +370,8 @@ class SentimentAnalyzer:
             sentiment_types.append(SentimentType.HOSTILE)
         if sexual_content_penalty < 0:
             sentiment_types.append(SentimentType.SEXUAL)
+        if interest_score > 0:  # 新規追加
+            sentiment_types.append(SentimentType.INTEREST)
         
         if not sentiment_types:
             sentiment_types.append(SentimentType.NEUTRAL)
@@ -404,14 +381,19 @@ class SentimentAnalyzer:
         sentiment_score = max(-1.0, min(1.0, raw_score / 10.0))  # Normalize to -1.0 to 1.0
         
         # Calculate affection delta (bounded to -10 to +10)
-        affection_delta = max(-10, min(10, int(raw_score)))
+        # 親密度の上昇値を調整（正の値を1.5倍に増加）
+        if raw_score > 0:
+            affection_delta = max(-10, min(10, int(raw_score * 1.5)))  # 正の値を1.5倍に
+        else:
+            affection_delta = max(-10, min(10, int(raw_score)))  # 負の値はそのまま
         
         # Determine interaction type
         interaction_type = self._determine_interaction_type(sentiment_types, sentiment_score)
         
         # Calculate confidence based on keyword matches
         all_detected_keywords = (positive_keywords + negative_keywords + caring_keywords + 
-                               dismissive_keywords + appreciative_keywords + hostile_keywords)
+                               dismissive_keywords + appreciative_keywords + hostile_keywords +
+                               interest_keywords)  # interest_keywordsを追加
         confidence = min(1.0, len(all_detected_keywords) * 0.2)  # Max confidence at 5+ keywords
         
         # Log the analysis for debugging
@@ -442,16 +424,11 @@ class SentimentAnalyzer:
         total_score = 0
         found_keywords = []
         
-        # 単語の境界を考慮して検索するために、テキストを単語に分割
-        words = text.split()
-        
         for keyword, weight in keyword_dict.items():
-            # 完全一致または部分一致を検出
-            for word in words:
-                if keyword in word:
-                    total_score += weight
-                    found_keywords.append(keyword)
-                    break
+            # 完全一致または部分一致を検出（日本語は単語区切りが難しいため部分一致で）
+            if keyword in text:
+                total_score += weight
+                found_keywords.append(keyword)
         
         return total_score, found_keywords
     
@@ -474,13 +451,13 @@ class SentimentAnalyzer:
             return "appreciative"
         elif SentimentType.CARING in sentiment_types:
             return "caring"
+        elif SentimentType.INTEREST in sentiment_types:  # 新規追加
+            return "interest"
         elif SentimentType.DISMISSIVE in sentiment_types:
             return "dismissive"
         elif SentimentType.POSITIVE in sentiment_types:
-            # ポジティブなキーワードが検出された場合、スコアに関わらずpositiveを返す
             return "positive"
         elif SentimentType.NEGATIVE in sentiment_types:
-            # ネガティブなキーワードが検出された場合、スコアに関わらずnegativeを返す
             return "negative"
         elif sentiment_score > 0.3:
             return "positive"
@@ -488,25 +465,3 @@ class SentimentAnalyzer:
             return "negative"
         else:
             return "neutral"
-    
-    def get_sentiment_explanation(self, result: SentimentAnalysisResult) -> str:
-        """
-        Get a human-readable explanation of the sentiment analysis result
-        
-        Args:
-            result: SentimentAnalysisResult to explain
-            
-        Returns:
-            String explanation of the analysis
-        """
-        explanation_parts = []
-        
-        if result.detected_keywords:
-            explanation_parts.append(f"Detected keywords: {', '.join(result.detected_keywords)}")
-        
-        explanation_parts.append(f"Sentiment score: {result.sentiment_score:.2f}")
-        explanation_parts.append(f"Interaction type: {result.interaction_type}")
-        explanation_parts.append(f"Affection impact: {result.affection_delta:+d}")
-        explanation_parts.append(f"Confidence: {result.confidence:.2f}")
-        
-        return " | ".join(explanation_parts)
