@@ -661,7 +661,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     def update_session_info(session_id):
         """Update session info display with current affection level and relationship stage"""
         if not session_id or not get_session_manager() or not get_affection_tracker():
-            return session_id, 15, "不明", {}
+            return session_id, 25, "distant", {}
         
         # Get current affection level
         affection_level = get_session_manager().get_affection_level(session_id)
@@ -690,7 +690,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         """Enhanced clear_history that also resets session info display"""
         empty_chatbot, empty_history, empty_session, empty_rel_info = clear_history()
         
-        return empty_chatbot, empty_history, empty_session, "", 15, "不明", {}
+        return empty_chatbot, empty_history, empty_session, "", 25, "distant", {}
 
     # イベントハンドラ
     user_input.submit(on_submit_with_info, 

@@ -48,7 +48,7 @@ class SessionManager:
         current_time = datetime.now().isoformat()
         session = UserSession(
             user_id=session_id,
-            affection_level=15,  # Start with low affection as per Mari's character
+            affection_level=25,  # Start with 'distant' relationship stage (affection_level <= 25)
             conversation_history=[],
             session_start_time=current_time,
             last_interaction=current_time
