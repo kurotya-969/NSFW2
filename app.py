@@ -166,7 +166,7 @@ ChatHistory = List[Tuple[str, str]]
 
 # --- Hugging Face モデル設定 ---
 MODEL_NAME = "Rakuten/RakutenAI-7B-chat"
-RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "")
+RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com")
 # Gradioのデフォルトポートは7860、FastAPIのデフォルトは8000、競合を避けるため10000を使用
 DEFAULT_PORT = 10000
 PORT = int(os.environ.get("PORT", DEFAULT_PORT))
@@ -897,5 +897,5 @@ def build_messages_with_token_management(history: ChatHistory, user_input: str, 
 # アプリケーション起動用のエントリーポイント
 if __name__ == "__main__":
     import uvicorn
-    # 上部で定義したPORT変数を使用（DEFAULT_PORT = 10000）
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    # 明示的に固定ポート10000を使用
+    uvicorn.run(app, host="0.0.0.0", port=10000)

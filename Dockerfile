@@ -8,9 +8,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Render が PORT を注入するため明示的に環境変数指定しなくてOKだが、念のためデフォルト値も定義
+# 明示的にポート10000を設定
 ENV PORT=10000
-EXPOSE ${PORT}
+EXPOSE 10000
 
-# PORT を shell 展開するには sh -c の中で $PORT を囲う
-CMD sh -c "uvicorn app:app --host 0.0.0.0 --port ${PORT}"
+# 固定ポートを使用して起動
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "10000"]
