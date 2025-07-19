@@ -4,12 +4,10 @@ import requests
 import gradio as gr
 import logging
 import json
-import torch
 from datetime import datetime
 from fastapi import FastAPI
 from typing import List, Tuple, Any, Optional, Dict
 from fastapi.responses import JSONResponse
-from transformers import AutoTokenizer, AutoModelForCausalLM
 from tsundere_aware_prompt_generator import TsundereAwarePromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
 
@@ -40,20 +38,20 @@ def clean_meta(text: str) -> str:
     # 特定のプレフィックス行を削除（より包括的に）
     prefix_patterns = [
         # 英語のメタ情報
-        r'^(Note:|Response:|Example:|Explanation:|Context:|Clarification:|Instruction:|Guidance:).*$',
+        r'^(Note:|Response:|Example:|Explanation:|Context:|Clarification:|Instruction:|Guidance:).*',
         # 日本語のメタ情報
-        r'^(補足:|説明:|注意:|注:|メモ:|例:|例示:|ヒント:|アドバイス:|ポイント:|解説:|前提:|状況:|設定:|背景:|理由:|注釈:|参考:|例文:|回答例:|応答例:).*$',
+        r'^(補足:|説明:|注意:|注:|メモ:|例:|例示:|ヒント:|アドバイス:|ポイント:|解説:|前提:|状況:|設定:|背景:|理由:|注釈:|参考:|例文:|回答例:|応答例:).*',
         # 記号で始まるメタ情報
-        r'^※.*$',
-        r'^#.*$',
-        r'^・.*$',
+        r'^※.*',
+        r'^#.*',
+        r'^・.*',
         # マークダウン形式の見出し
-        r'^#+\s+.*$',
+        r'^#+\s+.*',
         # 会話形式のプレフィックス
-        r'^(麻理:|ユーザー:|システム:|AI:|Mari:|User:|System:).*$',
+        r'^(麻理:|ユーザー:|システム:|AI:|Mari:|User:|System:).*',
         # 良い例・悪い例などの例示
-        r'^#\s*(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)?(応答|会話|対応|反応|例|例文|サンプル).*$',
-        r'^(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)(応答|会話|対応|反応|例|例文|サンプル).*$'
+        r'^#\s*(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)?(応答|会話|対応|反応|例|例文|サンプル).*',
+        r'^(良い|悪い|適切|不適切|正しい|誤った|推奨|非推奨)(応答|会話|対応|反応|例|例文|サンプル).*'
     ]
     
     for pattern in prefix_patterns:
@@ -106,17 +104,17 @@ def clean_meta(text: str) -> str:
         r'.*麻理の口調で返します.*',
         
         # 「〜です」「〜ます」などの敬語表現（麻理の口調と不一致）
-        r'.*でしょうか。$',
-        r'.*します。$',
-        r'.*します$',
-        r'.*ください。$',
-        r'.*ください$',
-        r'.*お願いします。$',
-        r'.*お願いします$',
-        r'.*いたします。$',
-        r'.*いたします$',
-        r'.*致します。$',
-        r'.*致します$'
+        r'.*でしょうか。',
+        r'.*します。',
+        r'.*します',
+        r'.*ください。',
+        r'.*ください',
+        r'.*お願いします。',
+        r'.*お願いします',
+        r'.*いたします。',
+        r'.*いたします',
+        r'.*致します。',
+        r'.*致します'
     ]
     
     for pattern in removal_phrases:
@@ -164,17 +162,13 @@ logging.basicConfig(
 # --- 型定義 ---
 ChatHistory = List[Tuple[str, str]]
 
-# --- Hugging Face モデル設定 ---
-MODEL_NAME = "Rakuten/RakutenAI-7B-chat"
+# --- Groq API設定 ---
+MODEL_NAME = "llama3-8b-8192"
+GROQ_API_KEY = os.environ.get("API-KEY", "")
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com")
 # Gradioのデフォルトポートは7860、FastAPIのデフォルトは8000、競合を避けるため10000を使用
 DEFAULT_PORT = 10000
 PORT = int(os.environ.get("PORT", DEFAULT_PORT))
-
-# モデルとトークナイザーの初期化
-logging.info(f"Loading model: {MODEL_NAME}")
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=torch.float16, device_map="auto")
 
 system_prompt = """\
 あなたは「麻理（まり）」という人格を持ったAIセクサロイド兼コンパニオンとして振る舞います。
@@ -283,8 +277,7 @@ def safe_history(history: Any) -> ChatHistory:
 def build_messages(history: ChatHistory, user_input: str, system_prompt: str) -> List[dict]:
     """
     会話履歴とユーザー入力からメッセージリストを構築する
-    システムプロンプト（人格設定）を常にコンテキストの先頭に配置し、
-    LoRAモデルなどで人格設定の記憶が消えるのを防止する
+    システムプロンプト（人格設定）を常にコンテキストの先頭に配置
     
     Args:
         history: 会話履歴
@@ -306,6 +299,46 @@ def build_messages(history: ChatHistory, user_input: str, system_prompt: str) ->
     messages.append({"role": "user", "content": user_input})
     
     return messages
+
+def call_groq_api(messages: List[dict]) -> str:
+    """
+    Groq APIを呼び出して応答を取得する
+    
+    Args:
+        messages: APIに送信するメッセージリスト
+        
+    Returns:
+        APIからの応答テキスト
+    """
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    data = {
+        "model": MODEL_NAME,
+        "messages": messages,
+        "temperature": 0.7,
+        "top_p": 0.9,
+        "max_tokens": 1024
+    }
+    
+    try:
+        response = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers=headers,
+            json=data
+        )
+        response.raise_for_status()
+        
+        result = response.json()
+        return result["choices"][0]["message"]["content"]
+    except Exception as e:
+        logging.error(f"Groq API呼び出しエラー: {str(e)}")
+        if hasattr(e, 'response') and e.response:
+            logging.error(f"レスポンス: {e.response.text}")
+        return "チッ、調子悪いみたいだな..."
+
 def chat(user_input: str, system_prompt: str, history: Any = None, session_id: Optional[str] = None) -> Tuple[str, ChatHistory]:
     """
     Enhanced chat function with affection system integration
@@ -395,26 +428,9 @@ def chat(user_input: str, system_prompt: str, history: Any = None, session_id: O
         # デバッグ用：メッセージの内容をログに記録
         logging.debug(f"Preparing messages for model: {json.dumps(messages, ensure_ascii=False)[:500]}...")
         
-        # Hugging Face モデルを使用して推論を実行
-        inputs = tokenizer.apply_chat_template(messages, return_tensors="pt").to(model.device)
-        
-        # 生成パラメータを設定
-        generation_config = {
-            "max_new_tokens": 1024,
-            "temperature": 0.7,
-            "top_p": 0.9,
-            "do_sample": True,
-            "pad_token_id": tokenizer.eos_token_id
-        }
-        
-        # 推論を実行
-        logging.info(f"Generating response with {MODEL_NAME}")
-        with torch.no_grad():
-            output = model.generate(inputs, **generation_config)
-        
-        # 生成されたテキストをデコード
-        generated_text = tokenizer.decode(output[0][inputs.shape[1]:], skip_special_tokens=True)
-        api_response = generated_text.strip()
+        # Groq APIを使用して推論を実行
+        logging.info(f"Generating response with Groq API using {MODEL_NAME}")
+        api_response = call_groq_api(messages)
         
         # デバッグ用：レスポンスの一部をログに記録
         logging.debug(f"Generated response: {api_response[:100]}...")
@@ -752,147 +768,18 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 console.log("Restoring session from event:", e.detail.sessionId);
                 return e.detail.sessionId;
             }
-            return sessionId;
+            return null;
         });
-        return sessionId;
+        return null;
     }
     """
     
-    # Add event handler for session restoration
-    session_state.change(
-        fn=restore_session,
-        inputs=[session_state],
-        outputs=[session_state, chatbot, state, relationship_info],
-        js=js_code
-    )
-    
-    # Add periodic session cleanup (runs once per day)
-    def cleanup_old_sessions():
-        """Clean up expired sessions (older than 30 days)"""
-        if get_session_manager():
-            cleaned_count = get_session_manager().cleanup_old_sessions(days_old=30)
-            logging.info(f"Cleaned up {cleaned_count} expired sessions")
-        return None
-    
-    # Schedule session cleanup to run once per day
-    demo.load(cleanup_old_sessions, inputs=None, outputs=None)
+    demo.load(restore_session, 
+             inputs=[gr.Javascript(js_code)], 
+             outputs=[session_state, chatbot, state, relationship_info])
 
 # Gradioアプリをマウント - UIへのパスを明示的に指定
 app = gr.mount_gradio_app(app, demo, path="/ui")
-
-def count_tokens(text: str) -> int:
-    """
-    テキストのトークン数を概算する簡易関数
-    正確なトークン数計算にはtiktokenなどのライブラリが必要だが、
-    ここでは簡易的に文字数の1/3をトークン数として扱う
-    
-    Args:
-        text: トークン数を計算するテキスト
-        
-    Returns:
-        概算トークン数
-    """
-    # 日本語は1文字あたり約1.5〜2トークン、英語は1単語あたり約1.3トークン
-    # 簡易的に文字数の1/3をトークン数として概算
-    return len(text) // 3
-
-def estimate_messages_tokens(messages: List[dict]) -> int:
-    """
-    メッセージリストの総トークン数を概算する
-    
-    Args:
-        messages: トークン数を計算するメッセージリスト
-        
-    Returns:
-        概算トークン数
-    """
-    total_tokens = 0
-    for message in messages:
-        # 各メッセージのロール部分も含めてトークン数を計算
-        total_tokens += count_tokens(message.get("content", ""))
-        # ロールごとのオーバーヘッド（4トークン程度）を加算
-        total_tokens += 4
-    
-    # メッセージ間のオーバーヘッド（3トークン程度）を加算
-    total_tokens += 3
-    
-    return total_tokens
-
-def summarize_conversation(history: ChatHistory) -> ChatHistory:
-    """
-    会話履歴を要約して、トークン数を削減する
-    
-    Args:
-        history: 要約対象の会話履歴
-        
-    Returns:
-        要約された会話履歴
-    """
-    if len(history) <= 4:  # 履歴が少ない場合は要約しない
-        return history
-    
-    # 最初の会話ターンと最新の3つの会話ターンを保持
-    # 最初のターンは文脈の設定に重要なことが多いため保持
-    summarized_history = [history[0]]
-    
-    # 中間部分を要約して1つのターンにまとめる
-    if len(history) > 4:
-        middle_history = history[1:-3]
-        if middle_history:
-            # 中間部分の要約を作成
-            user_parts = [u for u, _ in middle_history]
-            assistant_parts = [a for _, a in middle_history]
-            
-            summary_user = f"[過去の会話要約: {len(middle_history)}ターン分の会話履歴]"
-            summary_assistant = f"[過去の応答要約: 麻理は警戒心が強く、ぶっきらぼうな態度で応答していました]"
-            
-            summarized_history.append((summary_user, summary_assistant))
-    
-    # 最新の3つの会話ターンを追加
-    summarized_history.extend(history[-3:])
-    
-    return summarized_history
-
-def build_messages_with_token_management(history: ChatHistory, user_input: str, system_prompt: str, max_tokens: int = 3500) -> List[dict]:
-    """
-    トークン数を管理しながらメッセージリストを構築する
-    
-    Args:
-        history: 会話履歴
-        user_input: ユーザーの入力
-        system_prompt: システムプロンプト
-        max_tokens: 最大トークン数
-        
-    Returns:
-        トークン数を管理したメッセージリスト
-    """
-    # システムプロンプトのトークン数を計算
-    system_tokens = count_tokens(system_prompt)
-    
-    # ユーザー入力のトークン数を計算
-    user_input_tokens = count_tokens(user_input)
-    
-    # 会話履歴のトークン数を計算
-    history_messages = []
-    for u, a in history:
-        history_messages.append({"role": "user", "content": str(u)})
-        history_messages.append({"role": "assistant", "content": str(a)})
-    
-    history_tokens = estimate_messages_tokens(history_messages)
-    
-    # 合計トークン数を計算
-    total_tokens = system_tokens + user_input_tokens + history_tokens
-    
-    # トークン数が上限を超える場合、会話履歴を要約
-    if total_tokens > max_tokens:
-        logging.info(f"Token count ({total_tokens}) exceeds limit ({max_tokens}), summarizing conversation history")
-        summarized_history = summarize_conversation(history)
-        
-        # 要約後の会話履歴でメッセージを再構築
-        return build_messages(summarized_history, user_input, system_prompt)
-    
-    # トークン数が上限以内の場合、通常のメッセージ構築を行う
-    return build_messages(history, user_input, system_prompt)
 
 # アプリケーション起動用のエントリーポイント
 if __name__ == "__main__":
