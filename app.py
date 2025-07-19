@@ -6,6 +6,7 @@ import logging
 import json
 import uuid
 import google.generativeai as genai
+from google.generativeai.types.safety import HarmCategory, HarmBlockThreshold
 from datetime import datetime
 from fastapi import FastAPI
 from typing import List, Tuple, Any, Optional, Dict
@@ -195,7 +196,7 @@ logging.basicConfig(
 ChatHistory = List[Tuple[str, str]]
 
 # --- Google Gemini API設定 ---
-MODEL_NAME = "gemini-1.5-flash"
+MODEL_NAME = "Gemini 2.0 Flash-Lite"  # 最新のGemini 1.5 Flashモデル
 GOOGLE_API_KEY = os.environ.get("API-KEY", "")
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com")
 # Gradioのデフォルトポートは7860、FastAPIのデフォルトは8000、競合を避けるため10000を使用
@@ -364,24 +365,13 @@ class GeminiChatManager:
                 "max_output_tokens": 1024,
             }
             
-            safety_settings = [
-                {
-                    "category": "HARM_CATEGORY_HARASSMENT",
-                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-                },
-                {
-                    "category": "HARM_CATEGORY_HATE_SPEECH",
-                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-                },
-                {
-                    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                    "threshold": "BLOCK_NONE"
-                },
-                {
-                    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-                }
-            ]
+            # 安全性設定を最小限に設定 - HarmCategory と HarmBlockThreshold を使用
+            safety_settings = {
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE
+            }
             
             self.models[system_instruction] = genai.GenerativeModel(
                 model_name=MODEL_NAME,
