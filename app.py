@@ -193,7 +193,7 @@ logging.basicConfig(
 ChatHistory = List[Tuple[str, str]]
 
 # --- Groq API設定 ---
-MODEL_NAME = "mixtral-8x7b-32768"
+MODEL_NAME = "llama-3.3-70b-versatile"
 GROQ_API_KEY = os.environ.get("API-KEY", "")
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com")
 # Gradioのデフォルトポートは7860、FastAPIのデフォルトは8000、競合を避けるため10000を使用
