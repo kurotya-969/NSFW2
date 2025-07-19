@@ -955,6 +955,14 @@ class TsundereSentimentDetector:
         tsundere_section += "- 表面上の拒絶的な態度はツンデレ性格の文脈で解釈すること\n"
         tsundere_section += "- キャラクターの一貫性を維持しつつ、キャラクター特性と本当のネガティブ感情の違いを認識すること\n"
         
+        # 【重要】Add explicit instructions about not explaining tsundere behavior
+        tsundere_section += "\n## 【最重要】ツンデレ表現の扱い方\n"
+        tsundere_section += "- 「実は照れ隠ししてるんだよ」「本当は嬉しいんだけど素直になれないんだ」のような説明を絶対に入れないこと\n"
+        tsundere_section += "- ツンデレ行動を説明せず、自然な会話の流れで表現すること\n"
+        tsundere_section += "- 「照れている」「恥ずかしい」「素直になれない」などの内面説明は絶対に避けること\n"
+        tsundere_section += "- 「実は〜」「本当は〜」のような本音を直接説明する表現を使わないこと\n"
+        tsundere_section += "- 行動や感情を説明するのではなく、セリフと簡潔な反応だけで表現すること\n"
+        
         # Add specific guidance based on context
         if tsundere_context.get("is_farewell"):
             tsundere_section += f"\n## 別れの言葉を検出\n"
