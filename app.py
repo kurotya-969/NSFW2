@@ -10,6 +10,7 @@ from datetime import datetime
 from fastapi import FastAPI
 from typing import List, Tuple, Any, Optional, Dict
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from tsundere_aware_prompt_generator import TsundereAwarePromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
 from usage_statistics import initialize_usage_statistics, get_usage_statistics
@@ -644,6 +645,9 @@ manifest_data = {
 # FastAPIアプリ
 app = FastAPI()
 
+# 静的ファイルの配信設定
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # マニフェスト配信エンドポイント
 @app.get("/manifest.json")
 async def get_manifest():
@@ -660,8 +664,8 @@ async def admin_page():
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # マニフェストとカスタムCSSとJavaScriptを埋め込み
     gr.HTML(f"""
-            <link rel="stylesheet" href="affection_gauge.css">
-            <script src="affection_gauge.js"></script>
+            <link rel="stylesheet" href="/static/affection_gauge.css">
+            <script src="/static/affection_gauge.js"></script>
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL}";
             window.src = "{RENDER_EXTERNAL_URL}";
