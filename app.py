@@ -951,7 +951,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         empty_input, updated_chatbot, updated_history, new_session_id, updated_rel_info = on_submit(msg, history, session_id, rel_info)
         
         # Update session info display
-        session_id_display, affection_level, relationship_stage, rel_info = update_session_info(new_session_id)
+        session_id_display, affection_level, relationship_stage, rel_info, stage_notification, rel_details = update_session_info(new_session_id)
         
         return empty_input, updated_chatbot, updated_history, new_session_id, session_id_display, affection_level, relationship_stage, rel_info
     
@@ -1016,7 +1016,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                             history.append((entry['user'], entry['assistant']))
                     
                     # Update session info display
-                    session_id_val, affection_level, relationship_stage, rel_info = update_session_info(session_id)
+                    session_id_val, affection_level, relationship_stage, rel_info, stage_notification, rel_details = update_session_info(session_id)
                     
                     logging.info(f"Restored session: {session_id} with {len(history)} messages")
                     return session_id, history, history, rel_info
