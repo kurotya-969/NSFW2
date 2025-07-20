@@ -12,15 +12,22 @@
 
 .affection-gauge .gradio-slider .slider-track {
     height: 100%;
-    background: linear-gradient(to right, 
-        #ff4d4d 0%, /* hostile - 赤 */
-        #ff9966 10%, /* hostile -> distant */
-        #ffcc66 25%, /* distant -> cautious */
-        #ffff66 45%, /* cautious -> friendly */
-        #99ff99 65%, /* friendly -> warm */
-        #66ccff 85%, /* warm -> close */
-        #cc99ff 100% /* close - 紫 */
-    );
+    background: linear-gradient(to right,
+            #ff4d4d 0%,
+            /* hostile - 赤 */
+            #ff9966 10%,
+            /* hostile -> distant */
+            #ffcc66 25%,
+            /* distant -> cautious */
+            #ffff66 45%,
+            /* cautious -> friendly */
+            #99ff99 65%,
+            /* friendly -> warm */
+            #66ccff 85%,
+            /* warm -> close */
+            #cc99ff 100%
+            /* close - 紫 */
+        );
 }
 
 .affection-gauge .gradio-slider .slider-handle {
@@ -29,7 +36,7 @@
     top: -2px;
     background-color: white;
     border: 2px solid #666;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .relationship-stage {
@@ -73,9 +80,20 @@
 
 /* 段階変化通知のアニメーション */
 @keyframes stageChangeNotification {
-    0% { transform: scale(1); opacity: 0.7; }
-    50% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(1); opacity: 0.7; }
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
 }
 
 .stage-change-notification {
@@ -85,7 +103,7 @@
     border-radius: 5px;
     text-align: center;
     font-weight: bold;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 /* 詳細情報表示のスタイル */
