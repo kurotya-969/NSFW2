@@ -8,6 +8,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# 静的ファイルディレクトリが確実に存在するようにする
+RUN mkdir -p /app/static
+COPY static/ /app/static/
+
 # 明示的にポート10000を設定
 ENV PORT=10000
 EXPOSE 10000
