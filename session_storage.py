@@ -19,6 +19,9 @@ class UserSession:
     conversation_history: list
     session_start_time: str
     last_interaction: str
+    user_metadata: Dict[str, Any] = None  # ユーザー情報を保存
+    stage_transitions: List[Dict[str, Any]] = None  # 段階変化の履歴
+    engagement_metrics: Dict[str, Any] = None  # エンゲージメント指標
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert session to dictionary for JSON serialization"""

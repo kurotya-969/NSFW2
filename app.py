@@ -12,6 +12,8 @@ from typing import List, Tuple, Any, Optional, Dict
 from fastapi.responses import JSONResponse
 from tsundere_aware_prompt_generator import TsundereAwarePromptGenerator
 from affection_system import initialize_affection_system, get_session_manager, get_affection_tracker
+from usage_statistics import initialize_usage_statistics, get_usage_statistics
+from user_info_extractor import extract_and_update_user_info
 
 
 
@@ -311,6 +313,9 @@ system_prompt = """\
 storage_dir = os.path.join(os.path.dirname(__file__), "sessions")
 session_manager, affection_tracker = initialize_affection_system(storage_dir)
 prompt_generator = TsundereAwarePromptGenerator(system_prompt)
+
+# Initialize usage statistics
+initialize_usage_statistics(storage_dir)
 
 # Add logging for tsundere detection
 logging.getLogger('tsundere_sentiment_detector').setLevel(logging.INFO)
@@ -644,10 +649,19 @@ app = FastAPI()
 async def get_manifest():
     return JSONResponse(manifest_data)
 
+# 管理者インターフェースエンドポイント
+@app.get("/admin")
+async def admin_page():
+    from admin_interface import create_admin_interface
+    admin_interface = create_admin_interface()
+    return gr.mount_gradio_app(app, admin_interface, path="/admin")
+
 # Gradioインターフェースの定義
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    # マニフェストをHTMLとして埋め込み
+    # マニフェストとカスタムCSSとJavaScriptを埋め込み
     gr.HTML(f"""
+            <link rel="stylesheet" href="affection_gauge.css">
+            <script src="affection_gauge.js"></script>
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL}";
             window.src = "{RENDER_EXTERNAL_URL}";
@@ -767,8 +781,15 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             with gr.Accordion("セッション情報", open=False, visible=True):
                 session_id_display = gr.Textbox(label="セッションID", interactive=False)
                 affection_level_display = gr.Slider(minimum=0, maximum=100, value=15, 
-                                                  label="親密度", interactive=False)
+                                                  label="親密度", interactive=False,
+                                                  elem_classes=["affection-gauge-slider"])
                 relationship_stage_display = gr.Textbox(label="関係性ステージ", interactive=False)
+                
+                # 段階変化通知用の非表示コンポーネント
+                stage_change_notification = gr.HTML(visible=False, elem_classes=["stage-change-notification-container"])
+                
+                # 関係性詳細情報表示用のコンポーネント
+                relationship_details = gr.HTML(elem_classes=["relationship-details-container"])
             
             chatbot = gr.Chatbot(height=400)
             user_input = gr.Textbox(label="あなたの発言", placeholder="麻理に話しかけよう…", lines=2)
@@ -778,10 +799,19 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 clear_btn = gr.Button("履歴クリア")
 
     # Function to update session info display
-    def update_session_info(session_id):
-        """Update session info display with current affection level and relationship stage"""
+    def update_session_info(session_id, previous_stage=None):
+        """
+        Update session info display with current affection level and relationship stage
+        
+        Args:
+            session_id: User session ID
+            previous_stage: Previous relationship stage for detecting changes
+            
+        Returns:
+            Tuple of (session_id, affection_level, relationship_stage, relationship_info, stage_change_notification)
+        """
         if not session_id or not get_session_manager() or not get_affection_tracker():
-            return session_id, 25, "distant", {}
+            return session_id, 25, "distant", {}, ""
         
         # Get current affection level
         affection_level = get_session_manager().get_affection_level(session_id)
@@ -792,8 +822,124 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         # Get relationship info
         relationship_info = get_affection_tracker().get_mari_behavioral_state(affection_level)
         
+        # Check for stage change and prepare notification
+        stage_change_notification = ""
+        if previous_stage and previous_stage != relationship_stage:
+            # Stage has changed, prepare notification
+            notification_messages = {
+                "distant": "麻理の警戒心が少し和らいだようだ...",
+                "cautious": "麻理はあなたに対して少し興味を持ち始めたようだ...",
+                "friendly": "麻理はあなたに対して友好的な態度を見せ始めた！",
+                "warm": "麻理はあなたに心を開き始めている...！",
+                "close": "麻理はあなたを特別な存在として認めているようだ！"
+            }
+            
+            # Get appropriate message or default
+            message = notification_messages.get(relationship_stage, "麻理との関係性が変化した...")
+            
+            # Create HTML for notification
+            stage_change_notification = f"""
+            <div class="stage-change-notification stage-{relationship_stage}">
+                {message}
+            </div>
+            """
+            
+            # Log the stage change
+            logging.info(f"Relationship stage changed for session {session_id}: {previous_stage} -> {relationship_stage}")
+        
+        # Update relationship details HTML
+        relationship_details_html = generate_relationship_details_html(affection_level, relationship_stage, relationship_info)
+        
         # Update session info display
-        return session_id, affection_level, relationship_stage, relationship_info
+        return session_id, affection_level, relationship_stage, relationship_info, stage_change_notification, relationship_details_html
+        
+    def generate_relationship_details_html(affection_level, stage, relationship_info):
+        """Generate HTML for relationship details display"""
+        # Get stage traits
+        traits = relationship_info.get("stage_traits", {})
+        
+        # Calculate points to next stage
+        next_stage_info = calculate_next_stage_info(affection_level)
+        
+        # Generate HTML
+        html = f"""
+        <div class="relationship-details">
+            <h4>現在の関係性: {get_stage_display_name(stage)}</h4>
+            <p>{relationship_info.get("description", "関係性の詳細情報がありません")}</p>
+            <ul>
+                <li><strong>心の開き具合:</strong> {traits.get("openness", "不明")}</li>
+                <li><strong>信頼度:</strong> {traits.get("trust", "不明")}</li>
+                <li><strong>コミュニケーションスタイル:</strong> {traits.get("communication_style", "不明")}</li>
+                <li><strong>感情表現:</strong> {traits.get("emotional_expression", "不明")}</li>
+            </ul>
+        """
+        
+        # Add next stage progress if not at max level
+        if next_stage_info["next_stage"] != "max":
+            html += f"""
+            <div class="next-stage-progress">
+                <span>次のステージ「{get_stage_display_name(next_stage_info["next_stage"])}」まであと {next_stage_info["points_needed"]} ポイント</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {next_stage_info["percentage"]}%"></div>
+                </div>
+            </div>
+            """
+        else:
+            html += '<div class="next-stage-progress">最高の関係性に達しています！</div>'
+        
+        html += "</div>"
+        return html
+        
+    def get_stage_display_name(stage):
+        """Get display name for relationship stage"""
+        stage_names = {
+            "hostile": "敵対的",
+            "distant": "距離を置く",
+            "cautious": "慎重",
+            "friendly": "友好的",
+            "warm": "温かい",
+            "close": "親密"
+        }
+        return stage_names.get(stage, stage)
+        
+    def calculate_next_stage_info(affection_level):
+        """Calculate information about progress to next stage"""
+        if affection_level <= 10:
+            return {
+                "next_stage": "distant", 
+                "points_needed": 11 - affection_level, 
+                "percentage": affection_level / 11 * 100
+            }
+        elif affection_level <= 25:
+            return {
+                "next_stage": "cautious", 
+                "points_needed": 26 - affection_level, 
+                "percentage": (affection_level - 11) / 15 * 100
+            }
+        elif affection_level <= 45:
+            return {
+                "next_stage": "friendly", 
+                "points_needed": 46 - affection_level, 
+                "percentage": (affection_level - 26) / 20 * 100
+            }
+        elif affection_level <= 65:
+            return {
+                "next_stage": "warm", 
+                "points_needed": 66 - affection_level, 
+                "percentage": (affection_level - 66) / 20 * 100
+            }
+        elif affection_level <= 85:
+            return {
+                "next_stage": "close", 
+                "points_needed": 86 - affection_level, 
+                "percentage": (affection_level - 66) / 20 * 100
+            }
+        else:
+            return {
+                "next_stage": "max", 
+                "points_needed": 0, 
+                "percentage": 100
+            }
     
     # Modified on_submit to update session info
     def on_submit_with_info(msg, history, session_id, rel_info=None):
