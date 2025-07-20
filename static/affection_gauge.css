@@ -1,146 +1,486 @@
-/* 親密度ゲージのカスタムスタイル */
-.affection-gauge {
-    margin-top: 10px;
+/* 麻理チャットアプリ - 拡張スタイルシート */
+/* 全体的なテーマ設定 */
+:root {
+    --primary-color: #ff6b8b;
+    --primary-light: #ffccd5;
+    --primary-dark: #d94c6a;
+    --accent-color: #6b7fff;
+    --accent-light: #d5dcff;
+    --accent-dark: #4c5ad9;
+    --neutral-light: #f8f9fa;
+    --neutral-medium: #e9ecef;
+    --neutral-dark: #495057;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.05);
+    --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --border-radius-sm: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 20px;
+    --transition-normal: all 0.3s ease;
+    --font-main: 'M PLUS Rounded 1c', 'Nunito', sans-serif;
+}
+
+/* フォント読み込み - Google Fontsから日本語対応のかわいいフォント */
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&family=Nunito:wght@400;600;700&display=swap');
+
+/* 全体のスタイル調整 */
+body .gradio-container {
+    font-family: var(--font-main);
+    background-color: var(--neutral-light);
+    color: var(--text-primary);
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-medium);
+}
+
+/* ヘッダースタイル */
+.gradio-markdown h1, 
+.gradio-markdown h2, 
+.gradio-markdown h3 {
+    font-family: var(--font-main);
+    color: var(--primary-dark);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.gradio-markdown h2 {
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.gradio-markdown h2:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+    border-radius: 3px;
+}
+
+/* チャットボックスのスタイル改善 */
+.gradio-chatbot {
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-soft);
+    background-color: white;
+    overflow: hidden;
+    border: 1px solid var(--neutral-medium);
+}
+
+.gradio-chatbot .user-message {
+    background-color: var(--accent-light);
+    border-radius: var(--border-radius-sm);
+    padding: 12px 16px;
+    margin: 8px;
+    position: relative;
+}
+
+.gradio-chatbot .bot-message {
+    background-color: var(--primary-light);
+    border-radius: var(--border-radius-sm);
+    padding: 12px 16px;
+    margin: 8px;
+    position: relative;
+}
+
+/* 入力フィールドのスタイル改善 */
+.gradio-textbox textarea {
+    border-radius: var(--border-radius-md);
+    border: 2px solid var(--neutral-medium);
+    padding: 12px;
+    font-family: var(--font-main);
+    transition: var(--transition-normal);
+}
+
+.gradio-textbox textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
+    outline: none;
+}
+
+/* ボタンのスタイル改善 */
+.gradio-button {
+    border-radius: var(--border-radius-md);
+    font-family: var(--font-main);
+    font-weight: 600;
+    padding: 10px 20px;
+    transition: var(--transition-normal);
+    border: none;
+    cursor: pointer;
+}
+
+.gradio-button.primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.gradio-button.primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.gradio-button.secondary {
+    background-color: var(--neutral-medium);
+    color: var(--text-primary);
+}
+
+.gradio-button.secondary:hover {
+    background-color: var(--neutral-dark);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* アコーディオンのスタイル改善 */
+.gradio-accordion {
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
     margin-bottom: 20px;
+    border: 1px solid var(--neutral-medium);
+}
+
+.gradio-accordion .accordion-header {
+    background-color: white;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--primary-dark);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+}
+
+.gradio-accordion .accordion-header:hover {
+    background-color: var(--neutral-light);
+}
+
+.gradio-accordion .accordion-content {
+    padding: 16px;
+    background-color: white;
+}
+
+/* 親密度ゲージのスタイル改善 */
+.affection-gauge {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-soft);
+    position: relative;
+}
+
+.affection-gauge::before {
+    content: '💖';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .affection-gauge .gradio-slider {
-    height: 20px;
-    border-radius: 10px;
+    height: 24px;
+    border-radius: var(--border-radius-lg);
     overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .affection-gauge .gradio-slider .slider-track {
     height: 100%;
     background: linear-gradient(to right,
-            #ff4d4d 0%,
-            /* hostile - 赤 */
-            #ff9966 10%,
-            /* hostile -> distant */
-            #ffcc66 25%,
-            /* distant -> cautious */
-            #ffff66 45%,
-            /* cautious -> friendly */
-            #99ff99 65%,
-            /* friendly -> warm */
-            #66ccff 85%,
-            /* warm -> close */
-            #cc99ff 100%
-            /* close - 紫 */
-        );
+        #ff4d6d 0%,      /* hostile - 赤 (より鮮やか) */
+        #ff7e54 10%,     /* hostile -> distant (より暖かい) */
+        #ffbe3d 25%,     /* distant -> cautious (より明るい) */
+        #fff95b 45%,     /* cautious -> friendly (より鮮やか) */
+        #a5ed6e 65%,     /* friendly -> warm (より明るい) */
+        #64d2ff 85%,     /* warm -> close (より鮮やか) */
+        #bb8eff 100%     /* close - 紫 (より明るい) */
+    );
 }
 
 .affection-gauge .gradio-slider .slider-handle {
-    width: 24px;
-    height: 24px;
-    top: -2px;
+    width: 30px;
+    height: 30px;
+    top: -3px;
     background-color: white;
-    border: 2px solid #666;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 10px rgba(255, 107, 139, 0.4);
+    transition: transform 0.2s ease;
 }
 
+.affection-gauge .gradio-slider .slider-handle:hover {
+    transform: scale(1.1);
+}
+
+/* 関係性ステージ表示の改善 */
 .relationship-stage {
     font-weight: bold;
     text-align: center;
-    margin-top: 5px;
-    padding: 5px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: var(--border-radius-md);
+    transition: var(--transition-normal);
+    font-size: 1.1em;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    overflow: hidden;
+}
+
+.relationship-stage::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%);
+    background-size: 10px 10px;
+    z-index: 1;
+    opacity: 0.5;
 }
 
 .stage-hostile {
-    background-color: #ffdddd;
-    color: #cc0000;
+    background-color: #ffe5e8;
+    color: #d10023;
+    border-left: 5px solid #ff4d6d;
 }
 
 .stage-distant {
-    background-color: #ffe6cc;
-    color: #cc6600;
+    background-color: #fff0e5;
+    color: #b54200;
+    border-left: 5px solid #ff7e54;
 }
 
 .stage-cautious {
-    background-color: #fff2cc;
-    color: #cc9900;
+    background-color: #fff8e0;
+    color: #a66800;
+    border-left: 5px solid #ffbe3d;
 }
 
 .stage-friendly {
-    background-color: #ffffcc;
-    color: #999900;
+    background-color: #fffde0;
+    color: #707000;
+    border-left: 5px solid #fff95b;
 }
 
 .stage-warm {
-    background-color: #e6ffcc;
-    color: #669900;
+    background-color: #eaffd8;
+    color: #2a7000;
+    border-left: 5px solid #a5ed6e;
 }
 
 .stage-close {
-    background-color: #d9eeff;
-    color: #0066cc;
+    background-color: #e0f4ff;
+    color: #0057a6;
+    border-left: 5px solid #64d2ff;
 }
 
-/* 段階変化通知のアニメーション */
+/* 段階変化通知のアニメーション改善 */
 @keyframes stageChangeNotification {
     0% {
-        transform: scale(1);
-        opacity: 0.7;
+        transform: translateY(-20px);
+        opacity: 0;
     }
-
-    50% {
-        transform: scale(1.1);
+    10% {
+        transform: translateY(0);
         opacity: 1;
     }
-
+    90% {
+        transform: translateY(0);
+        opacity: 1;
+    }
     100% {
-        transform: scale(1);
-        opacity: 0.7;
+        transform: translateY(-10px);
+        opacity: 0;
     }
 }
 
 .stage-change-notification {
-    animation: stageChangeNotification 1s ease-in-out 3;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
+    animation: stageChangeNotification 5s ease-in-out forwards;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: var(--border-radius-md);
     text-align: center;
     font-weight: bold;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-medium);
+    position: relative;
+    overflow: hidden;
+    background-color: white;
+    border-left: 5px solid;
 }
 
-/* 詳細情報表示のスタイル */
+.stage-change-notification::before {
+    content: '✨';
+    margin-right: 8px;
+}
+
+.stage-change-notification::after {
+    content: '✨';
+    margin-left: 8px;
+}
+
+.stage-change-notification.stage-distant {
+    border-color: #ff7e54;
+    background-color: #fff0e5;
+}
+
+.stage-change-notification.stage-cautious {
+    border-color: #ffbe3d;
+    background-color: #fff8e0;
+}
+
+.stage-change-notification.stage-friendly {
+    border-color: #fff95b;
+    background-color: #fffde0;
+}
+
+.stage-change-notification.stage-warm {
+    border-color: #a5ed6e;
+    background-color: #eaffd8;
+}
+
+.stage-change-notification.stage-close {
+    border-color: #64d2ff;
+    background-color: #e0f4ff;
+}
+
+/* 詳細情報表示のスタイル改善 */
 .relationship-details {
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    border-left: 4px solid #ccc;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: var(--border-radius-md);
+    background-color: white;
+    border-left: 5px solid var(--accent-color);
+    box-shadow: var(--shadow-soft);
 }
 
 .relationship-details h4 {
     margin-top: 0;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    color: var(--accent-dark);
+    font-size: 1.1em;
+    border-bottom: 2px dotted var(--accent-light);
+    padding-bottom: 5px;
+}
+
+.relationship-details p {
+    margin: 10px 0;
+    line-height: 1.5;
+    color: var(--text-secondary);
 }
 
 .relationship-details ul {
-    margin: 5px 0;
-    padding-left: 20px;
+    margin: 10px 0;
+    padding-left: 25px;
+    list-style-type: none;
+}
+
+.relationship-details ul li {
+    position: relative;
+    padding: 3px 0;
+}
+
+.relationship-details ul li::before {
+    content: '•';
+    color: var(--accent-color);
+    font-weight: bold;
+    position: absolute;
+    left: -15px;
+}
+
+.relationship-details ul li strong {
+    color: var(--accent-dark);
 }
 
 .next-stage-progress {
-    margin-top: 10px;
-    font-size: 0.9em;
-    color: #666;
+    margin-top: 15px;
+    font-size: 0.95em;
+    color: var(--text-secondary);
+    background-color: var(--neutral-light);
+    padding: 10px;
+    border-radius: var(--border-radius-sm);
 }
 
 .next-stage-progress .progress-bar {
-    height: 5px;
-    background-color: #eee;
-    border-radius: 2px;
-    margin-top: 3px;
+    height: 8px;
+    background-color: var(--neutral-medium);
+    border-radius: 4px;
+    margin-top: 5px;
     overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .next-stage-progress .progress-fill {
     height: 100%;
-    background-color: #66ccff;
-    transition: width 0.5s ease;
+    background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+    transition: width 1s ease;
+    border-radius: 4px;
+}
+
+/* レスポンシブデザイン調整 */
+@media (max-width: 768px) {
+    body .gradio-container {
+        padding: 15px;
+    }
+    
+    .affection-gauge::before {
+        display: none;
+    }
+    
+    .relationship-stage {
+        font-size: 1em;
+    }
+}
+
+/* アニメーション効果 */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+/* 装飾要素 */
+.kawaii-decoration {
+    position: absolute;
+    font-size: 20px;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* 全体のページスタイル */
+.gradio-app {
+    background-color: #f9f0f5;
+    background-image: 
+        radial-gradient(circle at 25px 25px, rgba(255, 107, 139, 0.15) 2%, transparent 0%), 
+        radial-gradient(circle at 75px 75px, rgba(107, 127, 255, 0.15) 2%, transparent 0%);
+    background-size: 100px 100px;
+}
+
+/* チャットボックスの装飾 */
+.gradio-chatbot::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+    z-index: 10;
 }

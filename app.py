@@ -663,9 +663,11 @@ async def admin_page():
 # Gradioインターフェースの定義
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # マニフェストとカスタムCSSとJavaScriptを埋め込み
+    # タイムスタンプをクエリパラメータとして追加してキャッシュを回避
+    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     gr.HTML(f"""
-            <link rel="stylesheet" href="/static/affection_gauge.css">
-            <script src="/static/affection_gauge.js"></script>
+            <link rel="stylesheet" href="/static/affection_gauge.css?v={timestamp}">
+            <script src="/static/affection_gauge.js?v={timestamp}"></script>
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL}";
             window.src = "{RENDER_EXTERNAL_URL}";
