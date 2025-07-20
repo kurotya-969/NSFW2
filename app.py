@@ -638,7 +638,7 @@ manifest_data = {
     "theme_color": "#ff6b8b",
     "icons": [
         {
-            "src": "/static/favicon.ico",
+            "src": "/assets/favicon.ico",
             "sizes": "48x48",
             "type": "image/x-icon"
         }
@@ -651,7 +651,7 @@ manifest_data = {
 app = FastAPI()
 
 # 静的ファイルの配信設定
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 # マニフェスト配信エンドポイント
 @app.get("/manifest.json")
@@ -671,8 +671,8 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # タイムスタンプをクエリパラメータとして追加してキャッシュを回避
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     gr.HTML(f"""
-            <link rel="stylesheet" href="/static/affection_gauge.css?v={timestamp}">
-            <script src="/static/affection_gauge.js?v={timestamp}"></script>
+            <link rel="stylesheet" href="/assets/affection_gauge.css?v={timestamp}">
+            <script src="/assets/affection_gauge.js?v={timestamp}"></script>
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL}";
             window.src = "{RENDER_EXTERNAL_URL}";

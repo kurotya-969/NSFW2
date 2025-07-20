@@ -154,7 +154,7 @@ function initializeAndUpdateAffectionGauge() {
         // スタイルシートの適用
         const styleLink = document.createElement('link');
         styleLink.rel = 'stylesheet';
-        styleLink.href = '/static/affection_gauge.css';
+        styleLink.href = '/assets/affection_gauge.css';
         document.head.appendChild(styleLink);
         
         // 親密度スライダーを探して拡張

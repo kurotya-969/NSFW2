@@ -29,10 +29,10 @@ body .gradio-container {
     font-family: var(--font-main);
     background-color: var(--neutral-light);
     color: var(--text-primary);
-    max-width: 1000px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
     padding: 20px;
-    border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-medium);
 }
 
