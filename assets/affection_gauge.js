@@ -47,8 +47,44 @@ function getPointsToNextStage(affectionLevel) {
     }
 }
 
-// 段階変化通知を表示
+// 背景装飾を追加
+function addRoomBackground() {
+    // 既存の背景装飾を削除
+    const existingBackground = document.querySelector('.room-background');
+    if (existingBackground) {
+        existingBackground.remove();
+    }
+
+    // 背景装飾コンテナを作成
+    const backgroundContainer = document.createElement('div');
+    backgroundContainer.className = 'room-background';
+
+    // 窓の装飾を追加
+    const window = document.createElement('div');
+    window.className = 'room-window';
+    backgroundContainer.appendChild(window);
+
+    // 家具のシルエットを追加
+    const furniture = document.createElement('div');
+    furniture.className = 'room-furniture';
+    backgroundContainer.appendChild(furniture);
+
+    // 小物の装飾を追加
+    const items = ['book', 'plant', 'lamp', 'clock'];
+    items.forEach(item => {
+        const element = document.createElement('div');
+        element.className = `room-item room-${item}`;
+        backgroundContainer.appendChild(element);
+    });
+
+    // ページのボディに追加
+    document.body.appendChild(backgroundContainer);
+}
+
+// 段階変化通知を表示（強化版）
 function showStageChangeNotification(oldStage, newStage) {
+    console.log(`関係性ステージ変化: ${oldStage} -> ${newStage}`); // デバッグ用
+
     // 既存の通知を削除
     const existingNotification = document.querySelector('.stage-change-notification');
     if (existingNotification) {
@@ -61,39 +97,65 @@ function showStageChangeNotification(oldStage, newStage) {
 
     // ステージに応じたメッセージを設定
     let message = '';
+    let emoji = '';
     switch (newStage) {
         case 'distant':
             message = '麻理の警戒心が少し和らいだようだ...';
+            emoji = '🌱';
             break;
         case 'cautious':
             message = '麻理はあなたに対して少し興味を持ち始めたようだ...';
+            emoji = '👀';
             break;
         case 'friendly':
             message = '麻理はあなたに対して友好的な態度を見せ始めた！';
+            emoji = '😊';
             break;
         case 'warm':
             message = '麻理はあなたに心を開き始めている...！';
+            emoji = '💫';
             break;
         case 'close':
             message = '麻理はあなたを特別な存在として認めているようだ！';
+            emoji = '💖';
             break;
         default:
             message = '麻理との関係性が変化した...';
+            emoji = '✨';
     }
 
-    notification.textContent = message;
+    // 通知内容を設定
+    notification.innerHTML = `
+        <div class="notification-icon">${emoji}</div>
+        <div class="notification-message">${message}</div>
+        <div class="notification-progress"></div>
+    `;
 
     // チャットボックスの上部に挿入
-    const chatbox = document.querySelector('.gradio-chatbot');
-    if (chatbox && chatbox.parentNode) {
-        chatbox.parentNode.insertBefore(notification, chatbox);
+    const gradioApp = document.querySelector('.gradio-app');
+    if (gradioApp) {
+        gradioApp.insertBefore(notification, gradioApp.firstChild);
+
+        // プログレスバーのアニメーション
+        const progressBar = notification.querySelector('.notification-progress');
+        progressBar.style.width = '100%';
 
         // 一定時間後に通知を消す
         setTimeout(() => {
-            notification.style.opacity = '0';
-            notification.style.transition = 'opacity 1s ease';
+            notification.classList.add('fade-out');
             setTimeout(() => notification.remove(), 1000);
-        }, 10000);
+        }, 8000);
+    } else {
+        console.error('gradio-app element not found');
+    }
+
+    // 効果音を再生（オプション）
+    try {
+        const audio = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAASAAAeMwAUFBQUFCIiIiIiIjAwMDAwMD09PT09PUxMTExMWFhYWFhYZmZmZmZmdHR0dHR0goKCgoKCkJCQkJCQnp6enp6erKysrKysvLy8vLy8ysrKysrK2NjY2NjY5ubm5ubm9PT09PT0//8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAQKAAAAAAAAHjOZTf9C');
+        audio.volume = 0.3;
+        audio.play().catch(e => console.log('Audio play failed:', e));
+    } catch (e) {
+        console.log('Audio not supported');
     }
 }
 
@@ -147,15 +209,36 @@ function updateRelationshipDetails(affectionLevel, stage, relationshipInfo) {
     `;
 }
 
+// 親密度ゲージを外部に移動
+function moveAffectionGaugeOutside() {
+    // セッション情報アコーディオンを取得
+    const sessionAccordion = document.querySelector('.gradio-accordion');
+    if (!sessionAccordion) return;
+
+    // 親密度ゲージを取得
+    const affectionGauge = document.querySelector('.affection-gauge');
+    if (!affectionGauge) return;
+
+    // 親密度ゲージの親要素を取得
+    const parentElement = affectionGauge.parentElement;
+    if (!parentElement) return;
+
+    // 親密度ゲージをアコーディオンの前に移動
+    sessionAccordion.parentElement.insertBefore(affectionGauge, sessionAccordion);
+
+    // スタイルを調整
+    affectionGauge.classList.add('affection-gauge-outside');
+}
+
 // 親密度ゲージの初期化と更新
 function initializeAndUpdateAffectionGauge() {
     // DOMが完全に読み込まれた後に実行
     document.addEventListener('DOMContentLoaded', function () {
-        // スタイルシートはgr.Blocksのcssパラメータで直接適用されるため、ここでの適用は不要
-        // CSSはGradioのコンポーネント内部に直接適用されます
+        // 背景装飾を追加
+        addRoomBackground();
 
         // 親密度スライダーを探して拡張
-        const observer = new MutationObserver(function (mutations) {
+        const observer = new MutationObserver(function () {
             const affectionSlider = document.querySelector('input[data-testid="range"]');
             if (affectionSlider && !affectionSlider.classList.contains('affection-gauge-initialized')) {
                 // スライダーの親要素にクラスを追加
@@ -166,6 +249,9 @@ function initializeAndUpdateAffectionGauge() {
 
                 // 初期化済みとしてマーク
                 affectionSlider.classList.add('affection-gauge-initialized');
+
+                // 親密度ゲージを外部に移動
+                setTimeout(moveAffectionGaugeOutside, 500);
 
                 // 値の変更を監視
                 let lastValue = affectionSlider.value;
@@ -193,7 +279,6 @@ function initializeAndUpdateAffectionGauge() {
                     }
 
                     // 関係性詳細情報を更新
-                    // Note: relationshipInfo はグローバル変数として別途設定する必要がある
                     if (window.currentRelationshipInfo) {
                         updateRelationshipDetails(currentValue, currentStage, window.currentRelationshipInfo);
                     }
@@ -217,7 +302,7 @@ function initializeAndUpdateAffectionGauge() {
 // 関係性ステージ表示の作成
 function createRelationshipStageDisplay() {
     document.addEventListener('DOMContentLoaded', function () {
-        const observer = new MutationObserver(function (mutations) {
+        const observer = new MutationObserver(function () {
             const affectionSlider = document.querySelector('input[data-testid="range"]');
             if (affectionSlider && !document.querySelector('.relationship-stage')) {
                 const sliderContainer = affectionSlider.closest('.gradio-slider');

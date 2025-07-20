@@ -951,7 +951,112 @@ body .gradio-container {
     border-left: 5px solid #64d2ff !important;
 }
 
+/* 背景装飾 - 家にいる風の雰囲気 */
+.room-background {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+    opacity: 0.5 !important;
+}
+
+.room-window {
+    position: absolute !important;
+    top: 50px !important;
+    right: 50px !important;
+    width: 200px !important;
+    height: 300px !important;
+    border: 8px solid #8b5a2b !important;
+    border-radius: 10px !important;
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%) !important;
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.room-window::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 2px !important;
+    background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.room-window::after {
+    content: '' !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 2px !important;
+    background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.room-furniture {
+    position: absolute !important;
+    bottom: 50px !important;
+    left: 50px !important;
+    width: 300px !important;
+    height: 100px !important;
+    background-color: #8b5a2b !important;
+    border-radius: 5px 5px 0 0 !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.room-item {
+    position: absolute !important;
+    opacity: 0.7 !important;
+}
+
+.room-book {
+    top: 150px !important;
+    left: 100px !important;
+    width: 50px !important;
+    height: 70px !important;
+    background-color: #d94c6a !important;
+    transform: rotate(-5deg) !important;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+
+.room-plant {
+    top: 120px !important;
+    right: 300px !important;
+    width: 80px !important;
+    height: 120px !important;
+    background: linear-gradient(to top, #8b5a2b 0%, #8b5a2b 30%, #4caf50 30%, #4caf50 100%) !important;
+    border-radius: 0 0 40px 40px !important;
+}
+
+.room-lamp {
+    top: 80px !important;
+    left: 300px !important;
+    width: 60px !important;
+    height: 150px !important;
+    background: linear-gradient(to top, #8b5a2b 0%, #8b5a2b 70%, #ffeb3b 70%, #ffeb3b 100%) !important;
+}
+
+.room-clock {
+    top: 80px !important;
+    left: 80% !important;
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 50% !important;
+    background-color: #f5f5f5 !important;
+    border: 5px solid #8b5a2b !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
+}
+
 /* チャットボックスのメッセージスタイル強制上書き */
+.gradio-chatbot {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffccd5' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E") !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid var(--neutral-medium) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
 .gradio-chatbot .user, .gradio-chatbot .bot {
     padding: 0 !important;
     border: none !important;
@@ -962,14 +1067,17 @@ body .gradio-container {
     padding: 12px 16px !important;
     margin: 8px !important;
     border-radius: var(--border-radius-sm) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
 }
 
 .gradio-chatbot .user > div {
     background-color: var(--accent-light) !important;
+    border-top-right-radius: 0 !important;
 }
 
 .gradio-chatbot .bot > div {
     background-color: var(--primary-light) !important;
+    border-top-left-radius: 0 !important;
 }
 
 /* ボタンスタイルの強制上書き */
@@ -1140,16 +1248,18 @@ input[type="range"]::-moz-range-thumb {
     
     with gr.Row():
         with gr.Column(scale=1):
+            # 親密度ゲージを外部に配置して常に表示
+            affection_level_display = gr.Slider(minimum=0, maximum=100, value=15, 
+                                              label="親密度", interactive=False,
+                                              elem_classes=["affection-gauge-slider"])
+            relationship_stage_display = gr.Textbox(label="関係性ステージ", interactive=False)
+            
+            # 段階変化通知用のコンポーネント
+            stage_change_notification = gr.HTML(visible=True, elem_classes=["stage-change-notification-container"])
+            
             # Add session info display (hidden by default)
             with gr.Accordion("セッション情報", open=False, visible=True):
                 session_id_display = gr.Textbox(label="セッションID", interactive=False)
-                affection_level_display = gr.Slider(minimum=0, maximum=100, value=15, 
-                                                  label="親密度", interactive=False,
-                                                  elem_classes=["affection-gauge-slider"])
-                relationship_stage_display = gr.Textbox(label="関係性ステージ", interactive=False)
-                
-                # 段階変化通知用の非表示コンポーネント
-                stage_change_notification = gr.HTML(visible=False, elem_classes=["stage-change-notification-container"])
                 
                 # 関係性詳細情報表示用のコンポーネント
                 relationship_details = gr.HTML(elem_classes=["relationship-details-container"])
