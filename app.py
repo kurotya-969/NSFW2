@@ -629,17 +629,22 @@ def clear_history():
 
 # --- マニフェストデータの定義 ---
 manifest_data = {
-    "name": "Chat App",
-    "short_name": "Chat",
+    "name": "麻理チャット",
+    "short_name": "麻理",
+    "description": "ツンデレAI「麻理」とのチャットアプリ",
     "start_url": "/",
     "display": "standalone",
-    "icons":  [
+    "background_color": "#f9f0f5",
+    "theme_color": "#ff6b8b",
+    "icons": [
         {
-            "src": "/favicon.ico",
+            "src": "/static/favicon.ico",
             "sizes": "48x48",
             "type": "image/x-icon"
         }
-    ]
+    ],
+    "orientation": "portrait",
+    "lang": "ja-JP"
 }
 
 # FastAPIアプリ
@@ -1035,9 +1040,6 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
 # HTMLコンポーネント（修正版）
 session_restore_html = gr.HTML("""
-    <head>
-    <link rel="stylesheet" href="/static/affection_gauge.css">
-    </head>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         console.log("DOM loaded, initializing session restoration...");
@@ -1161,4 +1163,4 @@ app = gr.mount_gradio_app(app, demo, path="/ui")
 if __name__ == "__main__":
     import uvicorn
     # 明示的に固定ポート10000を使用
-    uvicorn.run(app, host="0.0.0.0", port=10000)
+    uvicorn.run(app, host="0.0.0.0", port=10000,block=True)
