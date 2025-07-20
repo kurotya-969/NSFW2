@@ -54,11 +54,11 @@ function showStageChangeNotification(oldStage, newStage) {
     if (existingNotification) {
         existingNotification.remove();
     }
-    
+
     // 新しい通知を作成
     const notification = document.createElement('div');
     notification.className = `stage-change-notification stage-${newStage}`;
-    
+
     // ステージに応じたメッセージを設定
     let message = '';
     switch (newStage) {
@@ -80,14 +80,14 @@ function showStageChangeNotification(oldStage, newStage) {
         default:
             message = '麻理との関係性が変化した...';
     }
-    
+
     notification.textContent = message;
-    
+
     // チャットボックスの上部に挿入
     const chatbox = document.querySelector('.gradio-chatbot');
     if (chatbox && chatbox.parentNode) {
         chatbox.parentNode.insertBefore(notification, chatbox);
-        
+
         // 一定時間後に通知を消す
         setTimeout(() => {
             notification.style.opacity = '0';
@@ -104,7 +104,7 @@ function updateRelationshipDetails(affectionLevel, stage, relationshipInfo) {
     if (!detailsContainer) {
         detailsContainer = document.createElement('div');
         detailsContainer.className = 'relationship-details';
-        
+
         // アコーディオンの中に挿入
         const accordion = document.querySelector('.gradio-accordion');
         if (accordion) {
@@ -114,10 +114,10 @@ function updateRelationshipDetails(affectionLevel, stage, relationshipInfo) {
             }
         }
     }
-    
+
     // 次のステージまでの情報を取得
     const nextStageInfo = getPointsToNextStage(affectionLevel);
-    
+
     // 関係性の特徴を取得
     const traits = relationshipInfo && relationshipInfo.stage_traits ? relationshipInfo.stage_traits : {
         openness: "不明",
@@ -125,7 +125,7 @@ function updateRelationshipDetails(affectionLevel, stage, relationshipInfo) {
         communication_style: "不明",
         emotional_expression: "不明"
     };
-    
+
     // 詳細情報を更新
     detailsContainer.innerHTML = `
         <h4>現在の関係性: ${getStageDisplayName(stage)}</h4>
@@ -150,15 +150,12 @@ function updateRelationshipDetails(affectionLevel, stage, relationshipInfo) {
 // 親密度ゲージの初期化と更新
 function initializeAndUpdateAffectionGauge() {
     // DOMが完全に読み込まれた後に実行
-    document.addEventListener('DOMContentLoaded', function() {
-        // スタイルシートの適用
-        const styleLink = document.createElement('link');
-        styleLink.rel = 'stylesheet';
-        styleLink.href = '/assets/affection_gauge.css';
-        document.head.appendChild(styleLink);
-        
+    document.addEventListener('DOMContentLoaded', function () {
+        // スタイルシートはgr.Blocksのcssパラメータで直接適用されるため、ここでの適用は不要
+        // CSSはGradioのコンポーネント内部に直接適用されます
+
         // 親密度スライダーを探して拡張
-        const observer = new MutationObserver(function(mutations) {
+        const observer = new MutationObserver(function (mutations) {
             const affectionSlider = document.querySelector('input[data-testid="range"]');
             if (affectionSlider && !affectionSlider.classList.contains('affection-gauge-initialized')) {
                 // スライダーの親要素にクラスを追加
@@ -166,25 +163,25 @@ function initializeAndUpdateAffectionGauge() {
                 if (sliderContainer) {
                     sliderContainer.classList.add('affection-gauge');
                 }
-                
+
                 // 初期化済みとしてマーク
                 affectionSlider.classList.add('affection-gauge-initialized');
-                
+
                 // 値の変更を監視
                 let lastValue = affectionSlider.value;
                 let lastStage = getRelationshipStage(lastValue);
-                
+
                 // 値の変更を監視する関数
                 const monitorValueChanges = () => {
                     const currentValue = parseFloat(affectionSlider.value);
                     const currentStage = getRelationshipStage(currentValue);
-                    
+
                     // ステージが変化した場合に通知
                     if (currentStage !== lastStage) {
                         showStageChangeNotification(lastStage, currentStage);
                         lastStage = currentStage;
                     }
-                    
+
                     // 関係性ステージ表示を更新
                     const stageDisplay = document.querySelector('.relationship-stage');
                     if (stageDisplay) {
@@ -194,24 +191,24 @@ function initializeAndUpdateAffectionGauge() {
                         stageDisplay.classList.add(`stage-${currentStage}`);
                         stageDisplay.textContent = getStageDisplayName(currentStage);
                     }
-                    
+
                     // 関係性詳細情報を更新
                     // Note: relationshipInfo はグローバル変数として別途設定する必要がある
                     if (window.currentRelationshipInfo) {
                         updateRelationshipDetails(currentValue, currentStage, window.currentRelationshipInfo);
                     }
-                    
+
                     lastValue = currentValue;
                 };
-                
+
                 // 値の変更を定期的に確認
                 setInterval(monitorValueChanges, 500);
-                
+
                 // 初期状態を設定
                 monitorValueChanges();
             }
         });
-        
+
         // DOM変更の監視を開始
         observer.observe(document.body, { childList: true, subtree: true });
     });
@@ -219,8 +216,8 @@ function initializeAndUpdateAffectionGauge() {
 
 // 関係性ステージ表示の作成
 function createRelationshipStageDisplay() {
-    document.addEventListener('DOMContentLoaded', function() {
-        const observer = new MutationObserver(function(mutations) {
+    document.addEventListener('DOMContentLoaded', function () {
+        const observer = new MutationObserver(function (mutations) {
             const affectionSlider = document.querySelector('input[data-testid="range"]');
             if (affectionSlider && !document.querySelector('.relationship-stage')) {
                 const sliderContainer = affectionSlider.closest('.gradio-slider');
@@ -232,7 +229,7 @@ function createRelationshipStageDisplay() {
                 }
             }
         });
-        
+
         observer.observe(document.body, { childList: true, subtree: true });
     });
 }
