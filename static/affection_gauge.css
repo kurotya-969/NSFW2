@@ -1,0 +1,128 @@
+/* 親密度ゲージのカスタムスタイル */
+.affection-gauge {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.affection-gauge .gradio-slider {
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.affection-gauge .gradio-slider .slider-track {
+    height: 100%;
+    background: linear-gradient(to right, 
+        #ff4d4d 0%, /* hostile - 赤 */
+        #ff9966 10%, /* hostile -> distant */
+        #ffcc66 25%, /* distant -> cautious */
+        #ffff66 45%, /* cautious -> friendly */
+        #99ff99 65%, /* friendly -> warm */
+        #66ccff 85%, /* warm -> close */
+        #cc99ff 100% /* close - 紫 */
+    );
+}
+
+.affection-gauge .gradio-slider .slider-handle {
+    width: 24px;
+    height: 24px;
+    top: -2px;
+    background-color: white;
+    border: 2px solid #666;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
+.relationship-stage {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.stage-hostile {
+    background-color: #ffdddd;
+    color: #cc0000;
+}
+
+.stage-distant {
+    background-color: #ffe6cc;
+    color: #cc6600;
+}
+
+.stage-cautious {
+    background-color: #fff2cc;
+    color: #cc9900;
+}
+
+.stage-friendly {
+    background-color: #ffffcc;
+    color: #999900;
+}
+
+.stage-warm {
+    background-color: #e6ffcc;
+    color: #669900;
+}
+
+.stage-close {
+    background-color: #d9eeff;
+    color: #0066cc;
+}
+
+/* 段階変化通知のアニメーション */
+@keyframes stageChangeNotification {
+    0% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.7; }
+}
+
+.stage-change-notification {
+    animation: stageChangeNotification 1s ease-in-out 3;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* 詳細情報表示のスタイル */
+.relationship-details {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #ccc;
+}
+
+.relationship-details h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.relationship-details ul {
+    margin: 5px 0;
+    padding-left: 20px;
+}
+
+.next-stage-progress {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.next-stage-progress .progress-bar {
+    height: 5px;
+    background-color: #eee;
+    border-radius: 2px;
+    margin-top: 3px;
+    overflow: hidden;
+}
+
+.next-stage-progress .progress-fill {
+    height: 100%;
+    background-color: #66ccff;
+    transition: width 0.5s ease;
+}
