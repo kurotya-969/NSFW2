@@ -1035,6 +1035,9 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
 # HTMLコンポーネント（修正版）
 session_restore_html = gr.HTML("""
+    <head>
+    <link rel="stylesheet" href="/static/affection_gauge.css">
+    </head>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         console.log("DOM loaded, initializing session restoration...");
