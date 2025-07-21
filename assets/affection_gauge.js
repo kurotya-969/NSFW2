@@ -47,39 +47,8 @@ function getPointsToNextStage(affectionLevel) {
     }
 }
 
-// 背景装飾を追加
-function addRoomBackground() {
-    // 既存の背景装飾を削除
-    const existingBackground = document.querySelector('.room-background');
-    if (existingBackground) {
-        existingBackground.remove();
-    }
-
-    // 背景装飾コンテナを作成
-    const backgroundContainer = document.createElement('div');
-    backgroundContainer.className = 'room-background';
-
-    // 窓の装飾を追加
-    const window = document.createElement('div');
-    window.className = 'room-window';
-    backgroundContainer.appendChild(window);
-
-    // 家具のシルエットを追加
-    const furniture = document.createElement('div');
-    furniture.className = 'room-furniture';
-    backgroundContainer.appendChild(furniture);
-
-    // 小物の装飾を追加
-    const items = ['book', 'plant', 'lamp', 'clock'];
-    items.forEach(item => {
-        const element = document.createElement('div');
-        element.className = `room-item room-${item}`;
-        backgroundContainer.appendChild(element);
-    });
-
-    // ページのボディに追加
-    document.body.appendChild(backgroundContainer);
-}
+// 背景装飾はHTML側で直接埋め込むため、この関数は不要になりました
+// gr.HTML()で背景装飾コンテナを埋め込んでいます
 
 // 段階変化通知を表示（強化版）
 function showStageChangeNotification(oldStage, newStage) {
@@ -234,8 +203,7 @@ function moveAffectionGaugeOutside() {
 function initializeAndUpdateAffectionGauge() {
     // DOMが完全に読み込まれた後に実行
     document.addEventListener('DOMContentLoaded', function () {
-        // 背景装飾を追加
-        addRoomBackground();
+        // 背景装飾はHTML側で直接埋め込まれています
 
         // 親密度スライダーを探して拡張
         const observer = new MutationObserver(function () {

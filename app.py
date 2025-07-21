@@ -666,468 +666,574 @@ async def admin_page():
     return gr.mount_gradio_app(app, admin_interface, path="/admin")
 
 # Gradioインターフェースの定義
-with gr.Blocks(theme=gr.themes.Soft(), css="""
-/* 麻理チャットアプリ - 拡張スタイルシート */
-/* 全体的なテーマ設定 */
-:root {
-    --primary-color: #ff6b8b !important;
-    --primary-light: #ffccd5 !important;
-    --primary-dark: #d94c6a !important;
-    --accent-color: #6b7fff !important;
-    --accent-light: #d5dcff !important;
-    --accent-dark: #4c5ad9 !important;
-    --neutral-light: #f8f9fa !important;
-    --neutral-medium: #e9ecef !important;
-    --neutral-dark: #495057 !important;
-    --text-primary: #212529 !important;
-    --text-secondary: #6c757d !important;
-    --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
-    --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-    --border-radius-sm: 8px !important;
-    --border-radius-md: 12px !important;
-    --border-radius-lg: 20px !important;
-    --transition-normal: all 0.3s ease !important;
-    --font-main: 'M PLUS Rounded 1c', 'Nunito', sans-serif !important;
-}
+with gr.Blocks(theme=gr.themes.Soft()) as demo:
+    # CSSを直接埋め込み
+    gr.HTML(r"""
+    <style>
+    /* 麻理チャットアプリ - 拡張スタイルシート */
+    /* 全体的なテーマ設定 */
+    :root {{
+        --primary-color: #ff6b8b !important;
+        --primary-light: #ffccd5 !important;
+        --primary-dark: #d94c6a !important;
+        --accent-color: #6b7fff !important;
+        --accent-light: #d5dcff !important;
+        --accent-dark: #4c5ad9 !important;
+        --neutral-light: #f8f9fa !important;
+        --neutral-medium: #e9ecef !important;
+        --neutral-dark: #495057 !important;
+        --text-primary: #212529 !important;
+        --text-secondary: #6c757d !important;
+        --shadow-soft: 0px 2px 10px rgba(0, 0, 0, 0.05) !important;
+        --shadow-medium: 0px 4px 12px rgba(0, 0, 0, 0.08) !important;
+        --border-radius-sm: 8px !important;
+        --border-radius-md: 12px !important;
+        --border-radius-lg: 20px !important;
+        --transition-normal: all 0.3s ease !important;
+        --font-main: 'M PLUS Rounded 1c', 'Nunito', sans-serif !important;
+    }
 
-/* フォント読み込み - Google Fontsから日本語対応のかわいいフォント */
-@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&family=Nunito:wght@400;600;700&display=swap');
+    /* フォント読み込み - Google Fontsから日本語対応のかわいいフォント */
+    @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&family=Nunito:wght@400;600;700&display=swap');
 
-/* 全体のスタイル調整 */
-body .gradio-container {
-    font-family: var(--font-main) !important;
-    background-color: var(--neutral-light) !important;
-    color: var(--text-primary) !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 20px !important;
-    box-shadow: var(--shadow-medium) !important;
-}
+    /* 全体のスタイル調整 */
+    body .gradio-container {
+        font-family: var(--font-main) !important;
+        background-color: var(--neutral-light) !important;
+        color: var(--text-primary) !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 20px !important;
+        box-shadow: var(--shadow-medium) !important;
+    }
 
-/* ヘッダースタイル */
-.gradio-markdown h1, 
-.gradio-markdown h2, 
-.gradio-markdown h3 {
-    font-family: var(--font-main) !important;
-    color: var(--primary-dark) !important;
-    text-align: center !important;
-    margin-bottom: 1.5rem !important;
-}
+    /* ヘッダースタイル */
+    .gradio-markdown h1, 
+    .gradio-markdown h2, 
+    .gradio-markdown h3 {
+        font-family: var(--font-main) !important;
+        color: var(--primary-dark) !important;
+        text-align: center !important;
+        margin-bottom: 1.5rem !important;
+    }
 
-.gradio-markdown h2 {
-    position: relative !important;
-    padding-bottom: 10px !important;
-}
+    .gradio-markdown h2 {
+        position: relative !important;
+        padding-bottom: 10px !important;
+    }
 
-.gradio-markdown h2:after {
-    content: '' !important;
-    position: absolute !important;
-    bottom: 0 !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 60px !important;
-    height: 3px !important;
-    background: linear-gradient(to right, var(--primary-color), var(--accent-color)) !important;
-    border-radius: 3px !important;
-}
+    .gradio-markdown h2:after {
+        content: '' !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 60px !important;
+        height: 3px !important;
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color)) !important;
+        border-radius: 3px !important;
+    }
 
-/* チャットボックスのスタイル改善 */
-.gradio-chatbot {
-    border-radius: var(--border-radius-md) !important;
-    box-shadow: var(--shadow-soft) !important;
-    background-color: white !important;
-    overflow: hidden !important;
-    border: 1px solid var(--neutral-medium) !important;
-}
+    /* チャットボックスのスタイル改善 */
+    .gradio-chatbot {
+        border-radius: var(--border-radius-md) !important;
+        box-shadow: var(--shadow-soft) !important;
+        background-color: white !important;
+        overflow: hidden !important;
+        border: 1px solid var(--neutral-medium) !important;
+    }
 
-.gradio-chatbot .user-message {
-    background-color: var(--accent-light) !important;
-    border-radius: var(--border-radius-sm) !important;
-    padding: 12px 16px !important;
-    margin: 8px !important;
-    position: relative !important;
-}
+    .gradio-chatbot .user-message {
+        background-color: var(--accent-light) !important;
+        border-radius: var(--border-radius-sm) !important;
+        padding: 12px 16px !important;
+        margin: 8px !important;
+        position: relative !important;
+    }
 
-.gradio-chatbot .bot-message {
-    background-color: var(--primary-light) !important;
-    border-radius: var(--border-radius-sm) !important;
-    padding: 12px 16px !important;
-    margin: 8px !important;
-    position: relative !important;
-}
+    .gradio-chatbot .bot-message {
+        background-color: var(--primary-light) !important;
+        border-radius: var(--border-radius-sm) !important;
+        padding: 12px 16px !important;
+        margin: 8px !important;
+        position: relative !important;
+    }
 
-/* 入力フィールドのスタイル改善 */
-.gradio-textbox textarea {
-    border-radius: var(--border-radius-md) !important;
-    border: 2px solid var(--neutral-medium) !important;
-    padding: 12px !important;
-    font-family: var(--font-main) !important;
-    transition: var(--transition-normal) !important;
-}
+    /* 入力フィールドのスタイル改善 */
+    .gradio-textbox textarea {
+        border-radius: var(--border-radius-md) !important;
+        border: 2px solid var(--neutral-medium) !important;
+        padding: 12px !important;
+        font-family: var(--font-main) !important;
+        transition: var(--transition-normal) !important;
+    }
 
-.gradio-textbox textarea:focus {
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 0 0 3px var(--primary-light) !important;
-    outline: none !important;
-}
+    .gradio-textbox textarea:focus {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 3px var(--primary-light) !important;
+        outline: none !important;
+    }
 
-/* ボタンのスタイル改善 */
-.gradio-button {
-    border-radius: var(--border-radius-md) !important;
-    font-family: var(--font-main) !important;
-    font-weight: 600 !important;
-    padding: 10px 20px !important;
-    transition: var(--transition-normal) !important;
-    border: none !important;
-    cursor: pointer !important;
-}
+    /* ボタンのスタイル改善 */
+    .gradio-button {
+        border-radius: var(--border-radius-md) !important;
+        font-family: var(--font-main) !important;
+        font-weight: 600 !important;
+        padding: 10px 20px !important;
+        transition: var(--transition-normal) !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
 
-.gradio-button.primary {
-    background-color: var(--primary-color) !important;
-    color: white !important;
-}
+    .gradio-button.primary {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+    }
 
-.gradio-button.primary:hover {
-    background-color: var(--primary-dark) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: var(--shadow-medium) !important;
-}
+    .gradio-button.primary:hover {
+        background-color: var(--primary-dark) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: var(--shadow-medium) !important;
+    }
 
-.gradio-button.secondary {
-    background-color: var(--neutral-medium) !important;
-    color: var(--text-primary) !important;
-}
+    .gradio-button.secondary {
+        background-color: var(--neutral-medium) !important;
+        color: var(--text-primary) !important;
+    }
 
-.gradio-button.secondary:hover {
-    background-color: var(--neutral-dark) !important;
-    color: white !important;
-    transform: translateY(-2px) !important;
-}
+    .gradio-button.secondary:hover {
+        background-color: var(--neutral-dark) !important;
+        color: white !important;
+        transform: translateY(-2px) !important;
+    }
 
-/* アコーディオンのスタイル改善 */
-.gradio-accordion {
-    border-radius: var(--border-radius-md) !important;
-    overflow: hidden !important;
-    box-shadow: var(--shadow-soft) !important;
-    margin-bottom: 20px !important;
-    border: 1px solid var(--neutral-medium) !important;
-}
+    /* アコーディオンのスタイル改善 */
+    .gradio-accordion {
+        border-radius: var(--border-radius-md) !important;
+        overflow: hidden !important;
+        box-shadow: var(--shadow-soft) !important;
+        margin-bottom: 20px !important;
+        border: 1px solid var(--neutral-medium) !important;
+    }
 
-.gradio-accordion .accordion-header {
-    background-color: white !important;
-    padding: 12px 16px !important;
-    font-weight: 600 !important;
-    color: var(--primary-dark) !important;
-    cursor: pointer !important;
-    transition: var(--transition-normal) !important;
-    display: flex !important;
-    align-items: center !important;
-}
+    .gradio-accordion .accordion-header {
+        background-color: white !important;
+        padding: 12px 16px !important;
+        font-weight: 600 !important;
+        color: var(--primary-dark) !important;
+        cursor: pointer !important;
+        transition: var(--transition-normal) !important;
+        display: flex !important;
+        align-items: center !important;
+    }
 
-.gradio-accordion .accordion-header:hover {
-    background-color: var(--neutral-light) !important;
-}
+    .gradio-accordion .accordion-header:hover {
+        background-color: var(--neutral-light) !important;
+    }
 
-.gradio-accordion .accordion-content {
-    padding: 16px !important;
-    background-color: white !important;
-}
+    .gradio-accordion .accordion-content {
+        padding: 16px !important;
+        background-color: white !important;
+    }
 
-/* 親密度ゲージのスタイル改善 */
-.affection-gauge {
-    margin: 20px 0 !important;
-    padding: 15px !important;
-    background-color: white !important;
-    border-radius: var(--border-radius-md) !important;
-    box-shadow: var(--shadow-soft) !important;
-    position: relative !important;
-}
+    /* 親密度ゲージのスタイル改善 */
+    .affection-gauge {
+        margin: 20px 0 !important;
+        padding: 15px !important;
+        background-color: white !important;
+        border-radius: var(--border-radius-md) !important;
+        box-shadow: var(--shadow-soft) !important;
+        position: relative !important;
+    }
 
-.affection-gauge::before {
-    content: '💖' !important;
-    position: absolute !important;
-    left: -10px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    font-size: 24px !important;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)) !important;
-}
+    .affection-gauge::before {
+        content: '💖' !important;
+        position: absolute !important;
+        left: -10px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        font-size: 24px !important;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)) !important;
+    }
 
-.affection-gauge .gradio-slider {
-    height: 24px !important;
-    border-radius: var(--border-radius-lg) !important;
-    overflow: hidden !important;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1) !important;
-}
+    .affection-gauge .gradio-slider {
+        height: 24px !important;
+        border-radius: var(--border-radius-lg) !important;
+        overflow: hidden !important;
+        box-shadow: inset 0 2px 5px rgba(0,0,0,0.1) !important;
+    }
 
-.affection-gauge .gradio-slider .slider-track {
-    height: 100% !important;
-    background: linear-gradient(to right,
-        #ff4d6d 0%,      /* hostile - 赤 (より鮮やか) */
-        #ff7e54 10%,     /* hostile -> distant (より暖かい) */
-        #ffbe3d 25%,     /* distant -> cautious (より明るい) */
-        #fff95b 45%,     /* cautious -> friendly (より鮮やか) */
-        #a5ed6e 65%,     /* friendly -> warm (より明るい) */
-        #64d2ff 85%,     /* warm -> close (より鮮やか) */
-        #bb8eff 100%     /* close - 紫 (より明るい) */
-    ) !important;
-}
+    .affection-gauge .gradio-slider .slider-track {
+        height: 100% !important;
+        background: linear-gradient(to right,
+            #ff4d6d 0%,      /* hostile - 赤 (より鮮やか) */
+            #ff7e54 10%,     /* hostile -> distant (より暖かい) */
+            #ffbe3d 25%,     /* distant -> cautious (より明るい) */
+            #fff95b 45%,     /* cautious -> friendly (より鮮やか) */
+            #a5ed6e 65%,     /* friendly -> warm (より明るい) */
+            #64d2ff 85%,     /* warm -> close (より鮮やか) */
+            #bb8eff 100%     /* close - 紫 (より明るい) */
+        ) !important;
+    }
 
-.affection-gauge .gradio-slider .slider-handle {
-    width: 30px !important;
-    height: 30px !important;
-    top: -3px !important;
-    background-color: white !important;
-    border: 3px solid var(--primary-color) !important;
-    box-shadow: 0 0 10px rgba(255, 107, 139, 0.4) !important;
-    transition: transform 0.2s ease !important;
-}
+    .affection-gauge .gradio-slider .slider-handle {
+        width: 30px !important;
+        height: 30px !important;
+        top: -3px !important;
+        background-color: white !important;
+        border: 3px solid var(--primary-color) !important;
+        box-shadow: 0 0 10px rgba(255, 107, 139, 0.4) !important;
+        transition: transform 0.2s ease !important;
+    }
 
-.affection-gauge .gradio-slider .slider-handle:hover {
-    transform: scale(1.1) !important;
-}
+    .affection-gauge .gradio-slider .slider-handle:hover {
+        transform: scale(1.1) !important;
+    }
 
-/* 関係性ステージ表示の改善 */
-.relationship-stage {
-    font-weight: bold !important;
-    text-align: center !important;
-    margin-top: 10px !important;
-    padding: 8px 12px !important;
-    border-radius: var(--border-radius-md) !important;
-    transition: var(--transition-normal) !important;
-    font-size: 1.1em !important;
-    box-shadow: var(--shadow-soft) !important;
-    position: relative !important;
-    overflow: hidden !important;
-}
+    /* 関係性ステージ表示の改善 */
+    .relationship-stage {
+        font-weight: bold !important;
+        text-align: center !important;
+        margin-top: 10px !important;
+        padding: 8px 12px !important;
+        border-radius: var(--border-radius-md) !important;
+        transition: var(--transition-normal) !important;
+        font-size: 1.1em !important;
+        box-shadow: var(--shadow-soft) !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
 
-.relationship-stage::after {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%) !important;
-    background-size: 10px 10px !important;
-    z-index: 1 !important;
-    opacity: 0.5 !important;
-}
+    .relationship-stage::after {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%) !important;
+        background-size: 10px 10px !important;
+        z-index: 1 !important;
+        opacity: 0.5 !important;
+    }
 
-.stage-hostile {
-    background-color: #ffe5e8 !important;
-    color: #d10023 !important;
-    border-left: 5px solid #ff4d6d !important;
-}
+    .stage-hostile {
+        background-color: #ffe5e8 !important;
+        color: #d10023 !important;
+        border-left: 5px solid #ff4d6d !important;
+    }
 
-.stage-distant {
-    background-color: #fff0e5 !important;
-    color: #b54200 !important;
-    border-left: 5px solid #ff7e54 !important;
-}
+    .stage-distant {
+        background-color: #fff0e5 !important;
+        color: #b54200 !important;
+        border-left: 5px solid #ff7e54 !important;
+    }
 
-.stage-cautious {
-    background-color: #fff8e0 !important;
-    color: #a66800 !important;
-    border-left: 5px solid #ffbe3d !important;
-}
+    .stage-cautious {
+        background-color: #fff8e0 !important;
+        color: #a66800 !important;
+        border-left: 5px solid #ffbe3d !important;
+    }
 
-.stage-friendly {
-    background-color: #fffde0 !important;
-    color: #707000 !important;
-    border-left: 5px solid #fff95b !important;
-}
+    .stage-friendly {
+        background-color: #fffde0 !important;
+        color: #707000 !important;
+        border-left: 5px solid #fff95b !important;
+    }
 
-.stage-warm {
-    background-color: #eaffd8 !important;
-    color: #2a7000 !important;
-    border-left: 5px solid #a5ed6e !important;
-}
+    .stage-warm {
+        background-color: #eaffd8 !important;
+        color: #2a7000 !important;
+        border-left: 5px solid #a5ed6e !important;
+    }
 
-.stage-close {
-    background-color: #e0f4ff !important;
-    color: #0057a6 !important;
-    border-left: 5px solid #64d2ff !important;
-}
+    .stage-close {
+        background-color: #e0f4ff !important;
+        color: #0057a6 !important;
+        border-left: 5px solid #64d2ff !important;
+    }
 
-/* 背景装飾 - 家にいる風の雰囲気 */
-.room-background {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    z-index: -1 !important;
-    pointer-events: none !important;
-    opacity: 0.5 !important;
-}
+    /* 背景装飾 - 家にいる風の雰囲気 */
+    .room-background {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        z-index: -1 !important;
+        pointer-events: none !important;
+        opacity: 0.5 !important;
+    }
 
-.room-window {
-    position: absolute !important;
-    top: 50px !important;
-    right: 50px !important;
-    width: 200px !important;
-    height: 300px !important;
-    border: 8px solid #8b5a2b !important;
-    border-radius: 10px !important;
-    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%) !important;
-    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 30px rgba(0, 0, 0, 0.1) !important;
-}
+    .room-window {
+        position: absolute !important;
+        top: 50px !important;
+        right: 50px !important;
+        width: 200px !important;
+        height: 300px !important;
+        border: 8px solid #8b5a2b !important;
+        border-radius: 10px !important;
+        background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%) !important;
+        box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.5), 0 0 30px rgba(0, 0, 0, 0.1) !important;
+    }
 
-.room-window::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 50% !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 2px !important;
-    background-color: rgba(255, 255, 255, 0.7) !important;
-}
+    .room-window::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 2px !important;
+        background-color: rgba(255, 255, 255, 0.7) !important;
+    }
 
-.room-window::after {
-    content: '' !important;
-    position: absolute !important;
-    left: 50% !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    width: 2px !important;
-    background-color: rgba(255, 255, 255, 0.7) !important;
-}
+    .room-window::after {
+        content: '' !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        width: 2px !important;
+        background-color: rgba(255, 255, 255, 0.7) !important;
+    }
 
-.room-furniture {
-    position: absolute !important;
-    bottom: 50px !important;
-    left: 50px !important;
-    width: 300px !important;
-    height: 100px !important;
-    background-color: #8b5a2b !important;
-    border-radius: 5px 5px 0 0 !important;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
-}
+    .room-furniture {
+        position: absolute !important;
+        bottom: 50px !important;
+        left: 50px !important;
+        width: 300px !important;
+        height: 100px !important;
+        background-color: #8b5a2b !important;
+        border-radius: 5px 5px 0 0 !important;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    }
 
-.room-item {
-    position: absolute !important;
-    opacity: 0.7 !important;
-}
+    .room-item {
+        position: absolute !important;
+        opacity: 0.7 !important;
+    }
 
-.room-book {
-    top: 150px !important;
-    left: 100px !important;
-    width: 50px !important;
-    height: 70px !important;
-    background-color: #d94c6a !important;
-    transform: rotate(-5deg) !important;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2) !important;
-}
+    .room-book {
+        top: 150px !important;
+        left: 100px !important;
+        width: 50px !important;
+        height: 70px !important;
+        background-color: #d94c6a !important;
+        transform: rotate(-5deg) !important;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2) !important;
+    }
 
-.room-plant {
-    top: 120px !important;
-    right: 300px !important;
-    width: 80px !important;
-    height: 120px !important;
-    background: linear-gradient(to top, #8b5a2b 0%, #8b5a2b 30%, #4caf50 30%, #4caf50 100%) !important;
-    border-radius: 0 0 40px 40px !important;
-}
+    .room-plant {
+        top: 120px !important;
+        right: 300px !important;
+        width: 80px !important;
+        height: 120px !important;
+        background: linear-gradient(to top, #8b5a2b 0%, #8b5a2b 30%, #4caf50 30%, #4caf50 100%) !important;
+        border-radius: 0 0 40px 40px !important;
+    }
 
-.room-lamp {
-    top: 80px !important;
-    left: 300px !important;
-    width: 60px !important;
-    height: 150px !important;
-    background: linear-gradient(to top, #8b5a2b 0%, #8b5a2b 70%, #ffeb3b 70%, #ffeb3b 100%) !important;
-}
+    .room-lamp {
+        top: 80px !important;
+        left: 300px !important;
+        width: 60px !important;
+        height: 150px !important;
+        background: linear-gradient(to top, #8b5a2b 0%, #8b5a2b 70%, #ffeb3b 70%, #ffeb3b 100%) !important;
+    }
 
-.room-clock {
-    top: 80px !important;
-    left: 80% !important;
-    width: 80px !important;
-    height: 80px !important;
-    border-radius: 50% !important;
-    background-color: #f5f5f5 !important;
-    border: 5px solid #8b5a2b !important;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
-}
+    .room-clock {
+        top: 80px !important;
+        left: 80% !important;
+        width: 80px !important;
+        height: 80px !important;
+        border-radius: 50% !important;
+        background-color: #f5f5f5 !important;
+        border: 5px solid #8b5a2b !important;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
+    }
 
-/* チャットボックスのメッセージスタイル強制上書き */
-.gradio-chatbot {
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffccd5' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E") !important;
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    border: 1px solid var(--neutral-medium) !important;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
-}
+    /* チャットボックスのメッセージスタイル強制上書き */
+    .gradio-chatbot {
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffccd5' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E") !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid var(--neutral-medium) !important;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
+    }
 
-.gradio-chatbot .user, .gradio-chatbot .bot {
-    padding: 0 !important;
-    border: none !important;
-    background: transparent !important;
-}
+    .gradio-chatbot .user, .gradio-chatbot .bot {
+        padding: 0 !important;
+        border: none !important;
+        background: transparent !important;
+    }
 
-.gradio-chatbot .user > div, .gradio-chatbot .bot > div {
-    padding: 12px 16px !important;
-    margin: 8px !important;
-    border-radius: var(--border-radius-sm) !important;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
-}
+    .gradio-chatbot .user > div, .gradio-chatbot .bot > div {
+        padding: 12px 16px !important;
+        margin: 8px !important;
+        border-radius: var(--border-radius-sm) !important;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
+    }
 
-.gradio-chatbot .user > div {
-    background-color: var(--accent-light) !important;
-    border-top-right-radius: 0 !important;
-}
+    .gradio-chatbot .user > div {
+        background-color: var(--accent-light) !important;
+        border-top-right-radius: 0 !important;
+    }
 
-.gradio-chatbot .bot > div {
-    background-color: var(--primary-light) !important;
-    border-top-left-radius: 0 !important;
-}
+    .gradio-chatbot .bot > div {
+        background-color: var(--primary-light) !important;
+        border-top-left-radius: 0 !important;
+    }
 
-/* ボタンスタイルの強制上書き */
-button.primary {
-    background-color: var(--primary-color) !important;
-    color: white !important;
-}
+    /* 段階変化通知のアニメーション改善 */
+    @keyframes stageChangeNotification {
+        0% {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        10% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        90% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+    }
 
-button.secondary {
-    background-color: var(--neutral-medium) !important;
-    color: var(--text-primary) !important;
-}
+    .stage-change-notification {
+        animation: stageChangeNotification 5s ease-in-out forwards !important;
+        padding: 15px !important;
+        margin: 15px 0 !important;
+        border-radius: var(--border-radius-md) !important;
+        text-align: center !important;
+        font-weight: bold !important;
+        box-shadow: var(--shadow-medium) !important;
+        position: relative !important;
+        overflow: hidden !important;
+        background-color: white !important;
+        border-left: 5px solid !important;
+    }
 
-/* スライダーの強制上書き */
-input[type="range"] {
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    height: 24px !important;
-    border-radius: var(--border-radius-lg) !important;
-    background: linear-gradient(to right,
-        #ff4d6d 0%,
-        #ff7e54 10%,
-        #ffbe3d 25%,
-        #fff95b 45%,
-        #a5ed6e 65%,
-        #64d2ff 85%,
-        #bb8eff 100%
-    ) !important;
-}
+    .stage-change-notification::before {
+        content: '✨' !important;
+        margin-right: 8px !important;
+    }
 
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    width: 30px !important;
-    height: 30px !important;
-    background-color: white !important;
-    border: 3px solid var(--primary-color) !important;
-    border-radius: 50% !important;
-    box-shadow: 0 0 10px rgba(255, 107, 139, 0.4) !important;
-}
+    .stage-change-notification::after {
+        content: '✨' !important;
+        margin-left: 8px !important;
+    }
 
-input[type="range"]::-moz-range-thumb {
-    width: 30px !important;
-    height: 30px !important;
-    background-color: white !important;
-    border: 3px solid var(--primary-color) !important;
-    border-radius: 50% !important;
-    box-shadow: 0 0 10px rgba(255, 107, 139, 0.4) !important;
-}
-""") as demo:
+    .stage-change-notification.stage-distant {
+        border-color: #ff7e54 !important;
+        background-color: #fff0e5 !important;
+    }
+
+    .stage-change-notification.stage-cautious {
+        border-color: #ffbe3d !important;
+        background-color: #fff8e0 !important;
+    }
+
+    .stage-change-notification.stage-friendly {
+        border-color: #fff95b !important;
+        background-color: #fffde0 !important;
+    }
+
+    .stage-change-notification.stage-warm {
+        border-color: #a5ed6e !important;
+        background-color: #eaffd8 !important;
+    }
+
+    .stage-change-notification.stage-close {
+        border-color: #64d2ff !important;
+        background-color: #e0f4ff !important;
+    }
+
+    /* ボタンスタイルの強制上書き */
+    button.primary {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    button.secondary {
+        background-color: var(--neutral-medium) !important;
+        color: var(--text-primary) !important;
+    }
+
+    /* スライダーの強制上書き */
+    input[type="range"] {
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        height: 24px !important;
+        border-radius: var(--border-radius-lg) !important;
+        background: linear-gradient(to right,
+            #ff4d6d 0%,
+            #ff7e54 10%,
+            #ffbe3d 25%,
+            #fff95b 45%,
+            #a5ed6e 65%,
+            #64d2ff 85%,
+            #bb8eff 100%
+        ) !important;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        width: 30px !important;
+        height: 30px !important;
+        background-color: white !important;
+        border: 3px solid var(--primary-color) !important;
+        border-radius: 50% !important;
+        box-shadow: 0 0 10px rgba(255, 107, 139, 0.4) !important;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: white !important;
+        border: 3px solid var(--primary-color) !important;
+        border-radius: 50% !important;
+        box-shadow: 0 0 10px rgba(255, 107, 139, 0.4) !important;
+    }
+
+    /* 全体のページスタイル */
+    .gradio-app {
+        background-color: #f9f0f5 !important;
+        background-image: 
+            radial-gradient(circle at 25px 25px, rgba(255, 107, 139, 0.15) 2%, transparent 0%), 
+            radial-gradient(circle at 75px 75px, rgba(107, 127, 255, 0.15) 2%, transparent 0%) !important;
+        background-size: 100px 100px !important;
+    }
+
+    /* 親密度ゲージを外部に表示するためのスタイル */
+    .affection-gauge-outside {
+        margin-bottom: 20px !important;
+        padding: 15px !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        border-radius: var(--border-radius-md) !important;
+        box-shadow: var(--shadow-medium) !important;
+        border: 1px solid var(--primary-light) !important;
+    }
+    </style>
+    """)
+
+with gr.Blocks(theme=gr.themes.Soft()) as demo:
+    # 背景装飾コンテナを埋め込み
+    gr.HTML("""
+        <div class="room-background">
+            <div class="room-window"></div>
+            <div class="room-furniture"></div>
+            <div class="room-item room-book"></div>
+            <div class="room-item room-plant"></div>
+            <div class="room-item room-lamp"></div>
+            <div class="room-item room-clock"></div>
+        </div>
+    """)
+    
     # マニフェストとJavaScriptを埋め込み
     # タイムスタンプをクエリパラメータとして追加してキャッシュを回避
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -1497,11 +1603,8 @@ input[type="range"]::-moz-range-thumb {
         logging.info(f"Created new session during restoration: {new_session_id}")
         return new_session_id, [], [], {}
     
-    # セッション復元のためのカスタムJavaScriptを埋め込み
-   # 修正版のGradioセッション復元コード
-
-# HTMLコンポーネント（修正版）
-session_restore_html = gr.HTML("""
+     # セッション復元のためのカスタムJavaScriptを埋め込み
+    gr.HTML("""
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         console.log("DOM loaded, initializing session restoration...");
@@ -1555,74 +1658,10 @@ session_restore_html = gr.HTML("""
         };
     });
     </script>
-""")
-
-# Python側でセッション復元イベントを処理する関数
-def handle_session_restoration():
-    """
-    JavaScriptからのセッション復元イベントを処理
-    """
-    # この関数はJavaScriptのカスタムイベントと連携する
-    # 実際の実装では、セッションIDに基づいてデータを復元
-    pass
-
-# Gradioインターフェース例
-def create_gradio_interface():
-    with gr.Blocks() as demo:
-        # セッション復元用のHTML（ページ読み込み時に実行）
-        session_restore_html
-        
-        # セッション状態を管理するState変数
-        session_id = gr.State("")
-        affection_level = gr.State(0)
-        relationship_stage = gr.State("stranger")
-        
-        # チャット履歴
-        chatbot = gr.Chatbot()
-        msg = gr.Textbox(placeholder="まりと話してみよう...")
-        
-        # セッション情報表示（デバッグ用）
-        session_info = gr.HTML("<div id='session-info'>セッション情報: 未読み込み</div>")
-        
-        # JavaScriptでセッション情報を更新する関数
-        session_update_js = """
-        function updateSessionInfo(sessionId, affection, stage) {
-            document.getElementById('session-info').innerHTML = 
-                `<div>セッション: ${sessionId}<br>好感度: ${affection}<br>関係: ${stage}</div>`;
-            return [sessionId, affection, stage];
-        }
-        """
-        
-        # メッセージ送信時の処理
-        def respond(message, history, sess_id, affection, stage):
-            # ここでGroq APIを呼び出し
-            # セッション状態に基づいてレスポンスを調整
-            
-            # 仮のレスポンス
-            bot_response = f"こんにちは！（セッション: {sess_id}, 好感度: {affection}）"
-            history.append((message, bot_response))
-            
-            # 好感度を少し上げる
-            new_affection = int(affection) + 1
-            
-            return history, "", sess_id, str(new_affection), stage
-        
-        # イベント処理
-        msg.submit(
-            respond,
-            inputs=[msg, chatbot, session_id, affection_level, relationship_stage],
-            outputs=[chatbot, msg, session_id, affection_level, relationship_stage],
-            js=session_update_js  # JavaScript関数も実行
-        )
-        
-    return demo
-
-
-# Gradioアプリをマウント - UIへのパスを明示的に指定
-app = gr.mount_gradio_app(app, demo, path="/ui")
+    """)
 
 # アプリケーション起動用のエントリーポイント
 if __name__ == "__main__":
     import uvicorn
     # 明示的に固定ポート10000を使用
-    uvicorn.run(app, host="0.0.0.0", port=10000,block=True)
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
