@@ -628,6 +628,7 @@ def clear_history():
     return [], [], None, {}
 
 # --- マニフェストデータの定義 ---
+# このアプリケーションは FastAPI をバックエンドとし、Gradio UI を "/" と "/ui" パスにマウントしています
 manifest_data = {
     "name": "麻理チャット",
     "short_name": "麻理",
@@ -658,15 +659,9 @@ app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 async def get_manifest():
     return JSONResponse(manifest_data)
 
-# 管理者インターフェースエンドポイント
-@app.get("/admin")
-async def admin_page():
-    from admin_interface import create_admin_interface
-    admin_interface = create_admin_interface()
-    return gr.mount_gradio_app(app, admin_interface, path="/admin")
-
 # Gradioインターフェースの定義
-with gr.Blocks(theme=gr.themes.Soft()) as demo:
+# Gradioインターフェースの定義
+with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
     # CSSを直接埋め込み
     gr.HTML(r"""
     <style>
@@ -1220,8 +1215,6 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     }
     </style>
     """)
-
-with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # 背景装飾コンテナを埋め込み
     gr.HTML("""
         <div class="room-background">
@@ -1660,8 +1653,23 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     </script>
     """)
 
+# Gradioインターフェースをマウント
+# ルートパスとUIパスの両方にマウント
+app = gr.mount_gradio_app(app, demo, path="/")
+app = gr.mount_gradio_app(app, demo, path="/ui")
+
+# 管理者インターフェースエンドポイント
+@app.get("/admin")
+async def admin_page():
+    from admin_interface import create_admin_interface
+    admin_interface = create_admin_interface()
+    return gr.mount_gradio_app(app, admin_interface, path="/admin")
+
 # アプリケーション起動用のエントリーポイント
 if __name__ == "__main__":
     import uvicorn
     # 明示的に固定ポート10000を使用
     uvicorn.run(app, host="0.0.0.0", port=PORT)
+    
+    # Note: Gradioインターフェースは FastAPI の "/" と "/ui" パスの両方にマウントされています
+    # 直接アクセスするには http://localhost:10000/ または http://localhost:10000/ui を使用してください
