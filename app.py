@@ -704,11 +704,24 @@ custom_css = """
 /* Google Fonts読み込み */
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&family=Nunito:wght@400;600;700&display=swap');
 
+/* Gradioのメインコンテナの背景を透明にする */
+.gradio-container {
+    background-color: transparent !important;
+}
+
+/* Gradioのブロックの背景も透明に */
+.gradio-container .prose, 
+.gradio-container [class*='block'],
+.gradio-container [class*='panel'] {
+    background-color: transparent !important;
+}
+
 /* チャットボットの背景パターン */
 .custom-chatbot {
     background-color: rgba(255, 255, 255, 0.9) !important;
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffccd5' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E") !important;
     border-radius: var(--radius-md) !important;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08) !important;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08) !important;
 }
 
@@ -737,6 +750,23 @@ custom_css = """
     background-color: white !important;
     border-left: 5px solid !important;
     animation: fadeInOut 5s ease-in-out forwards !important;
+}
+
+/* 段階変化通知の色分け */
+.stage-change-notification.stage-distant {
+    border-left-color: #ff4d6d !important;
+}
+.stage-change-notification.stage-cautious {
+    border-left-color: #ffbe3d !important;
+}
+.stage-change-notification.stage-friendly {
+    border-left-color: #fff95b !important;
+}
+.stage-change-notification.stage-warm {
+    border-left-color: #a5ed6e !important;
+}
+.stage-change-notification.stage-close {
+    border-left-color: #64d2ff !important;
 }
 
 @keyframes fadeInOut {
@@ -776,7 +806,7 @@ custom_css = """
 with gr.Blocks(theme=theme, css=custom_css, title="麻理チャット") as demo:
 
     # 背景装飾コンテナを埋め込み
-    gr.HTML("""
+    gr.HTML(value="""
         <div class="room-background">
             <div class="room-window"></div>
             <div class="room-furniture"></div>
@@ -790,7 +820,7 @@ with gr.Blocks(theme=theme, css=custom_css, title="麻理チャット") as demo:
     # マニフェストとJavaScriptを埋め込み
     # タイムスタンプをクエリパラメータとして追加してキャッシュを回避
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    gr.HTML(f"""
+    gr.HTML("""
             <script src="assets/affection_gauge.js?v={timestamp}"></script>
             <script>
             // URLの末尾スラッシュを削除して二重スラッシュを防ぐ
@@ -924,6 +954,42 @@ with gr.Blocks(theme=theme, css=custom_css, title="麻理チャット") as demo:
                     localStorage.setItem('mari_last_interaction', new Date().toISOString());
                 }}
             }}, 60000); // Update every minute
+            
+            // Handle stage change notifications
+            document.addEventListener('DOMContentLoaded', function() {
+                // Set up a mutation observer to watch for changes to the stage notification
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList') {
+                            const stageNotification = document.querySelector('.stage-change-notification');
+                            if (stageNotification) {
+                                // If content is empty, hide the notification
+                                if (!stageNotification.textContent || stageNotification.textContent.trim() === '') {
+                                    stageNotification.style.display = 'none';
+                                } else {
+                                    // Show notification with animation
+                                    stageNotification.style.display = 'block';
+                                    // Reset animation
+                                    stageNotification.style.animation = 'none';
+                                    stageNotification.offsetHeight; // Trigger reflow
+                                    stageNotification.style.animation = 'fadeInOut 5s ease-in-out forwards';
+                                    
+                                    // Hide after animation completes
+                                    setTimeout(function() {
+                                        stageNotification.style.display = 'none';
+                                    }, 5000);
+                                }
+                            }
+                        }
+                    });
+                });
+                
+                // Start observing the stage notification element
+                const stageNotificationElement = document.querySelector('.stage-change-notification');
+                if (stageNotificationElement) {
+                    observer.observe(stageNotificationElement, { childList: true, subtree: true });
+                }
+            });
             </script>
             <link rel="manifest" href="manifest.json">
     """)
@@ -944,7 +1010,7 @@ with gr.Blocks(theme=theme, css=custom_css, title="麻理チャット") as demo:
             relationship_stage_display = gr.Textbox(label="関係性ステージ", interactive=False)
             
             # 段階変化通知用のコンポーネント
-            stage_change_notification = gr.HTML(visible=True, elem_classes=["stage-change-notification-container"])
+            stage_change_notification = gr.HTML(visible=True, elem_classes=["stage-change-notification"])
             
             # Add session info display (hidden by default)
             with gr.Accordion("セッション情報", open=False, visible=True):
@@ -953,7 +1019,7 @@ with gr.Blocks(theme=theme, css=custom_css, title="麻理チャット") as demo:
                 # 関係性詳細情報表示用のコンポーネント
                 relationship_details = gr.HTML(elem_classes=["relationship-details-container"])
             
-            chatbot = gr.Chatbot(height=400, elem_classes="custom-chatbot")
+            chatbot = gr.Chatbot(height=400, elem_classes=["custom-chatbot"])
             user_input = gr.Textbox(label="あなたの発言", placeholder="麻理に話しかけよう…", lines=2)
             
             with gr.Row():
@@ -999,11 +1065,9 @@ with gr.Blocks(theme=theme, css=custom_css, title="麻理チャット") as demo:
             # Get appropriate message or default
             message = notification_messages.get(relationship_stage, "麻理との関係性が変化した...")
             
-            # Create HTML for notification
+            # Create HTML for notification - no need for nested div since the component already has the class
             stage_change_notification = f"""
-            <div class="stage-change-notification stage-{relationship_stage}">
                 {message}
-            </div>
             """
             
             # Log the stage change
@@ -1111,7 +1175,7 @@ with gr.Blocks(theme=theme, css=custom_css, title="麻理チャット") as demo:
         # Update session info display
         session_id_display, affection_level, relationship_stage, rel_info, stage_notification, rel_details = update_session_info(new_session_id)
         
-        return empty_input, updated_chatbot, updated_history, new_session_id, session_id_display, affection_level, relationship_stage, rel_info
+        return empty_input, updated_chatbot, updated_history, new_session_id, session_id_display, affection_level, relationship_stage, rel_info, stage_notification, rel_details
     
     # Modified clear_history to reset session info
     def clear_history_with_info():
@@ -1125,13 +1189,15 @@ with gr.Blocks(theme=theme, css=custom_css, title="麻理チャット") as demo:
                      inputs=[user_input, state, session_state, relationship_info], 
                      outputs=[user_input, chatbot, state, session_state, 
                              session_id_display, affection_level_display, 
-                             relationship_stage_display, relationship_info])
+                             relationship_stage_display, relationship_info,
+                             stage_change_notification, relationship_details])
     
     submit_btn.click(on_submit_with_info, 
                     inputs=[user_input, state, session_state, relationship_info], 
                     outputs=[user_input, chatbot, state, session_state, 
                             session_id_display, affection_level_display, 
-                            relationship_stage_display, relationship_info])
+                            relationship_stage_display, relationship_info,
+                            stage_change_notification, relationship_details])
     
     clear_btn.click(clear_history_with_info, 
                    outputs=[chatbot, state, session_state, 
