@@ -203,6 +203,8 @@ GOOGLE_API_KEY = os.environ.get("API-KEY", "")
 # URLの末尾スラッシュを削除し、二重スラッシュを防ぐ
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com").rstrip('/')
 # デバッグ用ログ
+logging.info(f"RENDER_EXTERNAL_URL after rstrip: {RENDER_EXTERNAL_URL}")
+# デバッグ用ログ
 logging.info(f"RENDER_EXTERNAL_URL: {RENDER_EXTERNAL_URL}")
 # Gradioのデフォルトポートは7860、FastAPIのデフォルトは8000、競合を避けるため10000を使用
 DEFAULT_PORT = 10000
@@ -642,7 +644,7 @@ manifest_data = {
     "theme_color": "#ff6b8b",
     "icons": [
         {
-            "src": "/assets/favicon.ico",
+            "src": "assets/favicon.ico",
             "sizes": "48x48",
             "type": "image/x-icon"
         }
@@ -656,6 +658,8 @@ app = FastAPI(root_path="")
 
 # 静的ファイルの配信設定
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+# 静的ファイルの配信設定（スラッシュなしでもアクセス可能に）
+app.mount("assets", StaticFiles(directory="assets"), name="assets_no_slash")
 
 # マニフェスト配信エンドポイント
 @app.get("/manifest.json")
@@ -1234,7 +1238,7 @@ with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
     # タイムスタンプをクエリパラメータとして追加してキャッシュを回避
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     gr.HTML(f"""
-            <script src="/assets/affection_gauge.js?v={timestamp}"></script>
+            <script src="assets/affection_gauge.js?v={timestamp}"></script>
             <script>
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL}";
             window.src = "{RENDER_EXTERNAL_URL}";
@@ -1339,7 +1343,7 @@ with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
                 }}
             }}, 60000); // Update every minute
             </script>
-            <link rel="manifest" href="/manifest.json">
+            <link rel="manifest" href="manifest.json">
     """)
 
     gr.Markdown("## 🤖 麻理とチャット")
