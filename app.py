@@ -200,7 +200,10 @@ ChatHistory = List[Tuple[str, str]]
 # --- Google Gemini API設定 ---
 MODEL_NAME = "gemini-2.0-flash-lite" 
 GOOGLE_API_KEY = os.environ.get("API-KEY", "")
-RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com")
+# URLの末尾スラッシュを削除し、二重スラッシュを防ぐ
+RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com").rstrip('/')
+# デバッグ用ログ
+logging.info(f"RENDER_EXTERNAL_URL: {RENDER_EXTERNAL_URL}")
 # Gradioのデフォルトポートは7860、FastAPIのデフォルトは8000、競合を避けるため10000を使用
 DEFAULT_PORT = 10000
 
@@ -649,7 +652,7 @@ manifest_data = {
 }
 
 # FastAPIアプリ
-app = FastAPI()
+app = FastAPI(root_path="")
 
 # 静的ファイルの配信設定
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
@@ -1236,6 +1239,7 @@ with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL}";
             window.src = "{RENDER_EXTERNAL_URL}";
             window.space = "{RENDER_EXTERNAL_URL}";
+            window.location.origin = "{RENDER_EXTERNAL_URL}";
             
             // Enhanced session management with localStorage
             window.mariSessionManager = {{
@@ -1655,6 +1659,7 @@ with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
 
 # Gradioインターフェースをマウント
 # ルートパスとUIパスの両方にマウント
+demo.root_path = ""
 app = gr.mount_gradio_app(app, demo, path="/")
 app = gr.mount_gradio_app(app, demo, path="/ui")
 
