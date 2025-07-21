@@ -691,12 +691,13 @@ async def get_manifest():
 # Gradioインターフェースの定義
 # Gradioインターフェースの定義
 # カスタムテーマの定義
-theme = gr.themes.Soft().set(
-    primary_hue="pink",
-    secondary_hue="indigo",
-    font=["M PLUS Rounded 1c", "Nunito", "ui-sans-serif", "system-ui"],
-    radius_size=gr.themes.sizes.radius_md,
-)
+theme = gr.themes.Soft()
+# 個別のプロパティを設定
+theme.font = ["M PLUS Rounded 1c", "Nunito", "ui-sans-serif", "system-ui"]
+theme.radius_size = gr.themes.sizes.radius_md
+# 色相の設定
+theme.primary_hue = "pink"
+theme.secondary_hue = "indigo"
 
 # カスタムCSSの定義
 custom_css = """
