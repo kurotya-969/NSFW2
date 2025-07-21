@@ -202,6 +202,21 @@ MODEL_NAME = "gemini-2.0-flash-lite"
 GOOGLE_API_KEY = os.environ.get("API-KEY", "")
 # URLの末尾スラッシュを削除し、二重スラッシュを防ぐ
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com").rstrip('/')
+
+# URLパスを結合する関数（二重スラッシュを防ぐ）
+def join_url_paths(base, path):
+    if not base:
+        return path
+    if not path:
+        return base
+    
+    # 末尾のスラッシュを削除
+    base = base.rstrip('/')
+    # 先頭のスラッシュを削除
+    path = path.lstrip('/')
+    
+    return f"{base}/{path}"
+
 # デバッグ用ログ
 logging.info(f"RENDER_EXTERNAL_URL after rstrip: {RENDER_EXTERNAL_URL}")
 # デバッグ用ログ
@@ -644,7 +659,7 @@ manifest_data = {
     "theme_color": "#ff6b8b",
     "icons": [
         {
-            "src": "assets/favicon.ico",
+            "src": "/assets/favicon.ico",
             "sizes": "48x48",
             "type": "image/x-icon"
         }
@@ -658,8 +673,6 @@ app = FastAPI(root_path="")
 
 # 静的ファイルの配信設定
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
-# 静的ファイルの配信設定（スラッシュなしでもアクセス可能に）
-app.mount("assets", StaticFiles(directory="assets"), name="assets_no_slash")
 
 # マニフェスト配信エンドポイント
 @app.get("/manifest.json")
@@ -1238,12 +1251,26 @@ with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
     # タイムスタンプをクエリパラメータとして追加してキャッシュを回避
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     gr.HTML(f"""
-            <script src="assets/affection_gauge.js?v={timestamp}"></script>
+            <script src="/assets/affection_gauge.js?v={timestamp}"></script>
             <script>
+            // URLの末尾スラッシュを削除して二重スラッシュを防ぐ
             window.API_BASE_URL = "{RENDER_EXTERNAL_URL}";
             window.src = "{RENDER_EXTERNAL_URL}";
             window.space = "{RENDER_EXTERNAL_URL}";
             window.location.origin = "{RENDER_EXTERNAL_URL}";
+            
+            // URLパスを結合する関数（二重スラッシュを防ぐ）
+            window.joinPaths = function(base, path) {{
+                if (!base) return path;
+                if (!path) return base;
+                
+                // 末尾のスラッシュを削除
+                base = base.replace(/\\/+$/, '');
+                // 先頭のスラッシュを削除
+                path = path.replace(/^\\/+/, '');
+                
+                return base + '/' + path;
+            }};
             
             // Enhanced session management with localStorage
             window.mariSessionManager = {{
@@ -1343,7 +1370,7 @@ with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
                 }}
             }}, 60000); // Update every minute
             </script>
-            <link rel="manifest" href="manifest.json">
+            <link rel="manifest" href="/manifest.json">
     """)
 
     gr.Markdown("## 🤖 麻理とチャット")
