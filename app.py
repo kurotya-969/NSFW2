@@ -656,13 +656,13 @@ manifest_data = {
     "name": "麻理チャット",
     "short_name": "麻理",
     "description": "ツンデレAI「麻理」とのチャットアプリ",
-    "start_url": "./",
+    "start_url": "/ui",
     "display": "standalone",
     "background_color": "#f9f0f5",
     "theme_color": "#ff6b8b",
     "icons": [
         {
-            "src": "/assets/favicon.ico",
+            "src": "assets/favicon.ico",
             "sizes": "48x48",
             "type": "image/x-icon"
         }
@@ -676,6 +676,12 @@ app = FastAPI(root_path="")
 
 # 静的ファイルの配信設定
 app.mount("/assets", StaticFiles(directory="assets", html=True), name="assets")
+
+# ルートパスへのアクセスを/uiにリダイレクト
+@app.get("/")
+async def redirect_to_ui():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/ui")
 
 # マニフェスト配信エンドポイント
 @app.get("/manifest.json")
@@ -1254,12 +1260,12 @@ with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
     # タイムスタンプをクエリパラメータとして追加してキャッシュを回避
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     gr.HTML(f"""
-            <script src="/assets/affection_gauge.js?v={timestamp}"></script>
+            <script src="assets/affection_gauge.js?v={timestamp}"></script>
             <script>
             // URLの末尾スラッシュを削除して二重スラッシュを防ぐ
-            window.API_BASE_URL = "{RENDER_EXTERNAL_URL}";
-            window.src = "{RENDER_EXTERNAL_URL}";
-            window.space = "{RENDER_EXTERNAL_URL}";
+            window.API_BASE_URL = "{RENDER_EXTERNAL_URL}/ui";
+            window.src = "{RENDER_EXTERNAL_URL}/ui";
+            window.space = "{RENDER_EXTERNAL_URL}/ui";
             window.location.origin = "{RENDER_EXTERNAL_URL}";
             
             // URLパスを結合する関数（二重スラッシュを防ぐ）
@@ -1388,7 +1394,7 @@ with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
                 }}
             }}, 60000); // Update every minute
             </script>
-            <link rel="manifest" href="/manifest.json">
+            <link rel="manifest" href="manifest.json">
     """)
 
     gr.Markdown("## 🤖 麻理とチャット")
@@ -1707,9 +1713,8 @@ with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
     """)
 
 # Gradioインターフェースをマウント
-# ルートパスとUIパスの両方にマウント
+# UIパスのみにマウント（"/"は削除）
 demo.root_path = ""
-app = gr.mount_gradio_app(app, demo, path="/")
 app = gr.mount_gradio_app(app, demo, path="/ui")
 
 # 管理者インターフェースエンドポイント
