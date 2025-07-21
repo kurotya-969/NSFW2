@@ -201,7 +201,10 @@ ChatHistory = List[Tuple[str, str]]
 MODEL_NAME = "gemini-2.0-flash-lite" 
 GOOGLE_API_KEY = os.environ.get("API-KEY", "")
 # URLの末尾スラッシュを削除し、二重スラッシュを防ぐ
-RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com").rstrip('/')
+RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://yin-kiyachiyanchiyatsuto.onrender.com")
+# 末尾のスラッシュを確実に削除
+if RENDER_EXTERNAL_URL and RENDER_EXTERNAL_URL.endswith('/'):
+    RENDER_EXTERNAL_URL = RENDER_EXTERNAL_URL[:-1]
 
 # URLパスを結合する関数（二重スラッシュを防ぐ）
 def join_url_paths(base, path):
@@ -653,7 +656,7 @@ manifest_data = {
     "name": "麻理チャット",
     "short_name": "麻理",
     "description": "ツンデレAI「麻理」とのチャットアプリ",
-    "start_url": "/",
+    "start_url": "./",
     "display": "standalone",
     "background_color": "#f9f0f5",
     "theme_color": "#ff6b8b",
@@ -672,7 +675,7 @@ manifest_data = {
 app = FastAPI(root_path="")
 
 # 静的ファイルの配信設定
-app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+app.mount("/assets", StaticFiles(directory="assets", html=True), name="assets")
 
 # マニフェスト配信エンドポイント
 @app.get("/manifest.json")
@@ -1261,13 +1264,28 @@ with gr.Blocks(theme=gr.themes.Soft(), title="麻理チャット") as demo:
             
             // URLパスを結合する関数（二重スラッシュを防ぐ）
             window.joinPaths = function(base, path) {{
-                if (!base) return path;
-                if (!path) return base;
+                // nullやundefinedのチェック
+                if (!base) return path || '';
+                if (!path) return base || '';
+                
+                // 文字列に変換
+                base = String(base);
+                path = String(path);
                 
                 // 末尾のスラッシュを削除
-                base = base.replace(/\\/+$/, '');
+                while (base.endsWith('/')) {{
+                    base = base.slice(0, -1);
+                }}
+                
                 // 先頭のスラッシュを削除
-                path = path.replace(/^\\/+/, '');
+                while (path.startsWith('/')) {{
+                    path = path.slice(1);
+                }}
+                
+                // 空の場合の処理
+                if (base === '' && path === '') return '/';
+                if (base === '') return '/' + path;
+                if (path === '') return base;
                 
                 return base + '/' + path;
             }};

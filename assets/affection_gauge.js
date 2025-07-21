@@ -120,6 +120,7 @@ function showStageChangeNotification(oldStage, newStage) {
 
     // 効果音を再生（オプション）
     try {
+        // データURLを使用しているので、パス結合は不要
         const audio = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAASAAAeMwAUFBQUFCIiIiIiIjAwMDAwMD09PT09PUxMTExMWFhYWFhYZmZmZmZmdHR0dHR0goKCgoKCkJCQkJCQnp6enp6erKysrKysvLy8vLy8ysrKysrK2NjY2NjY5ubm5ubm9PT09PT0//8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAQKAAAAAAAAHjOZTf9C');
         audio.volume = 0.3;
         audio.play().catch(e => console.log('Audio play failed:', e));
