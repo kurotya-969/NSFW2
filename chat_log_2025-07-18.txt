@@ -1,0 +1,388 @@
+2025-07-18 07:42:10,171 - Session manager initialized with storage directory: C:\Users\brack\Downloads\NSFW2-master\NSFW2-master\sessions
+2025-07-18 07:42:10,171 - Auto-loaded 0 active sessions
+2025-07-18 07:42:10,171 - Affection system initialized successfully
+2025-07-18 07:42:10,324 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_s6hpfchu
+2025-07-18 07:42:10,325 - Affection system initialized successfully
+2025-07-18 07:42:10,327 - Created new session: 9585df4d-5ec8-499b-8da0-b566747c7669 with affection level 15
+2025-07-18 07:42:10,336 - Session 9585df4d-5ec8-499b-8da0-b566747c7669: Affection updated from 10 to 14 (delta: 4)
+2025-07-18 07:42:10,338 - Session 9585df4d-5ec8-499b-8da0-b566747c7669: Affection updated from 30 to 34 (delta: 4)
+2025-07-18 07:42:10,339 - Session 9585df4d-5ec8-499b-8da0-b566747c7669: Affection updated from 50 to 54 (delta: 4)
+2025-07-18 07:42:10,340 - Session 9585df4d-5ec8-499b-8da0-b566747c7669: Affection updated from 70 to 74 (delta: 4)
+2025-07-18 07:42:10,341 - Session 9585df4d-5ec8-499b-8da0-b566747c7669: Affection updated from 90 to 94 (delta: 4)
+2025-07-18 07:42:10,341 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_pgpdw3zi
+2025-07-18 07:42:10,342 - Affection system initialized successfully
+2025-07-18 07:42:10,342 - Created new session: 7a9baffd-113e-40e1-9117-e4239efd7da7 with affection level 15
+2025-07-18 07:42:10,343 - Session 7a9baffd-113e-40e1-9117-e4239efd7da7: Affection updated from 10 to 14 (delta: 4)
+2025-07-18 07:42:10,345 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_dzehrzmj
+2025-07-18 07:42:10,345 - Affection system initialized successfully
+2025-07-18 07:42:10,346 - Created new session: 2bfc6d7b-1a43-4b32-a674-6d861be3a1f1 with affection level 15
+2025-07-18 07:42:10,348 - Session 2bfc6d7b-1a43-4b32-a674-6d861be3a1f1: Affection updated from 15 to 20 (delta: 5)
+2025-07-18 07:42:10,349 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_dzehrzmj
+2025-07-18 07:42:10,359 - Session 2bfc6d7b-1a43-4b32-a674-6d861be3a1f1: Affection updated from 20 to 24 (delta: 4)
+2025-07-18 07:42:10,360 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_0vllzgyw
+2025-07-18 07:42:10,360 - Affection system initialized successfully
+2025-07-18 07:42:10,360 - Created new session: 7be6817c-ec56-4bdd-a7a1-fc27215f2906 with affection level 15
+2025-07-18 07:42:10,362 - Session 7be6817c-ec56-4bdd-a7a1-fc27215f2906: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:42:10,364 - Session 7be6817c-ec56-4bdd-a7a1-fc27215f2906: Affection updated from 16 to 14 (delta: -2)
+2025-07-18 07:42:10,364 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_3taivdk9
+2025-07-18 07:42:10,364 - Affection system initialized successfully
+2025-07-18 07:42:10,366 - Created new session: 5495e4dd-a600-42ba-b5c0-be08816364b7 with affection level 15
+2025-07-18 07:42:10,368 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_n4dbmc0e
+2025-07-18 07:42:10,368 - Affection system initialized successfully
+2025-07-18 07:42:10,368 - Created new session: 2816dde4-5f7b-4129-b247-cf926e21982f with affection level 15
+2025-07-18 07:42:10,373 - Session 2816dde4-5f7b-4129-b247-cf926e21982f: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:42:10,374 - Session 2816dde4-5f7b-4129-b247-cf926e21982f: Affection updated from 16 to 21 (delta: 5)
+2025-07-18 07:42:10,375 - Session 2816dde4-5f7b-4129-b247-cf926e21982f: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:10,375 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_8z3icnf7
+2025-07-18 07:42:10,375 - Affection system initialized successfully
+2025-07-18 07:42:10,376 - Created new session: 278c6285-77b6-48f0-ba65-7cd596990e04 with affection level 15
+2025-07-18 07:42:10,383 - Session 278c6285-77b6-48f0-ba65-7cd596990e04: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:42:10,389 - Session 278c6285-77b6-48f0-ba65-7cd596990e04: Affection updated from 16 to 17 (delta: 1)
+2025-07-18 07:42:10,389 - Session 278c6285-77b6-48f0-ba65-7cd596990e04: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:10,390 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_zcc1ehxo
+2025-07-18 07:42:10,390 - Affection system initialized successfully
+2025-07-18 07:42:10,392 - Created new session: 9909daee-1764-4e40-9bff-c103106fae92 with affection level 15
+2025-07-18 07:42:10,392 - Created new session: 9909daee-1764-4e40-9bff-c103106fae92
+2025-07-18 07:42:10,392 - Updated affection for session 9909daee-1764-4e40-9bff-c103106fae92: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:42:10,392 - Using dynamic prompt for session 9909daee-1764-4e40-9bff-c103106fae92 with affection level 15 (relationship stage: distant)
+2025-07-18 07:42:10,394 - Updated affection for session 9909daee-1764-4e40-9bff-c103106fae92: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:42:10,394 - Using dynamic prompt for session 9909daee-1764-4e40-9bff-c103106fae92 with affection level 15 (relationship stage: distant)
+2025-07-18 07:42:10,395 - Session 9909daee-1764-4e40-9bff-c103106fae92: Affection updated from 15 to 18 (delta: 3)
+2025-07-18 07:42:10,395 - Updated affection for session 9909daee-1764-4e40-9bff-c103106fae92: new level = 18, sentiment = neutral, delta = 3
+2025-07-18 07:42:10,396 - Using dynamic prompt for session 9909daee-1764-4e40-9bff-c103106fae92 with affection level 18 (relationship stage: distant)
+2025-07-18 07:42:10,397 - Created new session: b07e2cd3-0a6f-40fe-a758-0d245b8e0e3e with affection level 15
+2025-07-18 07:42:10,398 - Created new session: b07e2cd3-0a6f-40fe-a758-0d245b8e0e3e
+2025-07-18 07:42:10,398 - Updated affection for session b07e2cd3-0a6f-40fe-a758-0d245b8e0e3e: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:42:10,398 - Using dynamic prompt for session b07e2cd3-0a6f-40fe-a758-0d245b8e0e3e with affection level 15 (relationship stage: distant)
+2025-07-18 07:42:10,399 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_zkyn3r3n
+2025-07-18 07:42:10,399 - Affection system initialized successfully
+2025-07-18 07:42:10,400 - Created new session: 474bd183-19dd-4dd7-a573-c7583aaf8d25 with affection level 15
+2025-07-18 07:42:10,401 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 15 to 19 (delta: 4)
+2025-07-18 07:42:10,403 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 19 to 21 (delta: 2)
+2025-07-18 07:42:10,403 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 21 to 19 (delta: -2)
+2025-07-18 07:42:10,403 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 19 to 23 (delta: 4)
+2025-07-18 07:42:10,407 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 23 to 25 (delta: 2)
+2025-07-18 07:42:10,407 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:10,409 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 25 to 23 (delta: -2)
+2025-07-18 07:42:10,410 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 23 to 27 (delta: 4)
+2025-07-18 07:42:10,410 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:10,412 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 27 to 29 (delta: 2)
+2025-07-18 07:42:10,413 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 29 to 27 (delta: -2)
+2025-07-18 07:42:10,413 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:10,414 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 27 to 31 (delta: 4)
+2025-07-18 07:42:10,416 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:10,417 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 31 to 33 (delta: 2)
+2025-07-18 07:42:10,417 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Affection updated from 33 to 31 (delta: -2)
+2025-07-18 07:42:10,418 - Session 474bd183-19dd-4dd7-a573-c7583aaf8d25: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:10,420 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_do2nk_zz
+2025-07-18 07:42:10,420 - Affection system initialized successfully
+2025-07-18 07:42:10,420 - Created new session: cf5e838e-b140-4105-9598-ca8d627cb67b with affection level 15
+2025-07-18 07:42:10,423 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_c_4us1bd
+2025-07-18 07:42:10,424 - Affection system initialized successfully
+2025-07-18 07:42:10,424 - Created new session: 9288ba2f-7da9-4057-bd96-234328e79f8e with affection level 15
+2025-07-18 07:42:10,426 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_n6jrkvq6
+2025-07-18 07:42:10,426 - Affection system initialized successfully
+2025-07-18 07:42:10,426 - Created new session: 36ca7281-1f43-40f6-ac55-f3a7b9bdd0f4 with affection level 15
+2025-07-18 07:42:10,427 - Session 36ca7281-1f43-40f6-ac55-f3a7b9bdd0f4: Affection updated from 15 to 20 (delta: 5)
+2025-07-18 07:42:10,429 - Session 36ca7281-1f43-40f6-ac55-f3a7b9bdd0f4: Affection updated from 20 to 24 (delta: 4)
+2025-07-18 07:42:10,432 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_y9nb5n48
+2025-07-18 07:42:10,432 - Affection system initialized successfully
+2025-07-18 07:42:10,433 - Created new session: 07d1f2a8-cfdc-4a88-8936-f9e23370bfe5 with affection level 15
+2025-07-18 07:42:10,976 - HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2025-07-18 07:42:26,785 - Session manager initialized with storage directory: C:\Users\brack\Downloads\NSFW2-master\NSFW2-master\sessions
+2025-07-18 07:42:26,785 - Auto-loaded 0 active sessions
+2025-07-18 07:42:26,785 - Affection system initialized successfully
+2025-07-18 07:42:26,913 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_sg8ws8jm
+2025-07-18 07:42:26,913 - Affection system initialized successfully
+2025-07-18 07:42:26,923 - Created new session: 8550896b-e7d3-4684-a2a5-abba618fbfb3 with affection level 15
+2025-07-18 07:42:26,931 - Session 8550896b-e7d3-4684-a2a5-abba618fbfb3: Affection updated from 10 to 14 (delta: 4)
+2025-07-18 07:42:26,931 - Session 8550896b-e7d3-4684-a2a5-abba618fbfb3: Affection updated from 30 to 34 (delta: 4)
+2025-07-18 07:42:26,933 - Session 8550896b-e7d3-4684-a2a5-abba618fbfb3: Affection updated from 50 to 54 (delta: 4)
+2025-07-18 07:42:26,934 - Session 8550896b-e7d3-4684-a2a5-abba618fbfb3: Affection updated from 70 to 74 (delta: 4)
+2025-07-18 07:42:26,934 - Session 8550896b-e7d3-4684-a2a5-abba618fbfb3: Affection updated from 90 to 94 (delta: 4)
+2025-07-18 07:42:26,937 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_kaylgm2i
+2025-07-18 07:42:26,937 - Affection system initialized successfully
+2025-07-18 07:42:26,937 - Created new session: e3349043-ee10-4b3e-9050-85ebe9e19d4f with affection level 15
+2025-07-18 07:42:26,938 - Session e3349043-ee10-4b3e-9050-85ebe9e19d4f: Affection updated from 10 to 14 (delta: 4)
+2025-07-18 07:42:26,941 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration__pnveg3a
+2025-07-18 07:42:26,941 - Affection system initialized successfully
+2025-07-18 07:42:26,942 - Created new session: 4af70b85-cab4-4b98-8852-4133454307bf with affection level 15
+2025-07-18 07:42:26,944 - Session 4af70b85-cab4-4b98-8852-4133454307bf: Affection updated from 15 to 20 (delta: 5)
+2025-07-18 07:42:26,945 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration__pnveg3a
+2025-07-18 07:42:26,954 - Session 4af70b85-cab4-4b98-8852-4133454307bf: Affection updated from 20 to 24 (delta: 4)
+2025-07-18 07:42:26,955 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_4_96zjd0
+2025-07-18 07:42:26,956 - Affection system initialized successfully
+2025-07-18 07:42:26,956 - Created new session: b4a8a264-6b0e-4767-bddb-a403f318fece with affection level 15
+2025-07-18 07:42:26,957 - Session b4a8a264-6b0e-4767-bddb-a403f318fece: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:42:26,959 - Session b4a8a264-6b0e-4767-bddb-a403f318fece: Affection updated from 16 to 14 (delta: -2)
+2025-07-18 07:42:26,960 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_n2ihj7k8
+2025-07-18 07:42:26,960 - Affection system initialized successfully
+2025-07-18 07:42:26,960 - Created new session: efe1a4a0-4a66-4615-9113-fd746f8d4d37 with affection level 15
+2025-07-18 07:42:26,963 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_lyosi2cd
+2025-07-18 07:42:26,963 - Affection system initialized successfully
+2025-07-18 07:42:26,963 - Created new session: 7c985cd2-447d-4fe6-bbd8-f0c7676a98d6 with affection level 15
+2025-07-18 07:42:26,968 - Session 7c985cd2-447d-4fe6-bbd8-f0c7676a98d6: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:42:26,969 - Session 7c985cd2-447d-4fe6-bbd8-f0c7676a98d6: Affection updated from 16 to 21 (delta: 5)
+2025-07-18 07:42:26,970 - Session 7c985cd2-447d-4fe6-bbd8-f0c7676a98d6: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:26,971 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_75cm98aa
+2025-07-18 07:42:26,972 - Affection system initialized successfully
+2025-07-18 07:42:26,972 - Created new session: ebe82ecd-0da4-4770-9b0c-79344cec16a4 with affection level 15
+2025-07-18 07:42:26,979 - Session ebe82ecd-0da4-4770-9b0c-79344cec16a4: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:42:26,983 - Session ebe82ecd-0da4-4770-9b0c-79344cec16a4: Affection updated from 16 to 17 (delta: 1)
+2025-07-18 07:42:26,983 - Session ebe82ecd-0da4-4770-9b0c-79344cec16a4: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:26,983 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_3a57j9bm
+2025-07-18 07:42:26,983 - Affection system initialized successfully
+2025-07-18 07:42:26,983 - Created new session: 2b2a0c8a-62e9-4b0c-95ed-0f8a3f2375f6 with affection level 15
+2025-07-18 07:42:26,983 - Created new session: 2b2a0c8a-62e9-4b0c-95ed-0f8a3f2375f6
+2025-07-18 07:42:26,983 - Updated affection for session 2b2a0c8a-62e9-4b0c-95ed-0f8a3f2375f6: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:42:26,983 - Using dynamic prompt for session 2b2a0c8a-62e9-4b0c-95ed-0f8a3f2375f6 with affection level 15 (relationship stage: distant)
+2025-07-18 07:42:26,990 - Updated affection for session 2b2a0c8a-62e9-4b0c-95ed-0f8a3f2375f6: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:42:26,990 - Using dynamic prompt for session 2b2a0c8a-62e9-4b0c-95ed-0f8a3f2375f6 with affection level 15 (relationship stage: distant)
+2025-07-18 07:42:26,991 - Session 2b2a0c8a-62e9-4b0c-95ed-0f8a3f2375f6: Affection updated from 15 to 18 (delta: 3)
+2025-07-18 07:42:26,991 - Updated affection for session 2b2a0c8a-62e9-4b0c-95ed-0f8a3f2375f6: new level = 18, sentiment = neutral, delta = 3
+2025-07-18 07:42:26,991 - Using dynamic prompt for session 2b2a0c8a-62e9-4b0c-95ed-0f8a3f2375f6 with affection level 18 (relationship stage: distant)
+2025-07-18 07:42:26,993 - Created new session: 7fc3f9c9-c819-40bf-a5f6-15ffae3ce518 with affection level 15
+2025-07-18 07:42:26,993 - Created new session: 7fc3f9c9-c819-40bf-a5f6-15ffae3ce518
+2025-07-18 07:42:26,993 - Updated affection for session 7fc3f9c9-c819-40bf-a5f6-15ffae3ce518: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:42:26,993 - Using dynamic prompt for session 7fc3f9c9-c819-40bf-a5f6-15ffae3ce518 with affection level 15 (relationship stage: distant)
+2025-07-18 07:42:26,996 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_l2nob5bj
+2025-07-18 07:42:26,996 - Affection system initialized successfully
+2025-07-18 07:42:26,996 - Created new session: 6c454123-66bc-43e2-9780-50008ff7e117 with affection level 15
+2025-07-18 07:42:26,997 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 15 to 19 (delta: 4)
+2025-07-18 07:42:26,999 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 19 to 21 (delta: 2)
+2025-07-18 07:42:27,000 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 21 to 19 (delta: -2)
+2025-07-18 07:42:27,002 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 19 to 23 (delta: 4)
+2025-07-18 07:42:27,003 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 23 to 25 (delta: 2)
+2025-07-18 07:42:27,003 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:27,005 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 25 to 23 (delta: -2)
+2025-07-18 07:42:27,006 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 23 to 27 (delta: 4)
+2025-07-18 07:42:27,007 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:27,008 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 27 to 29 (delta: 2)
+2025-07-18 07:42:27,009 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 29 to 27 (delta: -2)
+2025-07-18 07:42:27,009 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:27,011 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 27 to 31 (delta: 4)
+2025-07-18 07:42:27,012 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:27,012 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 31 to 33 (delta: 2)
+2025-07-18 07:42:27,015 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Affection updated from 33 to 31 (delta: -2)
+2025-07-18 07:42:27,016 - Session 6c454123-66bc-43e2-9780-50008ff7e117: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:42:27,016 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_y1_bxpy4
+2025-07-18 07:42:27,016 - Affection system initialized successfully
+2025-07-18 07:42:27,018 - Created new session: 603196e3-3e12-49f9-a5f9-444fddf9def9 with affection level 15
+2025-07-18 07:42:27,021 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_9izzqjnj
+2025-07-18 07:42:27,021 - Affection system initialized successfully
+2025-07-18 07:42:27,022 - Created new session: facf20fb-b708-44fc-adba-1180f74440f7 with affection level 15
+2025-07-18 07:42:27,023 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_k5y228zv
+2025-07-18 07:42:27,023 - Affection system initialized successfully
+2025-07-18 07:42:27,024 - Created new session: de372c84-15a3-4e8d-9b7f-6ac32eed2618 with affection level 15
+2025-07-18 07:42:27,026 - Session de372c84-15a3-4e8d-9b7f-6ac32eed2618: Affection updated from 15 to 20 (delta: 5)
+2025-07-18 07:42:27,028 - Session de372c84-15a3-4e8d-9b7f-6ac32eed2618: Affection updated from 20 to 24 (delta: 4)
+2025-07-18 07:42:27,030 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_i715pfm3
+2025-07-18 07:42:27,030 - Affection system initialized successfully
+2025-07-18 07:42:27,032 - Created new session: 00e88e9e-1774-4cbf-8482-3be479b94175 with affection level 15
+2025-07-18 07:42:27,533 - HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2025-07-18 07:48:09,272 - Session manager initialized with storage directory: C:\Users\brack\Downloads\NSFW2-master\NSFW2-master\sessions
+2025-07-18 07:48:09,272 - Auto-loaded 0 active sessions
+2025-07-18 07:48:09,272 - Affection system initialized successfully
+2025-07-18 07:48:09,413 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_yj6u3zh7
+2025-07-18 07:48:09,413 - Affection system initialized successfully
+2025-07-18 07:48:09,413 - Created new session: c7f5b9a5-6c98-4030-8c70-cf7b855954b5 with affection level 15
+2025-07-18 07:48:09,435 - Session c7f5b9a5-6c98-4030-8c70-cf7b855954b5: Affection updated from 10 to 14 (delta: 4)
+2025-07-18 07:48:09,435 - Session c7f5b9a5-6c98-4030-8c70-cf7b855954b5: Affection updated from 30 to 34 (delta: 4)
+2025-07-18 07:48:09,437 - Session c7f5b9a5-6c98-4030-8c70-cf7b855954b5: Affection updated from 50 to 54 (delta: 4)
+2025-07-18 07:48:09,438 - Session c7f5b9a5-6c98-4030-8c70-cf7b855954b5: Affection updated from 70 to 74 (delta: 4)
+2025-07-18 07:48:09,439 - Session c7f5b9a5-6c98-4030-8c70-cf7b855954b5: Affection updated from 90 to 94 (delta: 4)
+2025-07-18 07:48:09,440 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_7rdn_0go
+2025-07-18 07:48:09,440 - Affection system initialized successfully
+2025-07-18 07:48:09,441 - Created new session: 64eafc7f-1bce-4dbf-9ea8-21f44ab30502 with affection level 15
+2025-07-18 07:48:09,441 - Session 64eafc7f-1bce-4dbf-9ea8-21f44ab30502: Affection updated from 10 to 14 (delta: 4)
+2025-07-18 07:48:09,442 - Session 64eafc7f-1bce-4dbf-9ea8-21f44ab30502: Affection updated from 30 to 34 (delta: 4)
+2025-07-18 07:48:09,445 - Session 64eafc7f-1bce-4dbf-9ea8-21f44ab30502: Affection updated from 50 to 54 (delta: 4)
+2025-07-18 07:48:09,445 - Session 64eafc7f-1bce-4dbf-9ea8-21f44ab30502: Affection updated from 70 to 74 (delta: 4)
+2025-07-18 07:48:09,445 - Session 64eafc7f-1bce-4dbf-9ea8-21f44ab30502: Affection updated from 90 to 94 (delta: 4)
+2025-07-18 07:48:09,445 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_di8zqtu7
+2025-07-18 07:48:09,445 - Affection system initialized successfully
+2025-07-18 07:48:09,449 - Created new session: f45a244a-447a-4558-a020-12059adb86b4 with affection level 15
+2025-07-18 07:48:09,451 - Session f45a244a-447a-4558-a020-12059adb86b4: Affection updated from 15 to 20 (delta: 5)
+2025-07-18 07:48:09,452 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_di8zqtu7
+2025-07-18 07:48:09,465 - Session f45a244a-447a-4558-a020-12059adb86b4: Affection updated from 20 to 24 (delta: 4)
+2025-07-18 07:48:09,466 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_dcb9ig36
+2025-07-18 07:48:09,466 - Affection system initialized successfully
+2025-07-18 07:48:09,466 - Created new session: a628f636-40de-41e7-a251-d02b91dd7d88 with affection level 15
+2025-07-18 07:48:09,466 - Session a628f636-40de-41e7-a251-d02b91dd7d88: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:48:09,466 - Session a628f636-40de-41e7-a251-d02b91dd7d88: Affection updated from 16 to 14 (delta: -2)
+2025-07-18 07:48:09,473 - Session a628f636-40de-41e7-a251-d02b91dd7d88: Affection updated from 14 to 16 (delta: 2)
+2025-07-18 07:48:09,474 - Session a628f636-40de-41e7-a251-d02b91dd7d88: Affection updated from 16 to 17 (delta: 1)
+2025-07-18 07:48:09,475 - Session a628f636-40de-41e7-a251-d02b91dd7d88: Affection updated from 17 to 20 (delta: 3)
+2025-07-18 07:48:09,476 - Session a628f636-40de-41e7-a251-d02b91dd7d88: Affection updated from 20 to 23 (delta: 3)
+2025-07-18 07:48:09,476 - Session a628f636-40de-41e7-a251-d02b91dd7d88: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:48:09,479 - Session a628f636-40de-41e7-a251-d02b91dd7d88: Affection updated from 23 to 25 (delta: 2)
+2025-07-18 07:48:09,480 - Session a628f636-40de-41e7-a251-d02b91dd7d88: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:48:09,481 - Session a628f636-40de-41e7-a251-d02b91dd7d88: Affection updated from 25 to 28 (delta: 3)
+2025-07-18 07:48:09,482 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_0rnkkvmk
+2025-07-18 07:48:09,483 - Affection system initialized successfully
+2025-07-18 07:48:09,484 - Created new session: a6b0c013-ee80-4fe6-97a0-72f837c900db with affection level 15
+2025-07-18 07:48:09,486 - Session a6b0c013-ee80-4fe6-97a0-72f837c900db: Affection updated from 15 to 17 (delta: 2)
+2025-07-18 07:48:09,486 - Session a6b0c013-ee80-4fe6-97a0-72f837c900db: Affection updated from 17 to 22 (delta: 5)
+2025-07-18 07:48:09,489 - Session a6b0c013-ee80-4fe6-97a0-72f837c900db: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:48:09,491 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_m780snvv
+2025-07-18 07:48:09,491 - Affection system initialized successfully
+2025-07-18 07:48:09,491 - Created new session: f7f08790-c556-45ca-ad2f-7e75b346b345 with affection level 15
+2025-07-18 07:48:09,494 - Session f7f08790-c556-45ca-ad2f-7e75b346b345: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:48:09,496 - Session f7f08790-c556-45ca-ad2f-7e75b346b345: Affection updated from 16 to 21 (delta: 5)
+2025-07-18 07:48:09,496 - Session f7f08790-c556-45ca-ad2f-7e75b346b345: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:48:09,497 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_vsyve627
+2025-07-18 07:48:09,497 - Affection system initialized successfully
+2025-07-18 07:48:09,498 - Created new session: a8272ae4-cb08-40a1-b77c-f07dec95916a with affection level 15
+2025-07-18 07:48:09,502 - Session a8272ae4-cb08-40a1-b77c-f07dec95916a: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:48:09,510 - Session a8272ae4-cb08-40a1-b77c-f07dec95916a: Affection updated from 16 to 17 (delta: 1)
+2025-07-18 07:48:09,510 - Session a8272ae4-cb08-40a1-b77c-f07dec95916a: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:48:09,512 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_7owhfi2m
+2025-07-18 07:48:09,512 - Affection system initialized successfully
+2025-07-18 07:48:09,514 - Created new session: 9ca78b48-0b49-40cc-ae2e-ce0e2f72576f with affection level 15
+2025-07-18 07:48:09,514 - Created new session: 9ca78b48-0b49-40cc-ae2e-ce0e2f72576f
+2025-07-18 07:48:09,514 - Updated affection for session 9ca78b48-0b49-40cc-ae2e-ce0e2f72576f: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:48:09,514 - Using dynamic prompt for session 9ca78b48-0b49-40cc-ae2e-ce0e2f72576f with affection level 15 (relationship stage: distant)
+2025-07-18 07:48:09,516 - Updated affection for session 9ca78b48-0b49-40cc-ae2e-ce0e2f72576f: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:48:09,516 - Using dynamic prompt for session 9ca78b48-0b49-40cc-ae2e-ce0e2f72576f with affection level 15 (relationship stage: distant)
+2025-07-18 07:48:09,517 - Session 9ca78b48-0b49-40cc-ae2e-ce0e2f72576f: Affection updated from 15 to 18 (delta: 3)
+2025-07-18 07:48:09,517 - Updated affection for session 9ca78b48-0b49-40cc-ae2e-ce0e2f72576f: new level = 18, sentiment = neutral, delta = 3
+2025-07-18 07:48:09,517 - Using dynamic prompt for session 9ca78b48-0b49-40cc-ae2e-ce0e2f72576f with affection level 18 (relationship stage: distant)
+2025-07-18 07:48:09,520 - Created new session: bf465e23-479b-4cec-82f1-97d10f6eb71f with affection level 15
+2025-07-18 07:48:09,521 - Created new session: bf465e23-479b-4cec-82f1-97d10f6eb71f
+2025-07-18 07:48:09,521 - Updated affection for session bf465e23-479b-4cec-82f1-97d10f6eb71f: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:48:09,521 - Using dynamic prompt for session bf465e23-479b-4cec-82f1-97d10f6eb71f with affection level 15 (relationship stage: distant)
+2025-07-18 07:48:09,523 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_ds1bfn2s
+2025-07-18 07:48:09,523 - Affection system initialized successfully
+2025-07-18 07:48:09,523 - Created new session: 066c5c31-3efd-4fba-9c00-a40a1e7b12b0 with affection level 15
+2025-07-18 07:48:09,524 - Session 066c5c31-3efd-4fba-9c00-a40a1e7b12b0: Affection updated from 15 to 19 (delta: 4)
+2025-07-18 07:48:09,525 - Session 066c5c31-3efd-4fba-9c00-a40a1e7b12b0: Affection updated from 19 to 21 (delta: 2)
+2025-07-18 07:48:09,526 - Session 066c5c31-3efd-4fba-9c00-a40a1e7b12b0: Affection updated from 21 to 19 (delta: -2)
+2025-07-18 07:48:09,528 - Session 066c5c31-3efd-4fba-9c00-a40a1e7b12b0: Affection updated from 19 to 23 (delta: 4)
+2025-07-18 07:48:09,530 - Session 066c5c31-3efd-4fba-9c00-a40a1e7b12b0: Affection updated from 23 to 25 (delta: 2)
+2025-07-18 07:48:09,530 - Session 066c5c31-3efd-4fba-9c00-a40a1e7b12b0: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:48:09,531 - Session 066c5c31-3efd-4fba-9c00-a40a1e7b12b0: Affection updated from 25 to 23 (delta: -2)
+2025-07-18 07:48:09,533 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration__65_ags0
+2025-07-18 07:48:09,533 - Affection system initialized successfully
+2025-07-18 07:48:09,534 - Created new session: 2847efaf-a0a4-4103-90c6-90f7da71e14d with affection level 15
+2025-07-18 07:48:09,535 - Session 2847efaf-a0a4-4103-90c6-90f7da71e14d: Affection updated from 15 to 20 (delta: 5)
+2025-07-18 07:48:09,535 - Session 2847efaf-a0a4-4103-90c6-90f7da71e14d: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:48:09,541 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_e3bi3ez5
+2025-07-18 07:48:09,541 - Affection system initialized successfully
+2025-07-18 07:48:09,541 - Created new session: 53fead2d-2d90-4bee-9090-cdfd69b49bb8 with affection level 15
+2025-07-18 07:48:09,542 - Session 53fead2d-2d90-4bee-9090-cdfd69b49bb8: Affection updated from 15 to 17 (delta: 2)
+2025-07-18 07:48:09,544 - Session 53fead2d-2d90-4bee-9090-cdfd69b49bb8: Affection updated from 17 to 14 (delta: -3)
+2025-07-18 07:48:09,544 - Applied recovery bonus of +2 for session 53fead2d-2d90-4bee-9090-cdfd69b49bb8 (transitioning from negative to caring)
+2025-07-18 07:48:09,545 - Session 53fead2d-2d90-4bee-9090-cdfd69b49bb8: Affection updated from 14 to 10 (delta: -4)
+2025-07-18 07:48:09,545 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_qi6m5clr
+2025-07-18 07:48:09,545 - Affection system initialized successfully
+2025-07-18 07:48:09,545 - Created new session: a35548b5-faa2-4328-8187-6d0d24450b51 with affection level 15
+2025-07-18 07:48:09,548 - Session a35548b5-faa2-4328-8187-6d0d24450b51: Affection updated from 15 to 20 (delta: 5)
+2025-07-18 07:48:09,550 - Session a35548b5-faa2-4328-8187-6d0d24450b51: Affection updated from 20 to 24 (delta: 4)
+2025-07-18 07:48:09,553 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_nmkzjzer
+2025-07-18 07:48:09,553 - Affection system initialized successfully
+2025-07-18 07:48:09,553 - Created new session: 9716b8a0-4c61-4ef2-ad1b-26957bfed1ec with affection level 15
+2025-07-18 07:48:09,554 - Session 9716b8a0-4c61-4ef2-ad1b-26957bfed1ec: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:48:10,071 - HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2025-07-18 07:49:38,188 - Session manager initialized with storage directory: C:\Users\brack\Downloads\NSFW2-master\NSFW2-master\sessions
+2025-07-18 07:49:38,188 - Auto-loaded 0 active sessions
+2025-07-18 07:49:38,188 - Affection system initialized successfully
+2025-07-18 07:49:38,340 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_srvl2mo2
+2025-07-18 07:49:38,341 - Affection system initialized successfully
+2025-07-18 07:49:38,343 - Created new session: 013bf99d-674a-4eff-bc9f-7cb22b2f2ad3 with affection level 15
+2025-07-18 07:49:38,352 - Session 013bf99d-674a-4eff-bc9f-7cb22b2f2ad3: Affection updated from 10 to 14 (delta: 4)
+2025-07-18 07:49:38,354 - Session 013bf99d-674a-4eff-bc9f-7cb22b2f2ad3: Affection updated from 30 to 34 (delta: 4)
+2025-07-18 07:49:38,355 - Session 013bf99d-674a-4eff-bc9f-7cb22b2f2ad3: Affection updated from 50 to 54 (delta: 4)
+2025-07-18 07:49:38,355 - Session 013bf99d-674a-4eff-bc9f-7cb22b2f2ad3: Affection updated from 70 to 74 (delta: 4)
+2025-07-18 07:49:38,357 - Session 013bf99d-674a-4eff-bc9f-7cb22b2f2ad3: Affection updated from 90 to 94 (delta: 4)
+2025-07-18 07:49:38,358 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_u515ct1v
+2025-07-18 07:49:38,358 - Affection system initialized successfully
+2025-07-18 07:49:38,359 - Created new session: 6ed52557-ccd0-43bd-b38e-0364d13f89db with affection level 15
+2025-07-18 07:49:38,360 - Session 6ed52557-ccd0-43bd-b38e-0364d13f89db: Affection updated from 10 to 14 (delta: 4)
+2025-07-18 07:49:38,360 - Session 6ed52557-ccd0-43bd-b38e-0364d13f89db: Affection updated from 30 to 34 (delta: 4)
+2025-07-18 07:49:38,360 - Session 6ed52557-ccd0-43bd-b38e-0364d13f89db: Affection updated from 50 to 54 (delta: 4)
+2025-07-18 07:49:38,360 - Session 6ed52557-ccd0-43bd-b38e-0364d13f89db: Affection updated from 70 to 74 (delta: 4)
+2025-07-18 07:49:38,365 - Session 6ed52557-ccd0-43bd-b38e-0364d13f89db: Affection updated from 90 to 94 (delta: 4)
+2025-07-18 07:49:38,366 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_xqgttcm1
+2025-07-18 07:49:38,366 - Affection system initialized successfully
+2025-07-18 07:49:38,366 - Created new session: 74362c6d-c4e9-4bcf-8c09-8b3d4e3ca687 with affection level 15
+2025-07-18 07:49:38,370 - Session 74362c6d-c4e9-4bcf-8c09-8b3d4e3ca687: Affection updated from 15 to 20 (delta: 5)
+2025-07-18 07:49:38,371 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_xqgttcm1
+2025-07-18 07:49:38,387 - Session 74362c6d-c4e9-4bcf-8c09-8b3d4e3ca687: Affection updated from 20 to 24 (delta: 4)
+2025-07-18 07:49:38,388 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_k4hb1tzh
+2025-07-18 07:49:38,388 - Affection system initialized successfully
+2025-07-18 07:49:38,389 - Created new session: 0928d9cf-5f24-4584-a69b-33e5490ca52c with affection level 15
+2025-07-18 07:49:38,390 - Session 0928d9cf-5f24-4584-a69b-33e5490ca52c: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:49:38,392 - Session 0928d9cf-5f24-4584-a69b-33e5490ca52c: Affection updated from 16 to 14 (delta: -2)
+2025-07-18 07:49:38,395 - Session 0928d9cf-5f24-4584-a69b-33e5490ca52c: Affection updated from 14 to 16 (delta: 2)
+2025-07-18 07:49:38,395 - Session 0928d9cf-5f24-4584-a69b-33e5490ca52c: Affection updated from 16 to 17 (delta: 1)
+2025-07-18 07:49:38,395 - Session 0928d9cf-5f24-4584-a69b-33e5490ca52c: Affection updated from 17 to 20 (delta: 3)
+2025-07-18 07:49:38,395 - Session 0928d9cf-5f24-4584-a69b-33e5490ca52c: Affection updated from 20 to 23 (delta: 3)
+2025-07-18 07:49:38,395 - Session 0928d9cf-5f24-4584-a69b-33e5490ca52c: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:49:38,402 - Session 0928d9cf-5f24-4584-a69b-33e5490ca52c: Affection updated from 23 to 25 (delta: 2)
+2025-07-18 07:49:38,402 - Session 0928d9cf-5f24-4584-a69b-33e5490ca52c: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:49:38,404 - Session 0928d9cf-5f24-4584-a69b-33e5490ca52c: Affection updated from 25 to 28 (delta: 3)
+2025-07-18 07:49:38,406 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_qumuc8wi
+2025-07-18 07:49:38,406 - Affection system initialized successfully
+2025-07-18 07:49:38,407 - Created new session: 413013ed-f193-4c53-8a34-ae75ee4f5105 with affection level 15
+2025-07-18 07:49:38,409 - Session 413013ed-f193-4c53-8a34-ae75ee4f5105: Affection updated from 15 to 17 (delta: 2)
+2025-07-18 07:49:38,411 - Session 413013ed-f193-4c53-8a34-ae75ee4f5105: Affection updated from 17 to 22 (delta: 5)
+2025-07-18 07:49:38,412 - Session 413013ed-f193-4c53-8a34-ae75ee4f5105: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:49:38,413 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_19tadkzk
+2025-07-18 07:49:38,413 - Affection system initialized successfully
+2025-07-18 07:49:38,413 - Created new session: 59edaf3d-16fe-48fb-a290-0dc4df6e280f with affection level 15
+2025-07-18 07:49:38,418 - Session 59edaf3d-16fe-48fb-a290-0dc4df6e280f: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:49:38,420 - Session 59edaf3d-16fe-48fb-a290-0dc4df6e280f: Affection updated from 16 to 21 (delta: 5)
+2025-07-18 07:49:38,420 - Session 59edaf3d-16fe-48fb-a290-0dc4df6e280f: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:49:38,421 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_ll32u9b8
+2025-07-18 07:49:38,421 - Affection system initialized successfully
+2025-07-18 07:49:38,422 - Created new session: 8205dc56-10d1-420c-9c83-d12ebc3b6a21 with affection level 15
+2025-07-18 07:49:38,430 - Session 8205dc56-10d1-420c-9c83-d12ebc3b6a21: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:49:38,434 - Session 8205dc56-10d1-420c-9c83-d12ebc3b6a21: Affection updated from 16 to 17 (delta: 1)
+2025-07-18 07:49:38,434 - Session 8205dc56-10d1-420c-9c83-d12ebc3b6a21: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:49:38,436 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_t9xezcan
+2025-07-18 07:49:38,437 - Affection system initialized successfully
+2025-07-18 07:49:38,438 - Created new session: d00957f6-6571-4cdb-91ae-31c1d3b1bd65 with affection level 15
+2025-07-18 07:49:38,438 - Created new session: d00957f6-6571-4cdb-91ae-31c1d3b1bd65
+2025-07-18 07:49:38,438 - Updated affection for session d00957f6-6571-4cdb-91ae-31c1d3b1bd65: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:49:38,438 - Using dynamic prompt for session d00957f6-6571-4cdb-91ae-31c1d3b1bd65 with affection level 15 (relationship stage: distant)
+2025-07-18 07:49:38,440 - Updated affection for session d00957f6-6571-4cdb-91ae-31c1d3b1bd65: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:49:38,440 - Using dynamic prompt for session d00957f6-6571-4cdb-91ae-31c1d3b1bd65 with affection level 15 (relationship stage: distant)
+2025-07-18 07:49:38,442 - Session d00957f6-6571-4cdb-91ae-31c1d3b1bd65: Affection updated from 15 to 18 (delta: 3)
+2025-07-18 07:49:38,442 - Updated affection for session d00957f6-6571-4cdb-91ae-31c1d3b1bd65: new level = 18, sentiment = neutral, delta = 3
+2025-07-18 07:49:38,442 - Using dynamic prompt for session d00957f6-6571-4cdb-91ae-31c1d3b1bd65 with affection level 18 (relationship stage: distant)
+2025-07-18 07:49:38,452 - Created new session: f6dd276e-113a-418a-8bd8-e34b6a3391f5 with affection level 15
+2025-07-18 07:49:38,452 - Created new session: f6dd276e-113a-418a-8bd8-e34b6a3391f5
+2025-07-18 07:49:38,452 - Updated affection for session f6dd276e-113a-418a-8bd8-e34b6a3391f5: new level = 15, sentiment = neutral, delta = 0
+2025-07-18 07:49:38,452 - Using dynamic prompt for session f6dd276e-113a-418a-8bd8-e34b6a3391f5 with affection level 15 (relationship stage: distant)
+2025-07-18 07:49:38,454 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_aa7c5f6u
+2025-07-18 07:49:38,454 - Affection system initialized successfully
+2025-07-18 07:49:38,455 - Created new session: 7cdbf4a9-a6c1-4e5d-87bb-370d5722c3b3 with affection level 15
+2025-07-18 07:49:38,456 - Session 7cdbf4a9-a6c1-4e5d-87bb-370d5722c3b3: Affection updated from 15 to 19 (delta: 4)
+2025-07-18 07:49:38,457 - Session 7cdbf4a9-a6c1-4e5d-87bb-370d5722c3b3: Affection updated from 19 to 21 (delta: 2)
+2025-07-18 07:49:38,458 - Session 7cdbf4a9-a6c1-4e5d-87bb-370d5722c3b3: Affection updated from 21 to 19 (delta: -2)
+2025-07-18 07:49:38,459 - Session 7cdbf4a9-a6c1-4e5d-87bb-370d5722c3b3: Affection updated from 19 to 23 (delta: 4)
+2025-07-18 07:49:38,461 - Session 7cdbf4a9-a6c1-4e5d-87bb-370d5722c3b3: Affection updated from 23 to 25 (delta: 2)
+2025-07-18 07:49:38,462 - Session 7cdbf4a9-a6c1-4e5d-87bb-370d5722c3b3: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:49:38,462 - Session 7cdbf4a9-a6c1-4e5d-87bb-370d5722c3b3: Affection updated from 25 to 23 (delta: -2)
+2025-07-18 07:49:38,465 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_3pczr8bn
+2025-07-18 07:49:38,465 - Affection system initialized successfully
+2025-07-18 07:49:38,465 - Created new session: eaeee1ab-503a-4682-9522-23fa2621a3cc with affection level 15
+2025-07-18 07:49:38,470 - Session eaeee1ab-503a-4682-9522-23fa2621a3cc: Affection updated from 15 to 20 (delta: 5)
+2025-07-18 07:49:38,471 - Session eaeee1ab-503a-4682-9522-23fa2621a3cc: Conversation history summarized, keeping last 5 turns
+2025-07-18 07:49:38,473 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_4bpz0o9w
+2025-07-18 07:49:38,473 - Affection system initialized successfully
+2025-07-18 07:49:38,474 - Created new session: 3d99f164-5ccb-43d6-888a-e88715d92e30 with affection level 15
+2025-07-18 07:49:38,475 - Session 3d99f164-5ccb-43d6-888a-e88715d92e30: Affection updated from 15 to 17 (delta: 2)
+2025-07-18 07:49:38,476 - Session 3d99f164-5ccb-43d6-888a-e88715d92e30: Affection updated from 17 to 14 (delta: -3)
+2025-07-18 07:49:38,476 - Applied recovery bonus of +2 for session 3d99f164-5ccb-43d6-888a-e88715d92e30 (transitioning from negative to caring)
+2025-07-18 07:49:38,478 - Session 3d99f164-5ccb-43d6-888a-e88715d92e30: Affection updated from 14 to 10 (delta: -4)
+2025-07-18 07:49:38,479 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_onjo7xv1
+2025-07-18 07:49:38,479 - Affection system initialized successfully
+2025-07-18 07:49:38,479 - Created new session: 2f770545-7113-457c-9a17-4a5bf0bffeec with affection level 15
+2025-07-18 07:49:38,481 - Session 2f770545-7113-457c-9a17-4a5bf0bffeec: Affection updated from 15 to 20 (delta: 5)
+2025-07-18 07:49:38,483 - Session 2f770545-7113-457c-9a17-4a5bf0bffeec: Affection updated from 20 to 24 (delta: 4)
+2025-07-18 07:49:38,485 - Session manager initialized with storage directory: C:\Users\brack\AppData\Local\Temp\test_integration_r1o8hm6m
+2025-07-18 07:49:38,486 - Affection system initialized successfully
+2025-07-18 07:49:38,486 - Created new session: 005ccbc1-e8cf-4db8-b6f4-ecf1e5177a71 with affection level 15
+2025-07-18 07:49:38,487 - Session 005ccbc1-e8cf-4db8-b6f4-ecf1e5177a71: Affection updated from 15 to 16 (delta: 1)
+2025-07-18 07:49:38,968 - HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
